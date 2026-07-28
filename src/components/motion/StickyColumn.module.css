@@ -1,0 +1,10 @@
+@media (width >= 1024px) {
+  .sticky {
+    /* Without this the item stretches to the height of the media column beside
+       it, leaving it nothing to travel through, and sticky silently does
+       nothing. */
+    align-self: start;
+    inset-block-start: var(--space-header);
+    position: sticky;
+  }
+}

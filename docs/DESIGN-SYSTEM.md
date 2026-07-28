@@ -132,6 +132,7 @@ width `1680px` centred.
 --grid-cols: 12;
 --grid-gap: var(--space-m);
 --grid-max: 1680px;
+--measure: 68ch;   /* the prose limit in the table below, as a token */
 ```
 
 Standard placements:

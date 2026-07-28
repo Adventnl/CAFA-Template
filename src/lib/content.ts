@@ -43,6 +43,23 @@ export function getWork(slug: string): Work | undefined {
   return works.find((work) => work.slug === slug);
 }
 
+/** The works that have a page of their own. A private work is listed, not opened. */
+export function getPublishedWorks(): readonly Work[] {
+  return works.filter((work) => work.status !== 'private');
+}
+
+/**
+ * Neighbours in registry order, which is the editorial sequence rather than
+ * anything derived from year. The ends do not wrap: the first work has no
+ * previous, and saying so is more honest than looping back to the last.
+ */
+export function getWorkNeighbours(slug: string): { previous: Work | null; next: Work | null } {
+  const published = getPublishedWorks();
+  const at = published.findIndex((work) => work.slug === slug);
+  if (at === -1) return { previous: null, next: null };
+  return { previous: published[at - 1] ?? null, next: published[at + 1] ?? null };
+}
+
 /**
  * Cover derivatives for the works the index may show, keyed by slug. A private
  * work is absent: it publishes no cover, so no URL for one is ever handed to

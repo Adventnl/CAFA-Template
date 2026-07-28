@@ -81,6 +81,7 @@
   --grid-cols: 12;
   --grid-gap: var(--space-m);
   --grid-max: 1680px;
+  --measure: 68ch; /* the prose limit from DESIGN-SYSTEM.md §5 */
 
   --bp-sm: 480px;
   --bp-md: 768px; /* index collapses 4 cols → 2; hover layer off */

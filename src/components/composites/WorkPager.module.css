@@ -1,0 +1,31 @@
+.pager {
+  border-block-start: var(--hairline);
+  column-gap: var(--grid-gap);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-block-start: var(--space-l);
+}
+
+.step {
+  color: var(--c-ink);
+  display: grid;
+  min-block-size: var(--tap-min);
+  row-gap: var(--space-3xs);
+  text-decoration: none;
+  transition: opacity var(--dur-fast) var(--ease-io);
+}
+
+.step[data-align='end'] {
+  justify-items: end;
+  text-align: end;
+}
+
+.label {
+  color: var(--c-ink-45);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .step:hover {
+    opacity: var(--dim);
+  }
+}

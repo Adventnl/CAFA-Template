@@ -53,6 +53,8 @@ export interface NavItem {
 
 export interface SiteContent {
   name: LocalisedText;
+  /** Origin for canonical URLs, hreflang and og:image. Change this on deploy. */
+  url: string;
   /** Non-empty, and order matters: the first entry is the default served at `/`. */
   locales: readonly [Locale, ...Locale[]];
   localeNames: Record<Locale, string>;

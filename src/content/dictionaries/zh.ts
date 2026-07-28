@@ -16,6 +16,7 @@ export const zh = {
     primaryNav: '主导航',
     localeSwitch: '切换语言',
     worksList: '作品目录',
+    workPager: '作品导航',
   },
 
   home: {
@@ -37,6 +38,7 @@ export const zh = {
 
   work: {
     index: '编号',
+    status: '状态',
     year: '年份',
     discipline: '类型',
     credits: '参与',

@@ -1,0 +1,9 @@
+/*
+ * DESIGN-SYSTEM.md §8 rule 5: nothing is cropped to a shared ratio. The column
+ * width is the constant; each image keeps its own proportions, which is what
+ * separates a portfolio from a grid of thumbnails.
+ */
+.sequence {
+  display: grid;
+  row-gap: var(--space-xl);
+}

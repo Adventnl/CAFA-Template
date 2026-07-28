@@ -32,6 +32,8 @@ export async function generateMetadata({
   const { locale } = await params;
   const { meta } = getDictionary(requireLocale(locale));
   return {
+    // Without this Next resolves og:image against localhost at build time.
+    metadataBase: new URL(getSite().url),
     title: { default: meta.title, template: meta.titleTemplate },
     description: meta.description,
   };

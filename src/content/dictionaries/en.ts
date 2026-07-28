@@ -13,6 +13,7 @@ export const en: Dictionary = {
     primaryNav: 'Primary',
     localeSwitch: 'Change language',
     worksList: 'Index of works',
+    workPager: 'Works navigation',
   },
 
   home: {
@@ -32,6 +33,7 @@ export const en: Dictionary = {
 
   work: {
     index: 'Index',
+    status: 'Status',
     year: 'Year',
     discipline: 'Discipline',
     credits: 'Credits',
