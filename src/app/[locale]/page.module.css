@@ -4,6 +4,20 @@
  * after doing that. The logotype is in the header on every page including this
  * one, so it is not set a second time here.
  */
+/*
+ * The statement and its one link get the first screen to themselves. This is
+ * what makes "below the fold" true for the photograph rather than approximately
+ * true at desktop widths only — at 390px it was arriving inside the initial
+ * viewport and becoming the LCP element.
+ *
+ * svh, not vh: the small viewport height is the one that survives a mobile
+ * browser's collapsing toolbar without the image creeping back up.
+ */
+.above {
+  align-content: start;
+  min-block-size: calc(100svh - var(--space-header) - var(--space-xl));
+}
+
 .statement {
   grid-column: 1 / -1;
   margin-block-end: var(--space-2xl);
@@ -11,9 +25,12 @@
 }
 
 .link {
+  align-items: center;
   color: var(--c-ink);
+  display: inline-flex;
   grid-column: 1 / -1;
   justify-self: start;
+  min-block-size: var(--tap-min);
   text-decoration: underline;
   text-underline-offset: 0.22em;
   transition: text-decoration-color var(--dur-fast) var(--ease-io);
@@ -21,7 +38,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .link:hover {
-    text-decoration-color: var(--c-ink-45);
+    text-decoration-color: var(--c-ink-62);
   }
 }
 

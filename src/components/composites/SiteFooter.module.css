@@ -16,12 +16,15 @@
 }
 
 .address {
-  color: var(--c-ink-45);
+  color: var(--c-ink-62);
   grid-column: 1 / -1;
 }
 
 .email {
+  align-items: center;
   color: inherit;
+  display: inline-flex;
+  min-block-size: var(--tap-min);
   text-decoration: underline;
   text-underline-offset: 0.22em;
   transition: text-decoration-color var(--dur-fast) var(--ease-io);
@@ -29,7 +32,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .email:hover {
-    text-decoration-color: var(--c-ink-45);
+    text-decoration-color: var(--c-ink-62);
   }
 }
 

@@ -28,6 +28,9 @@ export function WorkIndex({ locale, works, covers, statusLabels, listLabel }: Wo
   const [previewed, setPreviewed] = useState<string | null>(null);
   const preloaded = useRef(false);
 
+  // The topmost row that publishes a cover: the LCP element on a touch device.
+  const firstCover = works.find((work) => covers[work.slug] !== undefined)?.slug;
+
   /**
    * Covers are warmed when the pointer first reaches the list, not on load: a
    * visitor who never hovers never pays for them. Only AVIF is preloaded — the
@@ -76,6 +79,7 @@ export function WorkIndex({ locale, works, covers, statusLabels, listLabel }: Wo
             locale={locale}
             statusLabel={statusLabels[work.status]}
             cover={covers[work.slug] ?? null}
+            priority={work.slug === firstCover}
             onPreview={setPreviewed}
           />
         ))}

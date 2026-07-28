@@ -23,7 +23,7 @@
 }
 
 .factLabel {
-  color: var(--c-ink-45);
+  color: var(--c-ink-62);
   padding-block-start: var(--space-3xs); /* optical: label caps against meta x-height */
 }
 

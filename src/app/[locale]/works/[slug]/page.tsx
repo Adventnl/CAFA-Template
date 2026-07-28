@@ -6,7 +6,9 @@ import { WorkMetaPanel } from '@/components/composites/WorkMetaPanel';
 import { WorkPager } from '@/components/composites/WorkPager';
 import { StickyColumn } from '@/components/motion/StickyColumn';
 import { Grid } from '@/components/primitives/Grid';
+import { JsonLd } from '@/components/seo/JsonLd';
 import {
+  getCoverImage,
   getDictionary,
   getPublishedWorks,
   getSite,
@@ -14,7 +16,9 @@ import {
   getWorkNeighbours,
   requireLocale,
 } from '@/lib/content';
-import { getImage } from '@/lib/image-manifest';
+import { creativeWorkJsonLd } from '@/lib/json-ld';
+import { pageMetadata } from '@/lib/metadata';
+import { routes } from '@/lib/routes';
 
 import styles from './page.module.css';
 
@@ -34,12 +38,13 @@ export async function generateMetadata({ params }: WorkParams): Promise<Metadata
   const work = getWork(slug);
   if (work === undefined) return {};
 
-  const cover = getImage(work.cover.src).formats.webp.at(-1);
-  return {
+  return pageMetadata({
+    locale,
+    route: (of) => routes.work(of, slug),
     title: work.title[locale],
     description: work.summary[locale],
-    openGraph: { images: cover === undefined ? [] : [cover.src] },
-  };
+    image: getCoverImage(work),
+  });
 }
 
 export default async function WorkPage({ params }: WorkParams) {
@@ -49,10 +54,10 @@ export default async function WorkPage({ params }: WorkParams) {
   if (work === undefined || work.status === 'private') notFound();
 
   const dictionary = getDictionary(locale);
-  const { previous, next } = getWorkNeighbours(slug);
 
   return (
     <Grid className={styles.page}>
+      <JsonLd data={creativeWorkJsonLd(work, locale, getCoverImage(work))} />
       <StickyColumn className={styles.meta}>
         <WorkMetaPanel
           work={work}
@@ -64,8 +69,7 @@ export default async function WorkPage({ params }: WorkParams) {
       <MediaSequence media={work.media} locale={locale} className={styles.media} />
       <WorkPager
         locale={locale}
-        previous={previous}
-        next={next}
+        {...getWorkNeighbours(slug)}
         labels={dictionary.work}
         navLabel={dictionary.a11y.workPager}
         className={styles.pager}

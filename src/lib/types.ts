@@ -1,7 +1,7 @@
 export type Locale = 'zh' | 'en';
 
 /** Every user-visible string in content/ is this shape. Never a bare string. */
-export type LocalisedText = Record<Locale, string>;
+type LocalisedText = Record<Locale, string>;
 
 /**
  * A reference to a file under public/media/source. Intrinsic dimensions are not
@@ -46,7 +46,7 @@ export interface Mentor {
   portrait: ImageRef;
 }
 
-export interface NavItem {
+interface NavItem {
   label: LocalisedText;
   href: (locale: Locale) => string;
 }

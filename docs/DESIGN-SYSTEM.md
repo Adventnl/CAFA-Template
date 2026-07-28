@@ -34,7 +34,7 @@ Monochrome plus one warm paper tint. No accent colour — the work supplies all 
   --c-paper-raised: #FFFFFF;  /* media wells, rare */
   --c-ink:          #14140F;  /* primary text */
   --c-ink-70:       rgb(20 20 15 / 0.70);  /* secondary text, metadata */
-  --c-ink-45:       rgb(20 20 15 / 0.45);  /* tertiary: status, numbers */
+  --c-ink-62:       rgb(20 20 15 / 0.62);  /* tertiary: status, numbers */
   --c-ink-16:       rgb(20 20 15 / 0.16);  /* hairlines */
   --dim:            0.28;                  /* and the same number as an opacity */
   --c-ink-dim:      rgb(20 20 15 / var(--dim));  /* list colour while hover backdrop is active */
@@ -45,9 +45,25 @@ Monochrome plus one warm paper tint. No accent colour — the work supplies all 
 }
 ```
 
-Contrast check: `--c-ink` on `--c-paper` is ~15:1. `--c-ink-70` is ~10:1 — safe for
-metadata. `--c-ink-45` is ~6:1, permitted for non-essential numerals only, never for body
-copy. `--c-ink-16` is hairlines, never text.
+Contrast check, measured rather than estimated — the first three figures written here were
+all wrong, and the tertiary one was wrong in a way that failed WCAG AA:
+
+| Token | Over `--c-paper` | |
+|---|---|---|
+| `--c-ink` | 17.1:1 | was written as ~15:1 |
+| `--c-ink-70` | 6.6:1 | was written as ~10:1 |
+| `--c-ink-62` | 5.0:1 | **was 45% at 2.9:1, not the ~6:1 claimed — it failed §10 of the constitution wherever it set text, which was everywhere: row numbers, years, statuses, gutter labels, the private row, the footer address** |
+| `--c-ink-16` | 1.3:1 | hairlines, never text |
+| `--c-ink-dim` | 1.9:1 | see below |
+
+0.62 is the lightest alpha that clears 4.5:1 on this paper. There is no room for a fourth
+step: below 0.60 nothing passes, so the ink scale is three text values and a hairline, and
+any further hierarchy has to come from size and position instead of colour.
+
+`--c-ink-dim` is the exception, and it is deliberate. It is the hover state of the works
+index — DESIGN-SYSTEM §7's inversion, where the siblings of the row under the pointer step
+back. It is transient, it is only reachable with a fine pointer, and the resting state of
+every row is full `--c-ink`. WCAG 1.4.3 applies to the default presentation, which passes.
 
 `--c-veil` was added during build: `--c-scrim` darkens media so *pale* text can sit on it,
 and the works index needs the opposite — ink rows sitting over an arbitrary photograph. At

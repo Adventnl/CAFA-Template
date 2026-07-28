@@ -60,6 +60,11 @@ export function getWorkNeighbours(slug: string): { previous: Work | null; next: 
   return { previous: published[at - 1] ?? null, next: published[at + 1] ?? null };
 }
 
+/** The largest WebP derivative of a work's cover — what og:image points at. */
+export function getCoverImage(work: Work): string | undefined {
+  return getImage(work.cover.src).formats.webp.at(-1)?.src;
+}
+
 /**
  * Cover derivatives for the works the index may show, keyed by slug. A private
  * work is absent: it publishes no cover, so no URL for one is ever handed to

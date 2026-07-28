@@ -22,7 +22,7 @@
 }
 
 .link[data-private] {
-  color: var(--c-ink-45);
+  color: var(--c-ink-62);
   cursor: default;
 }
 
@@ -45,7 +45,7 @@
 }
 
 .number {
-  color: var(--c-ink-45);
+  color: var(--c-ink-62);
 }
 
 .discipline {
@@ -56,7 +56,7 @@
 }
 
 .status {
-  color: var(--c-ink-45);
+  color: var(--c-ink-62);
   column-gap: var(--space-s);
   display: flex;
 }

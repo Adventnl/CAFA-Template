@@ -14,9 +14,12 @@
 }
 
 .link {
+  align-items: center;
   color: var(--c-ink);
+  display: inline-flex;
   justify-self: start;
   margin-block-start: var(--space-l);
+  min-block-size: var(--tap-min);
   text-decoration: underline;
   text-underline-offset: 0.22em;
 }

@@ -21,7 +21,7 @@
 }
 
 .label {
-  color: var(--c-ink-45);
+  color: var(--c-ink-62);
 }
 
 @media (hover: hover) and (pointer: fine) {

@@ -15,13 +15,33 @@ interface WorkIndexRowProps {
   statusLabel: string;
   /** null for a private work, which publishes no cover. */
   cover: ImageEntry | null;
+  /**
+   * The first row that has a cover. On a touch device that cover is in the
+   * initial viewport and is the LCP element, so it is fetched eagerly; on a
+   * pointer device it is the one image the hover backdrop is most likely to
+   * want first, so the fetch is not wasted there either.
+   */
+  priority?: boolean;
   /** Reports which cover the backdrop should show; null on leaving the row. */
   onPreview: (slug: string | null) => void;
 }
 
-export function WorkIndexRow({ work, locale, statusLabel, cover, onPreview }: WorkIndexRowProps) {
+export function WorkIndexRow({
+  work,
+  locale,
+  statusLabel,
+  cover,
+  priority,
+  onPreview,
+}: WorkIndexRowProps) {
   const contents = (
-    <RowContents work={work} locale={locale} statusLabel={statusLabel} cover={cover} />
+    <RowContents
+      work={work}
+      locale={locale}
+      statusLabel={statusLabel}
+      cover={cover}
+      priority={priority}
+    />
   );
 
   return (
@@ -53,6 +73,7 @@ function RowContents({
   locale,
   statusLabel,
   cover,
+  priority,
 }: Omit<WorkIndexRowProps, 'onPreview'>): ReactNode {
   return (
     <>
@@ -63,6 +84,7 @@ function RowContents({
           entry={cover}
           alt={work.cover.alt === '' ? '' : work.cover.alt[locale]}
           sizes="(min-width: 768px) 46vw, 92vw"
+          priority={priority}
           className={styles.cover}
         />
       )}

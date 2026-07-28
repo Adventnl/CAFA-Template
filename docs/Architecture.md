@@ -64,6 +64,8 @@ touches image markup.
     │   │   ├── StickyColumn.tsx     # position:sticky wrapper with bounds
     │   │   ├── HoverMediaLayer.tsx  # ium full-bleed hover backdrop
     │   │   └── SmoothScroll.tsx     # Lenis, desktop-pointer-only
+    │   ├── seo/
+    │   │   └── JsonLd.tsx           # the only dangerouslySetInnerHTML in the codebase
     │   └── composites/
     │       ├── SiteHeader.tsx
     │       ├── SiteFooter.tsx
@@ -90,6 +92,8 @@ touches image markup.
     ├── lib/
     │   ├── content.ts               # getWorks, getWork, getDictionary … — typed, pure
     │   ├── routes.ts                # every path in the site, as functions
+    │   ├── metadata.ts              # canonical + hreflang, built from a route function
+    │   ├── json-ld.ts               # schema.org payloads, so no page knows a vocabulary
     │   ├── image-manifest.ts        # typed read of the generated manifest
     │   ├── image-manifest.generated.json   # written by prebuild; committed so a
     │   │                            # fresh clone type-checks without a build

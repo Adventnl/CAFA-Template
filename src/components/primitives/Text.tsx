@@ -3,7 +3,7 @@ import type { ElementType, ReactNode } from 'react';
 import styles from './Text.module.css';
 
 /** The six roles from docs/DESIGN-SYSTEM.md §3. There is no seventh. */
-export type TextRole = 'display' | 'title' | 'body' | 'index' | 'meta' | 'label';
+type TextRole = 'display' | 'title' | 'body' | 'index' | 'meta' | 'label';
 
 interface TextProps {
   role: TextRole;

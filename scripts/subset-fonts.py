@@ -120,7 +120,18 @@ def subset(src: Path, chars: list[int], out_name: str) -> None:
 
 
 def frequency_list() -> list[str]:
-    raw = fetch(CHAR_FREQ, "charfreq.txt").read_bytes().decode("gb18030")
+    """Ranked hanzi, most frequent first.
+
+    Optional. It only widens the two subsets beyond what the site actually sets,
+    so a network that cannot reach the corpus degrades to "exactly our content
+    plus GB2312 level 1" rather than failing the run.
+    """
+    try:
+        path = fetch(CHAR_FREQ, "charfreq.txt")
+    except OSError as error:
+        print(f"character frequencies unavailable ({error}); subsetting to content only")
+        return []
+    raw = path.read_bytes().decode("gb18030")
     chars = []
     for line in raw.splitlines():
         if line.startswith("/*"):

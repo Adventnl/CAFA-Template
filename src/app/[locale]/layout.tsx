@@ -64,7 +64,12 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           </Text>
         </a>
         <SiteHeader locale={locale} site={site} dictionary={dictionary} />
-        <main id="main">{children}</main>
+        {/* tabIndex -1 so following the skip link actually moves focus here.
+            Without it the hash changes and focus stays on <body>, and the next
+            Tab goes back to the top of the nav. */}
+        <main id="main" tabIndex={-1}>
+          {children}
+        </main>
         <SiteFooter locale={locale} site={site} dictionary={dictionary} />
       </body>
     </html>

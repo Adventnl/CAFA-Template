@@ -13,7 +13,9 @@
   --c-paper-raised: #ffffff; /* media wells, rare */
   --c-ink: #14140f; /* primary text */
   --c-ink-70: rgb(20 20 15 / 0.7); /* secondary text, metadata */
-  --c-ink-45: rgb(20 20 15 / 0.45); /* tertiary: status, numbers */
+  /* 0.45 measured 2.9:1 on this paper, not the ~6:1 the design system claimed.
+     0.62 is the lightest value that clears the 4.5:1 floor in CLAUDE.md §10. */
+  --c-ink-62: rgb(20 20 15 / 0.62); /* tertiary: status, numbers */
   --c-ink-16: rgb(20 20 15 / 0.16); /* hairlines */
   /* One number, two forms. The index dims its rows with opacity, because
      CLAUDE.md §7 allows only compositable properties to be animated, and the
