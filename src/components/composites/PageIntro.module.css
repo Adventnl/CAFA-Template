@@ -1,0 +1,5 @@
+.intro {
+  color: var(--c-ink-70);
+  margin-block-start: var(--space-l);
+  max-inline-size: var(--measure);
+}

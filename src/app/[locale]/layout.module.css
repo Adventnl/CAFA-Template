@@ -1,0 +1,31 @@
+/*
+ * The skip link is off-screen by transform rather than by clip, so it animates on the
+ * compositor and reveals itself the moment it takes focus.
+ */
+.skipLink {
+  background-color: var(--c-paper);
+  color: var(--c-ink);
+  inset-block-start: var(--space-2xs);
+  inset-inline-start: var(--space-2xs);
+  padding: var(--space-2xs) var(--space-s);
+  position: absolute;
+  text-decoration: none;
+  transform: translateY(calc(-1 * var(--space-3xl)));
+  transition: transform var(--dur-fast) var(--ease-out);
+  z-index: 4;
+}
+
+.skipLink:focus-visible {
+  transform: none;
+}
+
+.main {
+  padding-block-start: var(--space-xl);
+}
+
+/* --bp-md: the header is fixed from here up, so the first line clears it. */
+@media (width >= 768px) {
+  .main {
+    padding-block-start: calc(var(--space-header) + var(--space-xl));
+  }
+}

@@ -3,8 +3,20 @@
   gap: var(--space-3xl);
   margin-inline: auto;
   max-inline-size: var(--grid-max);
-  padding-block: var(--space-2xl);
+  padding-block-end: var(--space-2xl); /* the layout's <main> owns the space above */
   padding-inline: var(--space-gutter);
+}
+
+.plates {
+  display: grid;
+  gap: var(--space-m);
+  grid-template-columns: 1fr;
+}
+
+@media (width >= 768px) {
+  .plates {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .section {

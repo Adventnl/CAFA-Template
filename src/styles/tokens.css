@@ -99,6 +99,11 @@
     0 0 0 2px var(--c-paper), 0 0 0 4px var(--c-focus);
   --hairline: 1px solid var(--c-ink-16);
   --radius: 0; /* yes, zero. Every corner in this design is square. */
+
+  /* CLAUDE.md §9–§10 — the two accessibility constants. Not decoration: changing
+     either one changes whether the site passes, so they belong here with the rest. */
+  --tap-target: 44px; /* minimum interactive target, both axes */
+  --measure: 68ch; /* DESIGN-SYSTEM §5 — prose never runs wider */
 }
 
 /*

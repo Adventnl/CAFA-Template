@@ -1,0 +1,65 @@
+/*
+ * The page grid — DESIGN-SYSTEM.md §5. Gutters live here, so a surface never sets its
+ * own page padding. Above --grid-max nothing grows except the whitespace either side.
+ *
+ * Below --bp-md every item spans the full width: at that size a twelve-column grid is
+ * a single column with extra arithmetic. The literal in the media query is --bp-md;
+ * a custom property cannot be used in a media condition.
+ */
+
+.grid {
+  display: grid;
+  gap: var(--grid-gap);
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  inline-size: 100%;
+  margin-inline: auto;
+  max-inline-size: var(--grid-max);
+  padding-inline: var(--space-gutter);
+}
+
+.item {
+  grid-column: 1 / -1;
+  min-inline-size: 0;
+}
+
+@media (width >= 768px) {
+  .col1to13 {
+    grid-column: 1 / 13;
+  }
+
+  .col1to8 {
+    grid-column: 1 / 8;
+  }
+
+  .col1to5 {
+    grid-column: 1 / 5;
+  }
+
+  .col1to3 {
+    grid-column: 1 / 3;
+  }
+
+  .col1to2 {
+    grid-column: 1 / 2;
+  }
+
+  .col2to6 {
+    grid-column: 2 / 6;
+  }
+
+  .col4to10 {
+    grid-column: 4 / 10;
+  }
+
+  .col6to9 {
+    grid-column: 6 / 9;
+  }
+
+  .col6to13 {
+    grid-column: 6 / 13;
+  }
+
+  .col11to13 {
+    grid-column: 11 / 13;
+  }
+}

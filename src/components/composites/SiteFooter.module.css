@@ -1,0 +1,60 @@
+/*
+ * Quiet by construction: gutter-aligned labels, metadata-sized values, and a lot of
+ * air above it. No rule, no background — §8.2, whitespace does the separating.
+ */
+
+.footer {
+  inline-size: 100%;
+  margin-block-start: var(--space-3xl);
+  padding-block-end: var(--space-xl);
+}
+
+.inner {
+  margin-inline: auto;
+  max-inline-size: var(--grid-max);
+  padding-inline-end: max(var(--space-gutter), env(safe-area-inset-right));
+  padding-inline-start: max(var(--space-gutter), env(safe-area-inset-left));
+}
+
+.contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-m) var(--space-xl);
+}
+
+.pair {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs);
+  max-inline-size: calc(var(--measure) / 2);
+}
+
+.term {
+  color: var(--c-ink-45);
+}
+
+.socials {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-s);
+}
+
+.link {
+  color: var(--c-ink-70);
+  text-decoration-color: var(--c-ink-16);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px; /* §7 — the underline rule, stated in the design system */
+  text-underline-offset: 0.22em;
+  transition: color var(--dur-fast) var(--ease-io);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    color: var(--c-ink);
+  }
+}
+
+.copyright {
+  color: var(--c-ink-45);
+  margin-block-start: var(--space-xl);
+}

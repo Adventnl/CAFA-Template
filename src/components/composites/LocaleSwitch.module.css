@@ -1,0 +1,43 @@
+.root {
+  align-items: center;
+  display: flex;
+}
+
+.active,
+.inactive {
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  min-block-size: var(--tap-target);
+  min-inline-size: var(--tap-target);
+  position: relative;
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-io);
+}
+
+.active {
+  color: var(--c-ink);
+}
+
+.inactive {
+  color: var(--c-ink-45);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .inactive:hover {
+    color: var(--c-ink);
+  }
+}
+
+/*
+ * The "中 / EN" separator. Generated content, because it is a mark rather than copy.
+ * The second declaration gives it empty alt text where that syntax is supported; the
+ * first is the fallback for engines that drop it.
+ */
+.root > * + *::before {
+  color: var(--c-ink-16);
+  content: '/';
+  content: '/' / '';
+  inset-inline-start: 0;
+  position: absolute;
+}

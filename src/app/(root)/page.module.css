@@ -1,0 +1,4 @@
+.fallback {
+  padding-block: var(--space-xl);
+  padding-inline: var(--space-gutter);
+}

@@ -1,15 +1,16 @@
 /*
- * TEMPORARY — the design-system specimen from Phase 1. It exists to be looked at
- * next to docs/DESIGN-SYSTEM.md §2–§4, and it is the one file in the repo allowed
- * to hold literal display strings. Delete it when the real home page lands.
+ * TEMPORARY — the design-system specimen from Phase 1, now also the route the image
+ * pipeline is inspected on. It exists to be looked at next to docs/DESIGN-SYSTEM.md
+ * §2–§4, and it is the one file in the repo allowed to hold literal display strings.
+ * Delete it when the real home page lands.
  */
+import { Media } from '@/components/primitives/Media';
 import { Text, type TextRole } from '@/components/primitives/Text';
+import { getWorks } from '@/lib/content';
+import { getImageEntry } from '@/lib/image-manifest';
+import { resolveLocale } from '@/lib/locale';
 
 import styles from './page.module.css';
-
-export function generateStaticParams() {
-  return [{ locale: 'zh' }];
-}
 
 const TYPE: { role: TextRole; spec: string; latin: string; zh: string }[] = [
   {
@@ -76,9 +77,16 @@ const COLOUR: { token: string; chip: string | undefined }[] = [
   { token: '--c-scrim', chip: styles.chipScrim },
 ];
 
-export default function SpecimenPage() {
+export default async function SpecimenPage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = resolveLocale((await params).locale);
+  // Only the works whose derivatives actually exist — the rest of the registry names
+  // images that have not been shot yet.
+  const plates = getWorks()
+    .filter((work) => getImageEntry(work.cover.src) !== undefined)
+    .slice(0, 3);
+
   return (
-    <main className={styles.page}>
+    <div className={styles.page}>
       <header className={styles.row}>
         <Text role="label">c.a.f.a atelier 央艺</Text>
         <Text role="display" as="h1">
@@ -138,6 +146,22 @@ export default function SpecimenPage() {
           ))}
         </div>
       </section>
-    </main>
+
+      <section className={styles.section}>
+        <Text role="label" as="h2" className={styles.sectionHead}>
+          Media
+        </Text>
+        <div className={styles.plates}>
+          {plates.map((work) => (
+            <Media
+              key={work.slug}
+              image={work.cover}
+              locale={locale}
+              sizes="(min-width: 768px) 33vw, 100vw"
+            />
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }

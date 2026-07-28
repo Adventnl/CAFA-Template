@@ -1,0 +1,22 @@
+/*
+ * The frame carries the image's own aspect ratio — set inline, because it is content
+ * data rather than a design decision — so the box is the right height before a single
+ * byte of the image arrives. That is the whole CLS story.
+ */
+
+.frame {
+  inline-size: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.frame picture {
+  block-size: 100%;
+  display: block;
+}
+
+.image {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+}

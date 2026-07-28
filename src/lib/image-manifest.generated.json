@@ -1,0 +1,186 @@
+{
+  "works/edible-house/01.jpg": {
+    "width": 2400,
+    "height": 1600,
+    "avif": [
+      {
+        "width": 480,
+        "path": "/media/derived/works/edible-house/01-480.avif"
+      },
+      {
+        "width": 768,
+        "path": "/media/derived/works/edible-house/01-768.avif"
+      },
+      {
+        "width": 1200,
+        "path": "/media/derived/works/edible-house/01-1200.avif"
+      },
+      {
+        "width": 1800,
+        "path": "/media/derived/works/edible-house/01-1800.avif"
+      },
+      {
+        "width": 2400,
+        "path": "/media/derived/works/edible-house/01-2400.avif"
+      }
+    ],
+    "webp": [
+      {
+        "width": 480,
+        "path": "/media/derived/works/edible-house/01-480.webp"
+      },
+      {
+        "width": 768,
+        "path": "/media/derived/works/edible-house/01-768.webp"
+      },
+      {
+        "width": 1200,
+        "path": "/media/derived/works/edible-house/01-1200.webp"
+      },
+      {
+        "width": 1800,
+        "path": "/media/derived/works/edible-house/01-1800.webp"
+      },
+      {
+        "width": 2400,
+        "path": "/media/derived/works/edible-house/01-2400.webp"
+      }
+    ]
+  },
+  "works/edible-house/02.jpg": {
+    "width": 2000,
+    "height": 2000,
+    "avif": [
+      {
+        "width": 480,
+        "path": "/media/derived/works/edible-house/02-480.avif"
+      },
+      {
+        "width": 768,
+        "path": "/media/derived/works/edible-house/02-768.avif"
+      },
+      {
+        "width": 1200,
+        "path": "/media/derived/works/edible-house/02-1200.avif"
+      },
+      {
+        "width": 1800,
+        "path": "/media/derived/works/edible-house/02-1800.avif"
+      }
+    ],
+    "webp": [
+      {
+        "width": 480,
+        "path": "/media/derived/works/edible-house/02-480.webp"
+      },
+      {
+        "width": 768,
+        "path": "/media/derived/works/edible-house/02-768.webp"
+      },
+      {
+        "width": 1200,
+        "path": "/media/derived/works/edible-house/02-1200.webp"
+      },
+      {
+        "width": 1800,
+        "path": "/media/derived/works/edible-house/02-1800.webp"
+      }
+    ]
+  },
+  "works/island-archive/01.jpg": {
+    "width": 2400,
+    "height": 1600,
+    "avif": [
+      {
+        "width": 480,
+        "path": "/media/derived/works/island-archive/01-480.avif"
+      },
+      {
+        "width": 768,
+        "path": "/media/derived/works/island-archive/01-768.avif"
+      },
+      {
+        "width": 1200,
+        "path": "/media/derived/works/island-archive/01-1200.avif"
+      },
+      {
+        "width": 1800,
+        "path": "/media/derived/works/island-archive/01-1800.avif"
+      },
+      {
+        "width": 2400,
+        "path": "/media/derived/works/island-archive/01-2400.avif"
+      }
+    ],
+    "webp": [
+      {
+        "width": 480,
+        "path": "/media/derived/works/island-archive/01-480.webp"
+      },
+      {
+        "width": 768,
+        "path": "/media/derived/works/island-archive/01-768.webp"
+      },
+      {
+        "width": 1200,
+        "path": "/media/derived/works/island-archive/01-1200.webp"
+      },
+      {
+        "width": 1800,
+        "path": "/media/derived/works/island-archive/01-1800.webp"
+      },
+      {
+        "width": 2400,
+        "path": "/media/derived/works/island-archive/01-2400.webp"
+      }
+    ]
+  },
+  "works/portfolio-interface/01.jpg": {
+    "width": 2400,
+    "height": 1600,
+    "avif": [
+      {
+        "width": 480,
+        "path": "/media/derived/works/portfolio-interface/01-480.avif"
+      },
+      {
+        "width": 768,
+        "path": "/media/derived/works/portfolio-interface/01-768.avif"
+      },
+      {
+        "width": 1200,
+        "path": "/media/derived/works/portfolio-interface/01-1200.avif"
+      },
+      {
+        "width": 1800,
+        "path": "/media/derived/works/portfolio-interface/01-1800.avif"
+      },
+      {
+        "width": 2400,
+        "path": "/media/derived/works/portfolio-interface/01-2400.avif"
+      }
+    ],
+    "webp": [
+      {
+        "width": 480,
+        "path": "/media/derived/works/portfolio-interface/01-480.webp"
+      },
+      {
+        "width": 768,
+        "path": "/media/derived/works/portfolio-interface/01-768.webp"
+      },
+      {
+        "width": 1200,
+        "path": "/media/derived/works/portfolio-interface/01-1200.webp"
+      },
+      {
+        "width": 1800,
+        "path": "/media/derived/works/portfolio-interface/01-1800.webp"
+      },
+      {
+        "width": 2400,
+        "path": "/media/derived/works/portfolio-interface/01-2400.webp"
+      }
+    ]
+  }
+}

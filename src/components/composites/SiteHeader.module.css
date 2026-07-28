@@ -1,0 +1,83 @@
+.header {
+  inline-size: 100%;
+}
+
+/*
+ * The inner box carries the same max width, gutters and safe-area insets as the page
+ * grid, so the logotype sits exactly on column 1 at every width — including past
+ * --grid-max, where only the whitespace either side grows.
+ */
+.inner {
+  align-items: center;
+  display: flex;
+  gap: var(--space-m);
+  margin-inline: auto;
+  max-inline-size: var(--grid-max);
+  min-block-size: var(--space-header);
+  padding-inline-end: max(var(--space-gutter), env(safe-area-inset-right));
+  padding-inline-start: max(var(--space-gutter), env(safe-area-inset-left));
+}
+
+.lockup {
+  align-items: baseline;
+  color: var(--c-ink);
+  display: flex;
+  gap: var(--space-2xs);
+  min-block-size: var(--tap-target);
+  padding-block: var(--space-s);
+  text-decoration: none;
+}
+
+.mark {
+  color: var(--c-ink);
+}
+
+.name {
+  color: var(--c-ink-70);
+}
+
+.actions {
+  align-items: center;
+  display: flex;
+  gap: var(--space-m);
+  margin-inline-start: auto;
+}
+
+.nav {
+  display: none;
+}
+
+.navLink {
+  align-items: center;
+  color: var(--c-ink-70);
+  display: inline-flex;
+  min-block-size: var(--tap-target);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-io);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .navLink:hover,
+  .lockup:hover .name {
+    color: var(--c-ink);
+  }
+}
+
+.navLink[aria-current='page'] {
+  color: var(--c-ink);
+}
+
+/* --bp-md: the nav comes inline and the header pins to the top of the viewport. */
+@media (width >= 768px) {
+  .header {
+    inset-block-start: 0;
+    inset-inline: 0;
+    position: fixed;
+    z-index: 2;
+  }
+
+  .nav {
+    display: flex;
+    gap: var(--space-l);
+  }
+}

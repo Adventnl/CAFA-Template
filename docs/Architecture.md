@@ -41,10 +41,12 @@ touches image markup.
 │       └── derived/                 # generated, gitignored
 └── src/
     ├── app/
-    │   ├── layout.tsx               # <html>, font links, tokens import. No UI.
+    │   ├── (root)/                  # root layout #1 — `/` only, the meta-refresh redirect
+    │   │   ├── layout.tsx
+    │   │   └── page.tsx
     │   ├── not-found.tsx
     │   └── [locale]/
-    │       ├── layout.tsx           # SiteHeader + <main> + SiteFooter + SmoothScroll
+    │       ├── layout.tsx           # root layout #2 — <html lang>, SiteHeader + <main> + SiteFooter
     │       ├── page.tsx             # home — SANAA-minimal
     │       ├── works/
     │       │   ├── page.tsx         # ium-style index
@@ -163,6 +165,12 @@ Rules:
 
 - `app/[locale]/layout.tsx` exports
   `generateStaticParams: () => [{locale:'zh'}, {locale:'en'}]`.
+- **There is no `app/layout.tsx`.** A root layout cannot read route params, so a single
+  one would have to hardcode `<html lang>` — wrong on every `/en` page, and it also
+  drives the `:lang(zh)` leading and tracking in `tokens.css`. Instead there are two
+  root layouts: `app/[locale]/layout.tsx` owns `<html lang={locale}>` for the localised
+  tree, and `app/(root)/layout.tsx` owns `/`. This is Next's supported arrangement — a
+  route group beside the dynamic segment, and no layout above either.
 - `app/[locale]/works/[slug]/page.tsx` exports `generateStaticParams` producing the cross
   product of locales × work slugs. Every detail page is pre-rendered.
 - **No middleware** — it doesn't run under static export. Root `/` is a static page that
@@ -248,9 +256,18 @@ CSS: [data-reveal="pending"]  { opacity:0; transform: translate3d(0, var(--revea
 1. Walk `public/media/source/**`.
 2. For each image emit AVIF + WebP at widths `[480, 768, 1200, 1800, 2400]`, skipping widths
    above the source's intrinsic width. Quality: AVIF 55, WebP 78.
-3. Write `src/lib/image-manifest.generated.json`:
-   `{ "works/edible-house/01.jpg": { "width": 3000, "height": 2000, "variants": [...] } }`
-4. Cache by source mtime + size so rebuilds are incremental.
+3. Write `src/lib/image-manifest.generated.json`, keyed by source path, with the
+   variants grouped by format so the file types itself without a cast:
+   ```json
+   { "works/edible-house/01.jpg": {
+       "width": 3000, "height": 2000,
+       "avif": [{ "width": 480, "path": "/media/derived/works/edible-house/01-480.avif" }],
+       "webp": [{ "width": 480, "path": "/media/derived/works/edible-house/01-480.webp" }] } }
+   ```
+   The manifest is committed; `.cache/build-images.json` (the mtime + size cache) and
+   `public/media/derived/` are not.
+4. Cache by source mtime + size so rebuilds are incremental. A cached entry is only
+   reused if every derivative it names is still on disk.
 
 `Media.tsx` reads the manifest, emits:
 

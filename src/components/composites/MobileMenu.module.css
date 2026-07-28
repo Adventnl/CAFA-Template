@@ -1,0 +1,82 @@
+/*
+ * Below --bp-md the nav is a text toggle and a full-screen panel; at and above it,
+ * both disappear and SiteHeader's inline nav takes over. The switch is CSS only —
+ * nothing here asks the device what it is.
+ */
+
+.toggle,
+.close {
+  align-items: center;
+  background: none;
+  border: 0;
+  color: var(--c-ink-70);
+  cursor: pointer;
+  display: inline-flex;
+  min-block-size: var(--tap-target);
+  min-inline-size: var(--tap-target);
+  padding: 0;
+  transition: color var(--dur-fast) var(--ease-io);
+}
+
+.close {
+  justify-content: flex-end;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .toggle:hover,
+  .close:hover {
+    color: var(--c-ink);
+  }
+}
+
+.panel {
+  animation: enter var(--dur-base) var(--ease-out) both;
+  background-color: var(--c-paper);
+  block-size: 100dvh;
+  display: flex;
+  flex-direction: column;
+  inset: 0;
+  overflow-y: auto;
+  padding-block: var(--space-s) var(--space-2xl);
+  padding-inline-end: max(var(--space-gutter), env(safe-area-inset-right));
+  padding-inline-start: max(var(--space-gutter), env(safe-area-inset-left));
+  position: fixed;
+  z-index: 3;
+}
+
+/* The UA `hidden` rule loses to .panel's display, so hand it back explicitly. */
+.panel[hidden] {
+  display: none;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  margin-block-start: var(--space-2xl);
+}
+
+.links a {
+  align-items: center;
+  color: var(--c-ink);
+  display: flex;
+  min-block-size: var(--tap-target);
+  text-decoration: none;
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@media (width >= 768px) {
+  .toggle,
+  .panel {
+    display: none;
+  }
+}
