@@ -1,15 +1,19 @@
 /*
  * DESIGN-SYSTEM.md §8 rule 6 — the page has to survive deleting half of it.
- * A statement and one link is what is left after doing that.
+ * A statement, one link, and one photograph below the fold is what is left
+ * after doing that. The logotype is in the header on every page including this
+ * one, so it is not set a second time here.
  */
 .statement {
   grid-column: 1 / -1;
   margin-block-end: var(--space-2xl);
+  text-wrap: balance;
 }
 
 .link {
   color: var(--c-ink);
   grid-column: 1 / -1;
+  justify-self: start;
   text-decoration: underline;
   text-underline-offset: 0.22em;
   transition: text-decoration-color var(--dur-fast) var(--ease-io);
@@ -19,6 +23,11 @@
   .link:hover {
     text-decoration-color: var(--c-ink-45);
   }
+}
+
+/* Outside the Grid, so it runs edge to edge. */
+.studio {
+  margin-block-start: var(--space-3xl);
 }
 
 @media (width >= 768px) {

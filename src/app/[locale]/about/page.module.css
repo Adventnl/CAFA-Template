@@ -1,0 +1,19 @@
+.prose {
+  color: var(--c-ink-70);
+  display: grid;
+  grid-column: 1 / -1;
+  max-inline-size: var(--measure);
+  row-gap: var(--space-m);
+}
+
+.mentors {
+  grid-column: 1 / -1;
+  margin-block-start: var(--space-3xl);
+}
+
+/* DESIGN-SYSTEM.md §5: prose in columns 4–9. */
+@media (width >= 768px) {
+  .prose {
+    grid-column: 4 / 10;
+  }
+}

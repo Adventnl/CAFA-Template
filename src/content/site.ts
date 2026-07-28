@@ -18,6 +18,14 @@ export const site: SiteContent = {
     { label: { zh: '联系', en: 'Contact' }, href: routes.contact },
   ],
 
+  studio: {
+    src: 'studio.jpg',
+    alt: {
+      zh: '工作室的主厅，长桌沿窗排开。',
+      en: 'The main room of the studio, long tables set out along the windows.',
+    },
+  },
+
   contact: {
     email: 'atelier@cafa-atelier.example',
     wechat: 'cafa_atelier',

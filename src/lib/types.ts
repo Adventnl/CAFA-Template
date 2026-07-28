@@ -59,6 +59,8 @@ export interface SiteContent {
   locales: readonly [Locale, ...Locale[]];
   localeNames: Record<Locale, string>;
   nav: readonly NavItem[];
+  /** The one photograph the home page carries, below the fold. */
+  studio: ImageRef;
   contact: {
     email: string;
     wechat: string;

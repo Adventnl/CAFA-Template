@@ -1,0 +1,16 @@
+.intro {
+  color: var(--c-ink-70);
+  grid-column: 1 / -1;
+  margin-block-end: var(--space-2xl);
+  max-inline-size: var(--measure);
+}
+
+.list {
+  grid-column: 1 / -1;
+}
+
+@media (width >= 768px) {
+  .intro {
+    grid-column: 4 / 10;
+  }
+}
