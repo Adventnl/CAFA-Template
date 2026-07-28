@@ -1,0 +1,48 @@
+.footer {
+  border-block-start: var(--hairline);
+  color: var(--c-ink-70);
+  margin-block-start: var(--space-3xl);
+  padding-block: var(--space-l);
+  padding-block-end: max(var(--space-l), env(safe-area-inset-bottom));
+  row-gap: var(--space-2xs);
+}
+
+.note {
+  grid-column: 1 / -1;
+}
+
+.contact {
+  grid-column: 1 / -1;
+}
+
+.address {
+  color: var(--c-ink-45);
+  grid-column: 1 / -1;
+}
+
+.email {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color var(--dur-fast) var(--ease-io);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .email:hover {
+    text-decoration-color: var(--c-ink-45);
+  }
+}
+
+@media (width >= 768px) {
+  .note {
+    grid-column: 1 / 5;
+  }
+
+  .contact {
+    grid-column: 5 / 9;
+  }
+
+  .address {
+    grid-column: 9 / -1;
+  }
+}

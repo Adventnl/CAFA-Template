@@ -1,0 +1,9 @@
+.page {
+  align-content: center;
+  min-block-size: 100dvh;
+}
+
+.link {
+  color: var(--c-ink);
+  grid-column: 1 / -1;
+}

@@ -1,0 +1,23 @@
+.switch {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.option {
+  align-items: center;
+  color: var(--c-ink-45);
+  display: flex;
+  min-block-size: var(--tap-min);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-io);
+}
+
+.option[aria-current] {
+  color: var(--c-ink);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .option:hover {
+    color: var(--c-ink);
+  }
+}

@@ -40,12 +40,18 @@ Monochrome plus one warm paper tint. No accent colour — the work supplies all 
   --c-inverse:      #F7F6F2;               /* text over media */
   --c-focus:        #14140F;               /* focus ring */
   --c-scrim:        rgb(20 20 15 / 0.35);  /* over-media legibility */
+  --c-veil:         rgb(247 246 242 / 0.62); /* paper over the hover backdrop */
 }
 ```
 
 Contrast check: `--c-ink` on `--c-paper` is ~15:1. `--c-ink-70` is ~10:1 — safe for
 metadata. `--c-ink-45` is ~6:1, permitted for non-essential numerals only, never for body
 copy. `--c-ink-16` is hairlines, never text.
+
+`--c-veil` was added during build: `--c-scrim` darkens media so *pale* text can sit on it,
+and the works index needs the opposite — ink rows sitting over an arbitrary photograph. At
+62% paper, the worst case (a black image) still measures ~6.6:1 for `--c-ink`, so the rule
+in §10 of the constitution holds whatever the cover happens to be.
 
 ---
 
@@ -186,6 +192,8 @@ Rules that make it feel like the references rather than a template:
 --focus-ring: 0 0 0 2px var(--c-paper), 0 0 0 4px var(--c-focus);
 --hairline: 1px solid var(--c-ink-16);
 --radius: 0;   /* yes, zero. Every corner in this design is square. */
+--tap-min: 2.75rem;  /* 44px. The interactive target floor from §9 of the constitution;
+                        no step on the space scale sits at 44px, so it gets its own. */
 ```
 
 - **Links in prose:** underline at 1px with `text-underline-offset: 0.22em`; on hover the

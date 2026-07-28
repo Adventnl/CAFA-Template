@@ -19,6 +19,7 @@
   --c-inverse: #f7f6f2; /* text over media */
   --c-focus: #14140f; /* focus ring */
   --c-scrim: rgb(20 20 15 / 0.35); /* over-media legibility */
+  --c-veil: rgb(247 246 242 / 0.62); /* paper over the hover backdrop, so ink rows keep ≥4.5:1 */
 
   /* §3 Typography — one family, weights 400 and 500 only.
      'Inter Fallback' and 'Noto Sans SC Fallback' are metric-matched local faces
@@ -99,6 +100,7 @@
     0 0 0 2px var(--c-paper), 0 0 0 4px var(--c-focus);
   --hairline: 1px solid var(--c-ink-16);
   --radius: 0; /* yes, zero. Every corner in this design is square. */
+  --tap-min: 2.75rem; /* 44px — the interactive target floor, CLAUDE.md §9 */
 }
 
 /*

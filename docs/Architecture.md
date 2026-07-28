@@ -40,11 +40,13 @@ touches image markup.
 │       ├── source/                  # committed originals (gitignored if large → use LFS)
 │       └── derived/                 # generated, gitignored
 └── src/
-    ├── app/
-    │   ├── layout.tsx               # <html>, font links, tokens import. No UI.
-    │   ├── not-found.tsx
+    ├── app/                         # NOTE: no app/layout.tsx — see §4
+    │   ├── (root)/
+    │   │   ├── layout.tsx           # <html lang> for the two pages below
+    │   │   ├── page.tsx             # `/` — static meta-refresh into the default locale
+    │   │   └── not-found/page.tsx   # becomes out/404.html via scripts/emit-404.mjs
     │   └── [locale]/
-    │       ├── layout.tsx           # SiteHeader + <main> + SiteFooter + SmoothScroll
+    │       ├── layout.tsx           # <html lang>, SiteHeader + <main> + SiteFooter
     │       ├── page.tsx             # home — SANAA-minimal
     │       ├── works/
     │       │   ├── page.tsx         # ium-style index
@@ -54,28 +56,26 @@ touches image markup.
     │       └── contact/page.tsx
     ├── components/
     │   ├── primitives/
-    │   │   ├── Media.tsx            # <picture>, srcset, aspect box, required alt
+    │   │   ├── Media.tsx            # <picture>, srcset, intrinsic size, required alt
     │   │   ├── Text.tsx             # renders a token type-role as any element
-    │   │   ├── Grid.tsx             # the 12-col page grid + column spans
-    │   │   └── AppLink.tsx          # locale-aware next/link wrapper
+    │   │   └── Grid.tsx             # the 12-col page grid
     │   ├── motion/
     │   │   ├── Reveal.tsx           # IO → class → CSS transition
     │   │   ├── StickyColumn.tsx     # position:sticky wrapper with bounds
     │   │   ├── HoverMediaLayer.tsx  # ium full-bleed hover backdrop
     │   │   └── SmoothScroll.tsx     # Lenis, desktop-pointer-only
-    │   ├── composites/
-    │   │   ├── SiteHeader.tsx
-    │   │   ├── SiteFooter.tsx
-    │   │   ├── LocaleSwitch.tsx
-    │   │   ├── WorkIndex.tsx        # the list + its hover backdrop
-    │   │   ├── WorkIndexRow.tsx
-    │   │   ├── WorkMetaPanel.tsx    # sticky left column on detail
-    │   │   ├── MediaSequence.tsx    # scrolling right column on detail
-    │   │   ├── ProgramList.tsx
-    │   │   ├── MentorGrid.tsx
-    │   │   └── ContactBlock.tsx
-    │   └── seo/
-    │       └── metadata.ts          # generateMetadata helpers
+    │   └── composites/
+    │       ├── SiteHeader.tsx
+    │       ├── SiteFooter.tsx
+    │       ├── LocaleSwitch.tsx
+    │       ├── PageHeading.tsx      # the one h1, in the same place on every page
+    │       ├── WorkIndex.tsx        # the list + its hover backdrop
+    │       ├── WorkIndexRow.tsx
+    │       ├── WorkMetaPanel.tsx    # sticky left column on detail
+    │       ├── MediaSequence.tsx    # scrolling right column on detail
+    │       ├── ProgramList.tsx
+    │       ├── MentorGrid.tsx
+    │       └── ContactBlock.tsx
     ├── content/
     │   ├── site.ts                  # nav, socials, contact, locales
     │   ├── works/
@@ -88,9 +88,11 @@ touches image markup.
     │       ├── zh.ts
     │       └── en.ts                # same keys, enforced by a shared type
     ├── lib/
-    │   ├── content.ts               # getWorks, getWork, getDictionary — typed, pure
+    │   ├── content.ts               # getWorks, getWork, getDictionary … — typed, pure
     │   ├── routes.ts                # every path in the site, as functions
     │   ├── image-manifest.ts        # typed read of the generated manifest
+    │   ├── image-manifest.generated.json   # written by prebuild; committed so a
+    │   │                            # fresh clone type-checks without a build
     │   └── types.ts                 # Work, Program, Mentor, LocalisedText, ImageRef
     └── styles/
         ├── tokens.css
@@ -117,8 +119,6 @@ export interface ImageRef {
   src: string;
   /** REQUIRED. Empty string only for decorative images, and that must be deliberate. */
   alt: LocalisedText | '';
-  width: number;
-  height: number;
 }
 
 export type WorkStatus = 'completed' | 'in-progress' | 'private';
@@ -145,9 +145,12 @@ Rules:
 - A `private` work renders in the index as an unlinked row (dimmed, no hover image), exactly
   as ium does. This is data-driven — `WorkIndexRow` branches on `status`, and nothing else
   in the codebase knows the concept exists.
-- `lib/content.ts` exports pure functions only: `getWorks()`, `getWork(slug)`,
-  `getDictionary(locale)`. Components never import from `content/` directly; pages do,
-  through `lib/content`.
+- `ImageRef` carries no dimensions. `scripts/build-images.mjs` measures the file and
+  `lib/image-manifest.ts` hands the numbers to `Media`, so a content record cannot
+  disagree with the image on disk and nobody has to type a pixel count.
+- `lib/content.ts` exports pure functions only: `getSite()`, `getWorks()`, `getWork(slug)`,
+  `getPrograms()`, `getMentors()`, `getDictionary(locale)` and `requireLocale(param)`.
+  Components never import from `content/` directly; pages do, through `lib/content`.
 
 ---
 
@@ -161,13 +164,24 @@ Rules:
 /en/works            …
 ```
 
+- **Two root layouts, and no `app/layout.tsx`.** A root layout cannot read route params, so
+  a single one would have to hardcode `<html lang>` — wrong on every page of the other
+  locale, and `:lang(zh)` is what drives the CJK leading in `tokens.css`.
+  `app/[locale]/layout.tsx` owns the localised tree; `app/(root)/layout.tsx` owns `/` and
+  the 404 source.
 - `app/[locale]/layout.tsx` exports
-  `generateStaticParams: () => [{locale:'zh'}, {locale:'en'}]`.
+  `generateStaticParams: () => [{locale:'zh'}, {locale:'en'}]`, which covers every page
+  nested under it.
 - `app/[locale]/works/[slug]/page.tsx` exports `generateStaticParams` producing the cross
   product of locales × work slugs. Every detail page is pre-rendered.
 - **No middleware** — it doesn't run under static export. Root `/` is a static page that
-  renders a `<meta http-equiv="refresh">` plus a link, or the GH Pages 404 fallback handles
-  it. Keep it dumb.
+  renders a `<meta http-equiv="refresh">` plus a link. Keep it dumb.
+- **The 404 is a route, not `app/not-found.tsx`.** That file sits above both root layouts,
+  so Next wraps it in a bare `<html>` with no `lang` and no stylesheet. Instead
+  `app/(root)/not-found/page.tsx` renders inside a real root layout and
+  `scripts/emit-404.mjs` (`postbuild`) renames its output to `out/404.html` and deletes the
+  directory. The segment cannot be called `404`: the exporter writes its own built-in error
+  page over anything at that path.
 - `lib/routes.ts` is the only place a path string exists:
   ```ts
   export const routes = {
@@ -248,8 +262,14 @@ CSS: [data-reveal="pending"]  { opacity:0; transform: translate3d(0, var(--revea
 1. Walk `public/media/source/**`.
 2. For each image emit AVIF + WebP at widths `[480, 768, 1200, 1800, 2400]`, skipping widths
    above the source's intrinsic width. Quality: AVIF 55, WebP 78.
-3. Write `src/lib/image-manifest.generated.json`:
-   `{ "works/edible-house/01.jpg": { "width": 3000, "height": 2000, "variants": [...] } }`
+3. Write `src/lib/image-manifest.generated.json`, variants grouped by format so the JSON
+   types itself against `ImageEntry` without a cast:
+   ```json
+   { "works/edible-house/01.jpg": {
+       "width": 3000, "height": 2000,
+       "formats": { "avif": [{ "src": "/media/derived/…-480.avif", "width": 480 }],
+                    "webp": [ … ] } } }
+   ```
 4. Cache by source mtime + size so rebuilds are incremental.
 
 `Media.tsx` reads the manifest, emits:
@@ -262,8 +282,11 @@ CSS: [data-reveal="pending"]  { opacity:0; transform: translate3d(0, var(--revea
 </picture>
 ```
 
-wrapped in a div with `aspect-ratio: w / h` so nothing shifts. `sizes` is a required prop —
-forgetting it is the single most common cause of over-downloading, so the type forbids it.
+No wrapper div: the intrinsic `width`/`height` attributes give the browser the ratio and
+`height: auto` holds the box open, which is one element fewer for the same zero CLS.
+`sizes` is a required prop — forgetting it is the single most common cause of
+over-downloading, so the type forbids it. A missing manifest entry throws rather than
+rendering a broken `<img>`.
 
 ---
 
