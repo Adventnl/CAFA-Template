@@ -1,0 +1,80 @@
+/*
+ * Reset and document defaults. Every value here comes from tokens.css.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--c-paper);
+  color: var(--c-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: var(--font-features);
+  font-size: var(--type-body-size);
+  font-synthesis: none; /* no faux 500 if the CJK face is still loading */
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-leading);
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  color: inherit;
+  font: inherit;
+}
+
+::selection {
+  background-color: var(--c-ink);
+  color: var(--c-paper);
+}
+
+:focus-visible {
+  box-shadow: var(--focus-ring);
+  outline: none;
+}
+
+/* box-shadow is dropped in forced-colours mode, so hand the ring back to the UA. */
+@media (forced-colors: active) {
+  :focus-visible {
+    outline: revert;
+  }
+}
+
+/*
+ * §8 — the single place motion is switched off. Content appears in its final
+ * state immediately; no component checks this itself.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    /* !important is the point: a component's own duration must not win here. */
+    animation-delay: 0s !important;
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-delay: 0s !important;
+    transition-duration: 0s !important;
+  }
+}

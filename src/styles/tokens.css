@@ -1,0 +1,129 @@
+/*
+ * Design tokens — docs/DESIGN-SYSTEM.md §2–§7.
+ *
+ * This is the only file in the codebase permitted to contain a literal value.
+ * Everything else reads var(--…). Media queries live here too, because a custom
+ * property cannot be used in a media condition: the breakpoint literals below are
+ * the same numbers as --bp-*, and they only ever switch a token.
+ */
+
+:root {
+  /* §2 Colour — monochrome plus one warm paper tint. No accent colour. */
+  --c-paper: #f7f6f2; /* page ground, warm off-white */
+  --c-paper-raised: #ffffff; /* media wells, rare */
+  --c-ink: #14140f; /* primary text */
+  --c-ink-70: rgb(20 20 15 / 0.7); /* secondary text, metadata */
+  --c-ink-45: rgb(20 20 15 / 0.45); /* tertiary: status, numbers */
+  --c-ink-16: rgb(20 20 15 / 0.16); /* hairlines */
+  --c-ink-dim: rgb(20 20 15 / 0.28); /* list colour while hover backdrop is active */
+  --c-inverse: #f7f6f2; /* text over media */
+  --c-focus: #14140f; /* focus ring */
+  --c-scrim: rgb(20 20 15 / 0.35); /* over-media legibility */
+
+  /* §3 Typography — one family, weights 400 and 500 only.
+     'Inter Fallback' and 'Noto Sans SC Fallback' are metric-matched local faces
+     declared in fonts.css; they hold the layout still during the swap. */
+  --font-sans:
+    'Inter var', 'Inter Fallback', 'Noto Sans SC', 'Noto Sans SC Fallback', ui-sans-serif,
+    system-ui, 'Helvetica Neue', sans-serif;
+  --font-features: 'cv05' 1, 'ss03' 1; /* Inter's l with a tail, single-storey g */
+
+  --type-display-size: clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem);
+  --type-display-leading: 1.02;
+  --type-display-tracking: -0.02em;
+  --type-display-weight: 400;
+
+  --type-title-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
+  --type-title-leading: 1.15;
+  --type-title-tracking: -0.012em;
+  --type-title-weight: 400;
+
+  --type-body-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem);
+  --type-body-leading: 1.62;
+  --type-body-tracking: 0;
+  --type-body-weight: 400;
+
+  --type-index-size: 0.8125rem; /* 13px — fixed, not fluid */
+  --type-index-leading: 1.7;
+  --type-index-tracking: 0;
+  --type-index-weight: 400;
+
+  --type-meta-size: 0.6875rem; /* 11px — fixed, not fluid */
+  --type-meta-leading: 1.55;
+  --type-meta-tracking: 0.01em;
+  --type-meta-weight: 400;
+
+  --type-label-size: 0.6875rem; /* 11px */
+  --type-label-leading: 1;
+  --type-label-tracking: 0.09em;
+  --type-label-weight: 500;
+
+  /* §4 Space — 8px base with a fluid multiplier. Nine steps, no more. */
+  --space-3xs: 0.25rem; /*  4 */
+  --space-2xs: 0.5rem; /*  8 */
+  --space-xs: 0.75rem; /* 12 */
+  --space-s: 1rem; /* 16 */
+  --space-m: 1.5rem; /* 24 */
+  --space-l: clamp(2rem, 1.6rem + 1.6vw, 3rem); /* 32→48  */
+  --space-xl: clamp(3.5rem, 2.6rem + 3.6vw, 6.5rem); /* 56→104 */
+  --space-2xl: clamp(6rem, 4.2rem + 7.2vw, 11rem); /* 96→176 */
+  --space-3xl: clamp(9rem, 6rem + 12vw, 18rem); /* 144→288 — between major sections */
+
+  --space-header: 4.5rem; /* fixed header height; sticky offsets reference this */
+  --space-gutter: clamp(1.25rem, 0.6rem + 2.6vw, 3.5rem); /* page edge padding */
+
+  /* §5 Grid */
+  --grid-cols: 12;
+  --grid-gap: var(--space-m);
+  --grid-max: 1680px;
+
+  --bp-sm: 480px;
+  --bp-md: 768px; /* index collapses 4 cols → 2; hover layer off */
+  --bp-lg: 1024px; /* detail becomes two-column and sticky */
+  --bp-xl: 1440px;
+
+  /* §6 Motion — two easings, four durations. Nothing else exists. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1); /* entrances, reveals */
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1); /* state changes, hover */
+
+  --dur-fast: 140ms; /* colour/opacity on hover of small text */
+  --dur-base: 280ms; /* most transitions */
+  --dur-slow: 560ms; /* scroll reveals */
+  --dur-scene: 700ms; /* hover backdrop crossfade — the longest permitted value */
+
+  --reveal-rise: 18px; /* a settle, not a slide */
+  --stagger-step: 70ms; /* max 3 steps */
+
+  /* §7 Component states */
+  --focus-ring:
+    0 0 0 2px var(--c-paper), 0 0 0 4px var(--c-focus);
+  --hairline: 1px solid var(--c-ink-16);
+  --radius: 0; /* yes, zero. Every corner in this design is square. */
+}
+
+/*
+ * §3 CJK adjustment — Chinese needs more leading and no negative tracking.
+ * These two are applied by Text.module.css at the element that carries the role,
+ * not folded into the role tokens here: a custom property is substituted where it
+ * is declared, so an override on :root would still reach a lang="en" run nested
+ * inside a Chinese page. Declaring the default and the reset on the same selector
+ * list means the innermost lang wins, which is what mixed-script copy needs.
+ */
+:root,
+:lang(en) {
+  --type-lang-leading-add: 0;
+  --type-lang-tracking-scale: 1;
+}
+
+:lang(zh) {
+  --type-lang-leading-add: 0.12;
+  --type-lang-tracking-scale: 0;
+}
+
+/* §3 — index and meta step once below --bp-sm so they clear the touch floor. */
+@media (width < 480px) {
+  :root {
+    --type-index-size: 0.875rem; /* 14px */
+    --type-meta-size: 0.75rem; /* 12px */
+  }
+}

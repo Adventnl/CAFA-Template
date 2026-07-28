@@ -1,0 +1,120 @@
+.page {
+  display: grid;
+  gap: var(--space-3xl);
+  margin-inline: auto;
+  max-inline-size: var(--grid-max);
+  padding-block: var(--space-2xl);
+  padding-inline: var(--space-gutter);
+}
+
+.section {
+  display: grid;
+  gap: var(--space-l);
+}
+
+.sectionHead {
+  border-block-end: var(--hairline);
+  color: var(--c-ink-45);
+  padding-block-end: var(--space-2xs);
+}
+
+.rows {
+  display: grid;
+  gap: var(--space-l);
+}
+
+.row {
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.spec {
+  color: var(--c-ink-45);
+}
+
+.measure {
+  display: grid;
+  gap: var(--space-xs);
+  grid-template-columns: max-content 1fr;
+  align-items: center;
+}
+
+.bar {
+  background-color: var(--c-ink);
+  block-size: var(--space-2xs);
+}
+
+.bar3xs {
+  inline-size: var(--space-3xs);
+}
+.bar2xs {
+  inline-size: var(--space-2xs);
+}
+.barXs {
+  inline-size: var(--space-xs);
+}
+.barS {
+  inline-size: var(--space-s);
+}
+.barM {
+  inline-size: var(--space-m);
+}
+.barL {
+  inline-size: var(--space-l);
+}
+.barXl {
+  inline-size: var(--space-xl);
+}
+.bar2xl {
+  inline-size: var(--space-2xl);
+}
+.bar3xl {
+  inline-size: var(--space-3xl);
+}
+
+.swatches {
+  display: grid;
+  gap: var(--space-m);
+  grid-template-columns: repeat(auto-fill, minmax(var(--space-2xl), 1fr));
+}
+
+.swatch {
+  display: grid;
+  gap: var(--space-2xs);
+}
+
+.chip {
+  block-size: var(--space-xl);
+  border: var(--hairline);
+}
+
+.chipPaper {
+  background-color: var(--c-paper);
+}
+.chipPaperRaised {
+  background-color: var(--c-paper-raised);
+}
+.chipInk {
+  background-color: var(--c-ink);
+}
+.chipInk70 {
+  background-color: var(--c-ink-70);
+}
+.chipInk45 {
+  background-color: var(--c-ink-45);
+}
+.chipInkDim {
+  background-color: var(--c-ink-dim);
+}
+.chipInk16 {
+  background-color: var(--c-ink-16);
+}
+.chipInverse {
+  background-color: var(--c-inverse);
+}
+.chipFocus {
+  background-color: var(--c-focus);
+}
+.chipScrim {
+  background-color: var(--c-scrim);
+}

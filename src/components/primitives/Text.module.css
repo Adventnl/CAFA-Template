@@ -1,0 +1,48 @@
+/*
+ * The six roles. Leading carries the CJK adjustment from tokens.css §3, resolved
+ * here so it answers to the nearest lang attribute; tracking is only neutralised
+ * on the two roles that set it negative.
+ */
+
+.display {
+  font-size: var(--type-display-size);
+  font-weight: var(--type-display-weight);
+  letter-spacing: calc(var(--type-display-tracking) * var(--type-lang-tracking-scale));
+  line-height: calc(var(--type-display-leading) + var(--type-lang-leading-add));
+}
+
+.title {
+  font-size: var(--type-title-size);
+  font-weight: var(--type-title-weight);
+  letter-spacing: calc(var(--type-title-tracking) * var(--type-lang-tracking-scale));
+  line-height: calc(var(--type-title-leading) + var(--type-lang-leading-add));
+}
+
+.body {
+  font-size: var(--type-body-size);
+  font-weight: var(--type-body-weight);
+  letter-spacing: var(--type-body-tracking);
+  line-height: calc(var(--type-body-leading) + var(--type-lang-leading-add));
+}
+
+.index {
+  font-size: var(--type-index-size);
+  font-weight: var(--type-index-weight);
+  letter-spacing: var(--type-index-tracking);
+  line-height: calc(var(--type-index-leading) + var(--type-lang-leading-add));
+}
+
+.meta {
+  font-size: var(--type-meta-size);
+  font-weight: var(--type-meta-weight);
+  letter-spacing: var(--type-meta-tracking);
+  line-height: calc(var(--type-meta-leading) + var(--type-lang-leading-add));
+}
+
+.label {
+  font-size: var(--type-label-size);
+  font-weight: var(--type-label-weight);
+  letter-spacing: var(--type-label-tracking);
+  line-height: calc(var(--type-label-leading) + var(--type-lang-leading-add));
+  text-transform: uppercase;
+}
