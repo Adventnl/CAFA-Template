@@ -2,6 +2,10 @@
   column-gap: var(--grid-gap);
   display: grid;
   grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  /* inline-size is not redundant: `margin-inline: auto` on a flex item overrides
+     stretch, and the grid would otherwise shrink-wrap to its content inside the
+     body's column. */
+  inline-size: 100%;
   margin-inline: auto;
   max-inline-size: var(--grid-max);
   padding-inline: max(var(--space-gutter), env(safe-area-inset-left));

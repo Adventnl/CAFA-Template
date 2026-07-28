@@ -1,4 +1,4 @@
-.media {
+.frame {
   background-color: var(--c-paper-raised);
   display: block;
 }
@@ -9,7 +9,7 @@
  * DESIGN-SYSTEM.md §8 rule 5 — the column width is what stays constant, not the
  * ratio.
  */
-.media img {
+.frame img {
   block-size: auto;
   inline-size: 100%;
 }

@@ -5,6 +5,7 @@ import { programs } from '@/content/programs';
 import { site } from '@/content/site';
 import { works } from '@/content/works';
 
+import { getImage, type ImageEntry } from './image-manifest';
 import type { Locale, Mentor, Program, SiteContent, Work } from './types';
 
 /** Re-exported so components can type a dictionary prop without reaching into content/. */
@@ -40,6 +41,19 @@ export function getWorks(): readonly Work[] {
 
 export function getWork(slug: string): Work | undefined {
   return works.find((work) => work.slug === slug);
+}
+
+/**
+ * Cover derivatives for the works the index may show, keyed by slug. A private
+ * work is absent: it publishes no cover, so no URL for one is ever handed to
+ * the browser.
+ */
+export function getIndexCovers(): Record<string, ImageEntry> {
+  return Object.fromEntries(
+    works
+      .filter((work) => work.status !== 'private')
+      .map((work) => [work.slug, getImage(work.cover.src)]),
+  );
 }
 
 export function getPrograms(): readonly Program[] {

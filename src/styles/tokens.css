@@ -15,11 +15,15 @@
   --c-ink-70: rgb(20 20 15 / 0.7); /* secondary text, metadata */
   --c-ink-45: rgb(20 20 15 / 0.45); /* tertiary: status, numbers */
   --c-ink-16: rgb(20 20 15 / 0.16); /* hairlines */
-  --c-ink-dim: rgb(20 20 15 / 0.28); /* list colour while hover backdrop is active */
+  /* One number, two forms. The index dims its rows with opacity, because
+     CLAUDE.md §7 allows only compositable properties to be animated, and the
+     colour is what that opacity resolves to over paper. */
+  --dim: 0.28;
+  --c-ink-dim: rgb(20 20 15 / var(--dim)); /* list colour while hover backdrop is active */
   --c-inverse: #f7f6f2; /* text over media */
   --c-focus: #14140f; /* focus ring */
   --c-scrim: rgb(20 20 15 / 0.35); /* over-media legibility */
-  --c-veil: rgb(247 246 242 / 0.62); /* paper over the hover backdrop, so ink rows keep ≥4.5:1 */
+  --c-veil: rgb(247 246 242 / 0.55); /* paper over the hover backdrop, so ink rows keep ≥4.5:1 */
 
   /* §3 Typography — one family, weights 400 and 500 only.
      'Inter Fallback' and 'Noto Sans SC Fallback' are metric-matched local faces

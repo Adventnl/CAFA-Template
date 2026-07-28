@@ -6,13 +6,16 @@
  * --bp-lg, where the bar is one row again.
  */
 .header {
-  align-items: center;
   background-color: var(--c-paper);
   inset-block-start: 0;
-  min-block-size: var(--space-header);
-  padding-block: var(--space-2xs);
   position: sticky;
   z-index: 2;
+}
+
+.bar {
+  align-items: center;
+  min-block-size: var(--space-header);
+  padding-block: var(--space-2xs);
 }
 
 .brand {

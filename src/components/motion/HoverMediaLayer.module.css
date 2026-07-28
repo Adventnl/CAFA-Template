@@ -1,0 +1,55 @@
+/*
+ * ARCHITECTURE.md §5.1. Fixed, behind the list, and gone entirely on anything
+ * without a fine pointer — a touch device shows its covers inside the rows
+ * instead, so this layer is never built there and its images are never fetched.
+ */
+.layer {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .layer {
+    display: block;
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    transform: scale(1.04);
+    transition:
+      opacity var(--dur-scene) var(--ease-io),
+      transform var(--dur-scene) var(--ease-io);
+    z-index: 0;
+  }
+
+  .layer[data-visible] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* Paper at 62% over the cover. Without it the ink rows would be sitting on an
+     arbitrary photograph, and DESIGN-SYSTEM.md §2 puts the floor at 4.5:1. */
+  .layer::after {
+    background-color: var(--c-veil);
+    content: '';
+    inset: 0;
+    position: absolute;
+  }
+
+  .slot {
+    display: block;
+    inset: 0;
+    opacity: 0;
+    position: absolute;
+    transition: opacity var(--dur-scene) var(--ease-io);
+  }
+
+  .slot[data-front] {
+    opacity: 1;
+  }
+
+  .slot img {
+    block-size: 100%;
+    inline-size: 100%;
+    object-fit: cover;
+  }
+}

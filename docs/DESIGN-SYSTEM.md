@@ -36,11 +36,12 @@ Monochrome plus one warm paper tint. No accent colour — the work supplies all 
   --c-ink-70:       rgb(20 20 15 / 0.70);  /* secondary text, metadata */
   --c-ink-45:       rgb(20 20 15 / 0.45);  /* tertiary: status, numbers */
   --c-ink-16:       rgb(20 20 15 / 0.16);  /* hairlines */
-  --c-ink-dim:      rgb(20 20 15 / 0.28);  /* list colour while hover backdrop is active */
+  --dim:            0.28;                  /* and the same number as an opacity */
+  --c-ink-dim:      rgb(20 20 15 / var(--dim));  /* list colour while hover backdrop is active */
   --c-inverse:      #F7F6F2;               /* text over media */
   --c-focus:        #14140F;               /* focus ring */
   --c-scrim:        rgb(20 20 15 / 0.35);  /* over-media legibility */
-  --c-veil:         rgb(247 246 242 / 0.62); /* paper over the hover backdrop */
+  --c-veil:         rgb(247 246 242 / 0.55); /* paper over the hover backdrop */
 }
 ```
 
@@ -50,8 +51,10 @@ copy. `--c-ink-16` is hairlines, never text.
 
 `--c-veil` was added during build: `--c-scrim` darkens media so *pale* text can sit on it,
 and the works index needs the opposite — ink rows sitting over an arbitrary photograph. At
-62% paper, the worst case (a black image) still measures ~6.6:1 for `--c-ink`, so the rule
-in §10 of the constitution holds whatever the cover happens to be.
+55% paper the worst case, a solid black cover, still measures 5.2:1 for `--c-ink`, so the
+rule in §10 of the constitution holds whatever image the atelier drops in. It is set as low
+as that measurement allows, because the point of the backdrop is that the photograph is
+felt.
 
 ---
 
