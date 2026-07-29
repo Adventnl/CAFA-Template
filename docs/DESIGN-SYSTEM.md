@@ -110,6 +110,11 @@ seventh role and no ad-hoc `font-size` anywhere.
 the 44 px touch floor on mobile or bloats absurdly at 2560 px. They step once at the `sm`
 breakpoint instead (`index` → 14 px, `meta` → 12 px on touch).
 
+These three sizes sit below the 14 px floor in §9 of the constitution. That was a genuine
+contradiction between the two documents, and it is resolved in §9's favour of the design:
+the carve-out is written there, it names these three roles and no others, and it is
+conditional on them clearing the contrast rule in §10.
+
 CJK adjustment: Chinese needs more leading and no negative tracking. `:lang(zh)` raises
 `line-height` by 0.12 on every role and zeroes `letter-spacing` on `display`/`title`.
 

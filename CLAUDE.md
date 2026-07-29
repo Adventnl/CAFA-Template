@@ -153,7 +153,19 @@ Rules that keep this true:
 - `dvh`/`svh`, never `vh`. Respect `env(safe-area-inset-*)`.
 - Hover effects live inside `@media (hover: hover) and (pointer: fine)`. The ium hover-image
   interaction must have a defined touch behaviour — decide it, don't inherit it.
-- Interactive targets ≥ 44 × 44 px. Text never below 14 px.
+- Interactive targets ≥ 44 × 44 px, from `--tap-min`.
+- Text never below 14 px, **except the `index`, `meta` and `label` roles**, which are 13 px,
+  11 px and 11 px. This is a carve-out, not a loophole, and it exists because the density
+  *is* the design: ium sets its works index at about 13 px and its detail metadata at about
+  11 px, and big.dk's gutter labels are smaller still. Setting those three at 14 px does not
+  make a restrained site — it makes a different, louder one.
+  The carve-out is bounded:
+  - It covers exactly those three roles. `body` and everything above it never goes below
+    14 px, and no component invents a size outside the six roles in DESIGN-SYSTEM.md §3.
+  - `index` and `meta` step up once below `--bp-sm` (to 14 px and 12 px) so a phone still
+    clears the touch floor above.
+  - Small never also means pale. Every one of these roles is held to the 4.5:1 rule in §10
+    — which is what caught `--c-ink-45` at 2.9:1 and retired it.
 - Verify at 320, 390, 768, 1024, 1440, 1920 and 2560 px before calling anything done. The
   reference failure mode we are avoiding: a beautiful left column and a permanently empty
   right half of the screen.
