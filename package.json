@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "predev": "node scripts/build-images.mjs",
     "dev": "next dev",
+    "dev:images": "node scripts/build-images.mjs && next dev",
     "prebuild": "node scripts/build-images.mjs",
     "build": "next build",
     "postbuild": "node scripts/emit-404.mjs",
