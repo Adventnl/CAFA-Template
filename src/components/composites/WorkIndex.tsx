@@ -26,6 +26,15 @@ interface WorkIndexProps {
  */
 export function WorkIndex({ locale, works, covers, statusLabels, listLabel }: WorkIndexProps) {
   const [previewed, setPreviewed] = useState<string | null>(null);
+  /**
+   * The row a touch has committed to, which is not the same question as which
+   * row is previewed. On a touch device `previewed` is already back to null by
+   * the time the navigation starts — pointerleave fires when the finger lifts,
+   * and the click that follows is what navigates — so the inline cover would
+   * have lost its shared-element name before the browser took the snapshot.
+   * This is set on pointerdown and deliberately never cleared.
+   */
+  const [chosen, setChosen] = useState<string | null>(null);
   const preloaded = useRef(false);
 
   // The topmost row that publishes a cover: the LCP element on a touch device.
@@ -80,7 +89,9 @@ export function WorkIndex({ locale, works, covers, statusLabels, listLabel }: Wo
             statusLabel={statusLabels[work.status]}
             cover={covers[work.slug] ?? null}
             priority={work.slug === firstCover}
+            morphing={work.slug === chosen}
             onPreview={setPreviewed}
+            onChoose={setChosen}
           />
         ))}
       </ul>

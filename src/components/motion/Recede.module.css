@@ -1,0 +1,30 @@
+@keyframes recede {
+  to {
+    opacity: var(--recede-fade);
+    transform: scale(var(--recede-scale));
+  }
+}
+
+@supports (animation-timeline: view()) {
+  /*
+   * `exit` is the range from the moment the element's top edge reaches the top
+   * of the viewport to the moment its bottom edge passes it — that is, exactly
+   * the part of the scroll where it is on its way off the screen. Before that
+   * range the fill holds it at its resting state, so nothing happens to an
+   * element the reader is still looking at.
+   */
+  .recede {
+    animation: recede linear both;
+    animation-range: exit 0% exit 100%;
+    animation-timeline: view();
+    transform-origin: 50% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recede {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

@@ -1,11 +1,15 @@
 import type { Work } from '@/lib/types';
 
+import { aHundredBricks } from './a-hundred-bricks';
 import { commissionNo14 } from './commission-no-14';
 import { edibleHouse } from './edible-house';
 import { kilnAndCorridor } from './kiln-and-corridor';
 import { lettersToARiverbed } from './letters-to-a-riverbed';
 import { nineGreyRooms } from './nine-grey-rooms';
 import { paperTopography } from './paper-topography';
+import { saltAndScaffold } from './salt-and-scaffold';
+import { theLongTable } from './the-long-table';
+import { weatherForARoom } from './weather-for-a-room';
 
 /**
  * The only registry. Display order is this array's order — it is not sorted by
@@ -16,9 +20,13 @@ import { paperTopography } from './paper-topography';
  */
 export const works: readonly Work[] = [
   commissionNo14,
+  saltAndScaffold,
   edibleHouse,
   paperTopography,
   kilnAndCorridor,
   nineGreyRooms,
   lettersToARiverbed,
+  theLongTable,
+  weatherForARoom,
+  aHundredBricks,
 ];

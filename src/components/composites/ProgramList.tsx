@@ -1,3 +1,4 @@
+import { Reveal } from '@/components/motion/Reveal';
 import { Text } from '@/components/primitives/Text';
 import type { Locale, Program } from '@/lib/types';
 
@@ -17,22 +18,26 @@ interface ProgramListProps {
 export function ProgramList({ programs, locale, className }: ProgramListProps) {
   return (
     <ul className={[styles.list, className].filter(Boolean).join(' ')}>
-      {programs.map((program) => (
-        <li key={program.slug} className={styles.entry}>
-          <div className={styles.gutter}>
-            <Text role="label" as="h2">
-              {program.name[locale]}
+      {programs.map((program, index) => (
+        <li key={program.slug}>
+          {/* The Reveal *is* the entry rather than a wrapper around it: another
+              div here would sit between the grid and its two placed children. */}
+          <Reveal step={index} className={styles.entry}>
+            <div className={styles.gutter}>
+              <Text role="label" as="h2">
+                {program.name[locale]}
+              </Text>
+              <Text role="meta" className={styles.particular}>
+                {program.audience[locale]}
+              </Text>
+              <Text role="meta" className={styles.particular}>
+                {program.duration[locale]}
+              </Text>
+            </div>
+            <Text role="body" className={styles.summary}>
+              {program.summary[locale]}
             </Text>
-            <Text role="meta" className={styles.particular}>
-              {program.audience[locale]}
-            </Text>
-            <Text role="meta" className={styles.particular}>
-              {program.duration[locale]}
-            </Text>
-          </div>
-          <Text role="body" className={styles.summary}>
-            {program.summary[locale]}
-          </Text>
+          </Reveal>
         </li>
       ))}
     </ul>

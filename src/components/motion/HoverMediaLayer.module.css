@@ -18,6 +18,17 @@
     transition:
       opacity var(--dur-scene) var(--ease-io),
       transform var(--dur-scene) var(--ease-io);
+    /*
+     * The layer, not the slot inside it, is what a navigation carries to the
+     * work's own page — where MediaSequence's first image answers to the same
+     * name. It has to be the layer because the ::after below is the paper veil
+     * that keeps the rows legible: naming the slot captured the photograph
+     * without it, and the image jumped to full strength the instant the
+     * transition began. Named here, the veil travels along and dissolves as the
+     * picture arrives, which is the image coming up to strength rather than
+     * snapping to it.
+     */
+    view-transition-name: var(--vt-cover);
     z-index: 0;
   }
 

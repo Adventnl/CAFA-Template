@@ -33,6 +33,16 @@
 }
 
 /*
+ * The touch half of the shared-element morph. Where there is a hover backdrop
+ * this element is display: none a few rules down, so it is never captured and
+ * never collides with the backdrop over the same name — only one of the two is
+ * ever rendered on a given device.
+ */
+.morphing {
+  view-transition-name: var(--vt-cover);
+}
+
+/*
  * The line spans the full row and repeats the same tracks, which resolve to the
  * same positions because it is exactly as wide. It exists so the cover can sit
  * on its own row without the text having to be placed by row number — the text

@@ -102,6 +102,32 @@
   --reveal-rise: 18px; /* a settle, not a slide */
   --stagger-step: 70ms; /* max 3 steps */
 
+  /*
+   * §6 Navigation. A route change is one 700ms move — --dur-fast of overlap
+   * plus --dur-slow — so the total still lands on --dur-scene and the rule that
+   * nothing outlasts it holds. No new duration is introduced here on purpose.
+   *
+   * The outgoing view recedes rather than slides: it is the only figure that
+   * reads as "the page went somewhere" without implying a direction, which
+   * matters because most navigation here is lateral.
+   */
+  --page-recede: 0.94; /* where the outgoing view settles */
+  --page-arrive: 1.03; /* where the incoming view starts */
+  --morph-soften: 5px; /* blur at the midpoint of a shared-element morph */
+
+  /*
+   * Shared-element identities. A view-transition-name has to be the same ident
+   * in two different stylesheets for the browser to pair the elements up, so it
+   * is declared once here rather than written twice as a literal — CLAUDE.md §4.
+   */
+  --vt-header: site-header;
+  --vt-cover: work-cover;
+
+  /* §6 Scroll-driven motion. Small numbers: the calm comes from barely moving. */
+  --drift: 3.5%; /* how far media travels across one view() pass */
+  --recede-scale: 0.94; /* what a block shrinks to as it leaves the top */
+  --recede-fade: 0.35; /* and how far it dims, never to nothing */
+
   /* §7 Component states */
   --focus-ring:
     0 0 0 2px var(--c-paper), 0 0 0 4px var(--c-focus);

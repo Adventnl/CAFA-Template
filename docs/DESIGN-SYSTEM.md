@@ -199,6 +199,45 @@ Two easings. Four durations. Nothing else exists.
 --stagger-step: 70ms;  /* max 3 steps */
 ```
 
+### Navigation and scroll
+
+Added when the site became one continuous surface rather than a set of pages. **No new
+duration was introduced** — that would have broken the four-value rule on its first real
+test. A route change is `--dur-fast` of overlap plus `--dur-slow`, which is 700 ms, which is
+`--dur-scene`.
+
+```css
+--page-recede: 0.94;   /* where the outgoing view settles */
+--page-arrive: 1.03;   /* where the incoming view starts */
+--morph-soften: 5px;   /* blur at the midpoint of a shared-element morph */
+
+--vt-header: site-header;   /* shared-element identities. A view-transition-name has  */
+--vt-cover:  work-cover;    /* to match across two stylesheets, so it is not a literal */
+
+--drift: 3.5%;         /* how far media travels across one view() pass */
+--recede-scale: 0.94;  /* what a block shrinks to as it leaves the top */
+--recede-fade: 0.35;   /* and how far it dims — never to nothing */
+```
+
+Why the numbers are this small: the outgoing page moves 6%, media drifts 3.5%. The reference
+sites feel expensive because almost nothing travels far. A 0.85 page scale and a 15% drift
+would read as a slideshow template, and the difference between the two is entirely in these
+two decimals.
+
+`--page-recede` and `--recede-scale` are the same number, and that is the point — scrolling a
+section off the top and navigating away from a page are the same gesture at the same
+magnitude, so the site has one vocabulary rather than two.
+
+Two rules that survive contact with the new mechanisms:
+
+- **A scroll-linked animation is `linear`.** Easing something bound to the scrollbar makes
+  the page feel like it is resisting the pointer. `--ease-out` is for things with a beginning
+  and an end.
+- **Reduced motion still means final state, immediately.** It now takes three declarations
+  rather than one, because a `*` selector does not reach a view-transition pseudo-element and
+  a zero duration does not stop a position-driven animation. Each is written beside the thing
+  it cancels; none of them is a check inside a component.
+
 Rules that make it feel like the references rather than a template:
 
 - **Nothing overshoots.** `--ease-out` decelerates to a stop. No spring, no bounce, no

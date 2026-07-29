@@ -33,5 +33,16 @@ export const lettersToARiverbed: Work = {
       src: 'works/letters-to-a-riverbed/03.jpg',
       alt: { zh: '装订成册后的书口。', en: 'The fore-edge of the bound volume.' },
     },
+    {
+      src: 'works/letters-to-a-riverbed/04.jpg',
+      alt: {
+        zh: '四百天的水位曲线，字号跟着它走。',
+        en: 'Four hundred days of readings, the curve the type size followed.',
+      },
+    },
+    {
+      src: 'works/letters-to-a-riverbed/05.jpg',
+      alt: { zh: '干掉的河床，写信的地方。', en: 'The dry bed itself, where the letters were written.' },
+    },
   ],
 };

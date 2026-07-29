@@ -36,5 +36,20 @@ export const kilnAndCorridor: Work = {
       src: 'works/kiln-and-corridor/03.jpg',
       alt: { zh: '出窑后的试片，按窑位排列。', en: 'Test tiles after unloading, arranged by their position in the kiln.' },
     },
+    {
+      src: 'works/kiln-and-corridor/04.jpg',
+      alt: { zh: '长廊入口，坡度从这里开始。', en: 'The corridor entrance, where the slope begins.' },
+    },
+    {
+      src: 'works/kiln-and-corridor/05.jpg',
+      alt: {
+        zh: '排烟道的剖面，决定了整条廊子的高度。',
+        en: 'The flue in section — the thing that set the height of the whole corridor.',
+      },
+    },
+    {
+      src: 'works/kiln-and-corridor/06.jpg',
+      alt: { zh: '烧到第三天夜里的窑口。', en: 'The kiln mouth on the third night of firing.' },
+    },
   ],
 };

@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { StudioSequence } from '@/components/composites/StudioSequence';
+import { Recede } from '@/components/motion/Recede';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { Grid } from '@/components/primitives/Grid';
-import { Media } from '@/components/primitives/Media';
 import { Text } from '@/components/primitives/Text';
 import { getDictionary, getSite, requireLocale } from '@/lib/content';
 import { organisationJsonLd } from '@/lib/json-ld';
@@ -34,19 +35,24 @@ export default async function HomePage({ params }: LocaleParams) {
   return (
     <>
       <JsonLd data={organisationJsonLd(locale)} />
-      <Grid className={styles.above}>
-        <Text role="display" as="h1" className={styles.statement}>
-          {dictionary.home.statement}
-        </Text>
-        <Link href={routes.works(locale)} className={styles.link}>
-          <Text role="label" as="span">
-            {dictionary.home.worksLink}
+      {/* The statement recedes as it leaves the top rather than simply scrolling
+          off, which is the same figure a navigation makes. It is the first thing
+          on the site that moves, and it sets the vocabulary for the rest. */}
+      <Recede>
+        <Grid className={styles.above}>
+          <Text role="display" as="h1" className={styles.statement}>
+            {dictionary.home.statement}
           </Text>
-        </Link>
-      </Grid>
-      {/* Genuinely below the fold — see .above — so it stays lazy and the
+          <Link href={routes.works(locale)} className={styles.link}>
+            <Text role="label" as="span">
+              {dictionary.home.worksLink}
+            </Text>
+          </Link>
+        </Grid>
+      </Recede>
+      {/* Genuinely below the fold — see .above — so these stay lazy and the
           statement is what the page is measured on. */}
-      <Media image={getSite().studio} locale={locale} sizes="100vw" className={styles.studio} />
+      <StudioSequence images={getSite().studio} locale={locale} className={styles.studio} />
     </>
   );
 }

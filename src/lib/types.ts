@@ -59,8 +59,11 @@ export interface SiteContent {
   locales: readonly [Locale, ...Locale[]];
   localeNames: Record<Locale, string>;
   nav: readonly NavItem[];
-  /** The one photograph the home page carries, below the fold. */
-  studio: ImageRef;
+  /**
+   * The photographs the home page carries below the fold, in order. Non-empty:
+   * the first is the one the page is measured on once the statement scrolls off.
+   */
+  studio: readonly [ImageRef, ...ImageRef[]];
   contact: {
     email: string;
     wechat: string;

@@ -48,5 +48,20 @@ export const edibleHouse: Work = {
         en: 'The winter plan, with half the rooms shut down.',
       },
     },
+    {
+      src: 'works/edible-house/04.jpg',
+      alt: { zh: '屋顶集水槽通向院子的落水口。', en: 'The roof gutter where it discharges into the yard.' },
+    },
+    {
+      src: 'works/edible-house/05.jpg',
+      alt: {
+        zh: '第一年的收成，按月称重记录。',
+        en: 'The first year’s yield, weighed and recorded by month.',
+      },
+    },
+    {
+      src: 'works/edible-house/06.jpg',
+      alt: { zh: '走廊在十一月，苗床已经空了。', en: 'The corridor in November, the seed beds emptied.' },
+    },
   ],
 };

@@ -38,5 +38,23 @@ export const paperTopography: Work = {
       src: 'works/paper-topography/03.jpg',
       alt: { zh: '展厅里的侧光下的叠层边缘。', en: 'Stacked edges under raking gallery light.' },
     },
+    {
+      src: 'works/paper-topography/04.jpg',
+      alt: {
+        zh: '十七层全部抽出后平铺在地上。',
+        en: 'All seventeen layers drawn out and laid flat on the floor.',
+      },
+    },
+    {
+      src: 'works/paper-topography/05.jpg',
+      alt: { zh: '等高线之间的落差，从侧面看。', en: 'The drop between contours, seen from the side.' },
+    },
+    {
+      src: 'works/paper-topography/06.jpg',
+      alt: {
+        zh: '观众抽层时留下的手印，第三周。',
+        en: 'Fingerprints left by visitors pulling layers, in the third week.',
+      },
+    },
   ],
 };

@@ -66,7 +66,12 @@ export default async function WorkPage({ params }: WorkParams) {
           statusLabel={dictionary.works.status[work.status]}
         />
       </StickyColumn>
-      <MediaSequence media={work.media} locale={locale} className={styles.media} />
+      <MediaSequence
+        cover={work.cover}
+        media={work.media}
+        locale={locale}
+        className={styles.media}
+      />
       <WorkPager
         locale={locale}
         {...getWorkNeighbours(slug)}

@@ -1,3 +1,4 @@
+import { Parallax } from '@/components/motion/Parallax';
 import { Reveal } from '@/components/motion/Reveal';
 import { Media } from '@/components/primitives/Media';
 import { Text } from '@/components/primitives/Text';
@@ -24,12 +25,13 @@ export function MentorGrid({ mentors, locale, heading, className }: MentorGridPr
         {mentors.map((mentor, index) => (
           <li key={mentor.slug}>
             <Reveal step={index}>
-              <Media
-                image={mentor.portrait}
-                locale={locale}
-                sizes="(min-width: 768px) 30vw, (min-width: 480px) 45vw, 92vw"
-                className={styles.portrait}
-              />
+              <Parallax className={styles.portrait}>
+                <Media
+                  image={mentor.portrait}
+                  locale={locale}
+                  sizes="(min-width: 768px) 30vw, (min-width: 480px) 45vw, 92vw"
+                />
+              </Parallax>
               <Text role="index" as="h3">
                 {mentor.name[locale]}
               </Text>

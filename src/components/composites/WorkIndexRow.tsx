@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import { Reveal } from '@/components/motion/Reveal';
 import { MediaFrame } from '@/components/primitives/MediaFrame';
 import { Text } from '@/components/primitives/Text';
 import type { ImageEntry } from '@/lib/image-manifest';
@@ -22,8 +23,16 @@ interface WorkIndexRowProps {
    * want first, so the fetch is not wasted there either.
    */
   priority?: boolean;
+  /**
+   * Whether this row's inline cover is the one a navigation should carry. Only
+   * ever true where there is no hover backdrop — on a pointer device the inline
+   * cover is display: none and the backdrop holds the name instead.
+   */
+  morphing?: boolean;
   /** Reports which cover the backdrop should show; null on leaving the row. */
   onPreview: (slug: string | null) => void;
+  /** Reports the row a press has committed to. See WorkIndex. */
+  onChoose: (slug: string) => void;
 }
 
 export function WorkIndexRow({
@@ -32,7 +41,9 @@ export function WorkIndexRow({
   statusLabel,
   cover,
   priority,
+  morphing,
   onPreview,
+  onChoose,
 }: WorkIndexRowProps) {
   const contents = (
     <RowContents
@@ -41,28 +52,32 @@ export function WorkIndexRow({
       statusLabel={statusLabel}
       cover={cover}
       priority={priority}
+      morphing={morphing}
     />
   );
 
   return (
     <li className={styles.row}>
-      {work.status === 'private' ? (
-        // DESIGN-SYSTEM.md §7: not a link at all, rather than a disabled one.
-        <span className={styles.link} data-private="">
-          {contents}
-        </span>
-      ) : (
-        <Link
-          href={routes.work(locale, work.slug)}
-          className={styles.link}
-          onPointerEnter={() => onPreview(work.slug)}
-          onPointerLeave={() => onPreview(null)}
-          onFocus={() => onPreview(work.slug)}
-          onBlur={() => onPreview(null)}
-        >
-          {contents}
-        </Link>
-      )}
+      <Reveal>
+        {work.status === 'private' ? (
+          // DESIGN-SYSTEM.md §7: not a link at all, rather than a disabled one.
+          <span className={styles.link} data-private="">
+            {contents}
+          </span>
+        ) : (
+          <Link
+            href={routes.work(locale, work.slug)}
+            className={styles.link}
+            onPointerEnter={() => onPreview(work.slug)}
+            onPointerLeave={() => onPreview(null)}
+            onPointerDown={() => onChoose(work.slug)}
+            onFocus={() => onPreview(work.slug)}
+            onBlur={() => onPreview(null)}
+          >
+            {contents}
+          </Link>
+        )}
+      </Reveal>
     </li>
   );
 }
@@ -74,7 +89,8 @@ function RowContents({
   statusLabel,
   cover,
   priority,
-}: Omit<WorkIndexRowProps, 'onPreview'>): ReactNode {
+  morphing,
+}: Omit<WorkIndexRowProps, 'onPreview' | 'onChoose'>): ReactNode {
   return (
     <>
       {cover !== null && (
@@ -85,7 +101,9 @@ function RowContents({
           alt={work.cover.alt === '' ? '' : work.cover.alt[locale]}
           sizes="(min-width: 768px) 46vw, 92vw"
           priority={priority}
-          className={styles.cover}
+          className={[styles.cover, morphing === true && styles.morphing]
+            .filter(Boolean)
+            .join(' ')}
         />
       )}
       <span className={styles.line}>

@@ -10,7 +10,7 @@ Companion to `CLAUDE.md`. That file is the law; this is the map.
 |---|---|---|
 | Framework | Next.js App Router, `output: 'export'` | Every route becomes real HTML at build time. A crawler and a cold visitor both get the works index without waiting on a bundle. File-based routing + `generateStaticParams` means new works generate pages with no code change. |
 | Styling | CSS Modules + custom properties | Zero runtime, scoped by default, and tokens are the single source of truth. Tailwind would put design decisions back into JSX as literals — the exact thing §4 of the constitution forbids. |
-| Animation | CSS first, `motion` (`LazyMotion` + `m`) second | ~5 KB for the subset vs ~34 KB for the full import. Most of what these reference sites do is a transform + opacity transition on an IntersectionObserver class. |
+| Animation | Browser-native: view transitions + scroll-driven animations | The budget for `motion` was ~5 KB and it has not been spent. React's `<ViewTransition>` hands route changes to the browser's View Transitions API, and `animation-timeline: view()` binds scroll motion to the compositor. Both are CSS from that point on, so the most animated surface on the site ships no animation runtime at all. §5.4–5.5. |
 | Content | Typed TS modules in `content/` | No CMS, no fetch, no build plugin. Type errors catch a malformed work at compile time. MDX only if long-form prose appears later. |
 | i18n | Route segment + dictionary | Two locales don't justify a library. `[locale]` segment, a `dictionaries/` map, `generateStaticParams` emits both trees. |
 | Images | `sharp` build script → static derivatives | `next/image` optimisation is unavailable under `output: 'export'`. We generate AVIF/WebP at fixed widths at build time and hand-roll `srcset`, which is both faster and fully static. |
@@ -33,7 +33,8 @@ touches image markup.
 ├── next.config.ts
 ├── tsconfig.json                    # strict, paths: "@/*" → "src/*"
 ├── scripts/
-│   └── build-images.mjs             # sharp → derivatives + image-manifest.json
+│   ├── build-images.mjs             # sharp → derivatives + image-manifest.json
+│   └── make-placeholders.mjs        # the template's own artwork; not part of the build
 ├── public/
 │   ├── fonts/                       # subset woff2
 │   └── media/
@@ -60,10 +61,12 @@ touches image markup.
     │   │   ├── Text.tsx             # renders a token type-role as any element
     │   │   └── Grid.tsx             # the 12-col page grid
     │   ├── motion/
-    │   │   ├── Reveal.tsx           # IO → class → CSS transition
+    │   │   ├── PageTransition.tsx   # React <ViewTransition> around every page
+    │   │   ├── Reveal.tsx           # view() timeline, IO fallback
+    │   │   ├── Parallax.tsx         # media drifts inside a clipped frame
+    │   │   ├── Recede.tsx           # a block shrinks as it leaves the top
     │   │   ├── StickyColumn.tsx     # position:sticky wrapper with bounds
-    │   │   ├── HoverMediaLayer.tsx  # ium full-bleed hover backdrop
-    │   │   └── SmoothScroll.tsx     # Lenis, desktop-pointer-only
+    │   │   └── HoverMediaLayer.tsx  # ium full-bleed hover backdrop
     │   ├── seo/
     │   │   └── JsonLd.tsx           # the only dangerouslySetInnerHTML in the codebase
     │   └── composites/
@@ -75,6 +78,7 @@ touches image markup.
     │       ├── WorkIndexRow.tsx
     │       ├── WorkMetaPanel.tsx    # sticky left column on detail
     │       ├── MediaSequence.tsx    # scrolling right column on detail
+    │       ├── StudioSequence.tsx   # the home page below the fold, full bleed
     │       ├── ProgramList.tsx
     │       ├── MentorGrid.tsx
     │       └── ContactBlock.tsx
@@ -98,13 +102,21 @@ touches image markup.
     │   ├── image-manifest.generated.json   # written by prebuild; committed so a
     │   │                            # fresh clone type-checks without a build
     │   └── types.ts                 # Work, Program, Mentor, LocalisedText, ImageRef
+    ├── types/
+    │   └── react-canary.d.ts        # pulls in the <ViewTransition> declaration
     └── styles/
         ├── tokens.css
         ├── globals.css              # reset + base element styles only
+        ├── motion.css               # every ::view-transition-* rule on the site
         └── *.module.css             # colocated next to their component instead
 ```
 
-Roughly 45 files at completion. That is the target: not 12, not 200.
+Roughly 50 files at completion. That is the target: not 12, not 200.
+
+`motion.css` is the one stylesheet that is not a module, and it has to be: the
+view-transition pseudo-element tree hangs off `:root` rather than off any component, so a
+scoped stylesheet cannot reach it and two files touching it would fight. Components opt in
+by carrying a `view-transition-name`; what that name then *does* is decided in one place.
 
 ---
 
@@ -136,10 +148,16 @@ export interface Work {
   year: number;
   summary: LocalisedText;
   credits: { role: LocalisedText; name: LocalisedText }[];
-  cover: ImageRef;              // shown on hover in the index; also the LCP on detail
-  media: ImageRef[];            // the scrolling right column, in order
+  cover: ImageRef;              // hover backdrop in the index; leads the detail column;
+                                // and the shared element carried between the two (§5.4)
+  media: ImageRef[];            // the rest of the scrolling right column, in order
 }
 ```
+
+`SiteContent.studio` is a non-empty tuple rather than a single `ImageRef`: the home page
+below the fold is a sequence, not a photograph. The type is
+`readonly [ImageRef, ...ImageRef[]]` so "there is at least one" is checked at compile time
+instead of asserted at the call site.
 
 Rules:
 
@@ -231,8 +249,11 @@ Server component. No client JS except `Reveal`.
 - CSS Grid: `grid-template-columns: minmax(0, 5fr) minmax(0, 7fr)` above 1024 px.
 - Left cell contains `WorkMetaPanel` inside `StickyColumn` (`position: sticky; top: var(--space-header)`).
   Pure CSS sticky — no scroll listener.
-- Right cell is `MediaSequence`: the `media[]` array rendered as `Media` primitives, each
-  wrapped in `Reveal`. First one is eager + `fetchPriority="high"`; the rest lazy.
+- Right cell is `MediaSequence`. It takes `cover` and `media` as separate props: the cover
+  leads the column, eager and `fetchPriority="high"`, and is also the half of the
+  shared-element morph that lands here (§5.4). Starting the column at `media[0]` instead
+  would have the browser moving one rectangle while crossfading two different photographs
+  inside it. The rest follow lazily, each in a `Reveal` and each in a `Parallax`.
 - Under 1024 px the grid becomes one column, the meta panel un-sticks and sits above the
   media. `StickyColumn` handles this by only applying `position: sticky` inside the
   `min-width: 1024px` query.
@@ -256,6 +277,74 @@ CSS: [data-reveal="pending"]  { opacity:0; transform: translate3d(0, var(--revea
 - `unobserve` after first reveal. Elements never animate twice.
 - A `stagger` prop sets `transition-delay` via a CSS variable, capped at 3 steps — beyond
   that it reads as slow, not choreographed.
+
+Since §5.5 this is the *fallback* branch. Where `animation-timeline: view()` exists the
+same 18 px settle is a scroll-driven animation and the observer above is never constructed —
+`Reveal` checks `CSS.supports` once per document and returns early from its effect.
+
+### 5.4 Navigation — the page never cuts
+
+The rule this replaces said there would be no page transitions. There are, and they are the
+point of the site rather than a decoration on it.
+
+- `next.config.ts` sets `experimental.viewTransition`. `components/motion/PageTransition.tsx`
+  wraps `{children}` in the layout in React's `<ViewTransition default="page">`. That is the
+  entire integration: React starts a browser view transition for any navigation inside it,
+  and every rule that shapes one lives in `styles/motion.css`.
+- **The page.** `::view-transition-old(.page)` recedes to `--page-recede` and fades over
+  `--dur-base`; `::view-transition-new(.page)` arrives from `--page-arrive` over `--dur-slow`
+  after `--dur-fast` of overlap. 140 + 560 = 700 ms, which is `--dur-scene` — the longest
+  value DESIGN-SYSTEM.md §6 permits, so no new duration was introduced.
+- **The group is pinned** (`animation: none`). Pages are different heights, and letting the
+  group interpolate between two of them stretches both snapshots on the way. That squashed
+  rubber is what makes most view-transition demos look cheap.
+- **The header does not travel.** It carries `view-transition-name: var(--vt-header)`, which
+  lifts it out of the page snapshot, and both its group and its new image are pinned. It is
+  identical on every page, so moving it would be motion carrying no information — and it is
+  the one fixed thing the eye can hold while the content moves.
+- **The shared element.** The works index's hover backdrop and the first image of
+  `MediaSequence` both carry `view-transition-name: var(--vt-cover)`. The browser pairs them,
+  so clicking a row does not crossfade two pictures — it moves one, from full bleed to the
+  width of the media column. This is the interaction the site exists to demonstrate.
+  `::view-transition-image-pair` blurs by `--morph-soften` at the midpoint, which hides the
+  resampling between two very different rectangles and resolves to nothing at both ends.
+- **Touch.** The backdrop does not exist without a fine pointer, so the row's own inline
+  cover takes the name instead — but only the row a press has committed to, tracked as
+  `chosen` in `WorkIndex` and set on `pointerdown`. `previewed` cannot do this job: on touch
+  it is already back to `null` by the time the click navigates. The two branches never
+  collide, because whichever element is not in use is `display: none` on that device and an
+  unrendered element is not captured.
+- **Names are tokens.** A `view-transition-name` has to be the same ident in two different
+  stylesheets for the pairing to happen. `--vt-header` and `--vt-cover` are declared in
+  `tokens.css` so it is not written twice as a literal — CLAUDE.md §4.
+
+### 5.5 Scroll-driven motion — big.dk's cadence, on the compositor
+
+Three wrappers in `components/motion/`, each pure CSS, and only one of them a Client
+Component:
+
+| | What it does | Range | Client? |
+|---|---|---|---|
+| `Reveal` | the 18 px settle, on the way in | `entry 0%` → `entry 80%` | yes, for the fallback only |
+| `Parallax` | media drifts `±--drift` inside a clipped frame | the full `view()` pass | no |
+| `Recede` | a block shrinks and dims as it leaves the top | `exit 0%` → `exit 100%` | no |
+
+- `Parallax` is two elements on purpose. The drift has to be clipped or it pushes into
+  whatever is below, and the inner element is scaled 1.08 so the translate never exposes a
+  sliver of paper at an edge.
+- `Recede` is the same figure a navigation makes, at the same magnitude. That is deliberate:
+  scrolling a section off the top and clicking a link should read as one vocabulary.
+- Parallax and Recede are `linear`. A scroll-linked animation with an easing curve feels
+  like the page is fighting the pointer; easing belongs on things with a beginning and end.
+- The site's only two scroll listeners would have been the header rule and the reveals.
+  Neither exists: the header rule is an `animation-timeline: scroll()` and the reveals are
+  `view()`.
+
+**Reduced motion.** `globals.css` collapses every duration under the query, but it cannot do
+this job alone and both exceptions are written down where they apply. A `*` selector does not
+match `::view-transition-*`, so `motion.css` cancels those explicitly; and a scroll-driven
+animation is driven by position rather than time, so a zero duration does not stop it — each
+of the three modules sets `animation: none !important` and states the resting value.
 
 ---
 
@@ -304,7 +393,14 @@ Listed so it stays absent:
 - No i18n, form, icon, carousel, lightbox or UI library.
 - No dark mode. The palette is near-monochrome by design; a second theme adds tokens,
   testing surface and contrast bugs for no editorial gain. Revisit only if asked.
-- No page-transition router animation. It fights back/forward, breaks focus management and
-  costs a client-side router. The reveal cadence already carries the feel.
+- No animation library, still. What replaced the "no page transitions" line that used to sit
+  here is not a library — see §5.4. That entry was written on the assumption that a page
+  transition means a JS router animating a tree it owns, which is what fights back/forward
+  and breaks focus. The View Transitions API is the browser doing it: history and focus are
+  handled by the same code that handles them without it.
+- No smooth-scroll library. Lenis was named in an early draft of this file and is absent on
+  purpose. It replaces the scroll position with an interpolated one, which desynchronises
+  every `animation-timeline: view()` on the page — it would break §5.5 to add a feel that
+  §5.5 already produces, and cost ~10 KB to do it.
 - No analytics until asked; if added, it is a single `<script defer>` from a
   cookieless provider, nothing bundled.

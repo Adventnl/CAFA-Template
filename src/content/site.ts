@@ -18,13 +18,43 @@ export const site: SiteContent = {
     { label: { zh: '联系', en: 'Contact' }, href: routes.contact },
   ],
 
-  studio: {
-    src: 'studio.jpg',
-    alt: {
-      zh: '工作室的主厅，长桌沿窗排开。',
-      en: 'The main room of the studio, long tables set out along the windows.',
+  studio: [
+    {
+      src: 'studio/01.jpg',
+      alt: {
+        zh: '工作室的主厅，长桌沿窗排开。',
+        en: 'The main room of the studio, long tables set out along the windows.',
+      },
     },
-  },
+    {
+      src: 'studio/02.jpg',
+      alt: {
+        zh: '模型架，按项目分层。',
+        en: 'The model shelves, one project to a shelf.',
+      },
+    },
+    {
+      src: 'studio/03.jpg',
+      alt: {
+        zh: '评图用的那面墙，通常是满的。',
+        en: 'The wall used for reviews, usually full.',
+      },
+    },
+    {
+      src: 'studio/04.jpg',
+      alt: {
+        zh: '材料间，样品按材质排。',
+        en: 'The material room, samples ordered by what they are made of.',
+      },
+    },
+    {
+      src: 'studio/05.jpg',
+      alt: {
+        zh: '院子，天气好的时候在这里晒图纸。',
+        en: 'The yard, where drawings are put out to dry in good weather.',
+      },
+    },
+  ],
 
   contact: {
     email: 'atelier@cafa-atelier.example',

@@ -31,5 +31,20 @@ export const nineGreyRooms: Work = {
       src: 'works/nine-grey-rooms/02.jpg',
       alt: { zh: '刷到第四遍时的墙面。', en: 'The wall at the fourth coat.' },
     },
+    {
+      src: 'works/nine-grey-rooms/03.jpg',
+      alt: {
+        zh: '第一遍与第九遍在同一面墙上的接缝。',
+        en: 'The join between the first coat and the ninth, on the same wall.',
+      },
+    },
+    {
+      src: 'works/nine-grey-rooms/04.jpg',
+      alt: { zh: '配色记录，每一遍的配比。', en: 'The mixing record, one ratio per coat.' },
+    },
+    {
+      src: 'works/nine-grey-rooms/05.jpg',
+      alt: { zh: '窗洞在第九遍之后。', en: 'The window opening after the ninth coat.' },
+    },
   ],
 };

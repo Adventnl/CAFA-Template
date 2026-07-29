@@ -53,4 +53,30 @@ export const mentors: readonly Mentor[] = [
       alt: { zh: '高原在工作室的肖像。', en: 'Gao Yuan photographed in the studio.' },
     },
   },
+  {
+    slug: 'pei-shu',
+    name: { zh: '裴舒', en: 'Pei Shu' },
+    discipline: { zh: '景观', en: 'Landscape' },
+    note: {
+      zh: '不画效果图，只画剖面。',
+      en: 'Draws no renderings, only sections.',
+    },
+    portrait: {
+      src: 'mentors/pei-shu.jpg',
+      alt: { zh: '裴舒在工作室的肖像。', en: 'Pei Shu photographed in the studio.' },
+    },
+  },
+  {
+    slug: 'tan-wei',
+    name: { zh: '谭维', en: 'Tan Wei' },
+    discipline: { zh: '家具与木作', en: 'Furniture and Joinery' },
+    note: {
+      zh: '先做一比一的样，再决定图对不对。',
+      en: 'Builds the mock-up at full size first, then decides whether the drawing was right.',
+    },
+    portrait: {
+      src: 'mentors/tan-wei.jpg',
+      alt: { zh: '谭维在工作室的肖像。', en: 'Tan Wei photographed in the studio.' },
+    },
+  },
 ];

@@ -1,0 +1,22 @@
+/*
+ * --space-2xl between plates, not --space-3xl. The 3xl step is reserved for the
+ * break between the statement and this sequence, which is the major section
+ * change DESIGN-SYSTEM.md §4 means; repeating it between every plate left so
+ * much paper that the photographs read as isolated incidents rather than as a
+ * body of work, which is the opposite of what this page is for.
+ */
+.sequence {
+  display: grid;
+  row-gap: var(--space-2xl);
+}
+
+/*
+ * Each plate is capped well below the viewport height so that two of them are
+ * never on screen at once and the scroll keeps its beat. Height rather than
+ * aspect-ratio: the source images keep their own proportions, and the crop
+ * comes from the Parallax frame around them.
+ */
+.plate img {
+  max-block-size: 82svh;
+  object-fit: cover;
+}

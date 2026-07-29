@@ -3,12 +3,14 @@ import type { ReactNode } from 'react';
 
 import { SiteFooter } from '@/components/composites/SiteFooter';
 import { SiteHeader } from '@/components/composites/SiteHeader';
+import { PageTransition } from '@/components/motion/PageTransition';
 import { Text } from '@/components/primitives/Text';
 import { getDictionary, getSite, requireLocale } from '@/lib/content';
 
 import '@/styles/tokens.css';
 import '@/styles/fonts.css';
 import '@/styles/globals.css';
+import '@/styles/motion.css';
 import styles from './layout.module.css';
 
 /**
@@ -68,7 +70,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             Without it the hash changes and focus stays on <body>, and the next
             Tab goes back to the top of the nav. */}
         <main id="main" tabIndex={-1}>
-          {children}
+          <PageTransition>{children}</PageTransition>
         </main>
         <SiteFooter locale={locale} site={site} dictionary={dictionary} />
       </body>

@@ -1,7 +1,7 @@
 {
   "mentors/gao-yuan.jpg": {
-    "width": 1000,
-    "height": 1250,
+    "width": 1440,
+    "height": 1800,
     "formats": {
       "avif": [
         {
@@ -13,8 +13,12 @@
           "width": 768
         },
         {
-          "src": "/media/derived/mentors/gao-yuan-1000.avif",
-          "width": 1000
+          "src": "/media/derived/mentors/gao-yuan-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/mentors/gao-yuan-1440.avif",
+          "width": 1440
         }
       ],
       "webp": [
@@ -27,15 +31,19 @@
           "width": 768
         },
         {
-          "src": "/media/derived/mentors/gao-yuan-1000.webp",
-          "width": 1000
+          "src": "/media/derived/mentors/gao-yuan-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/mentors/gao-yuan-1440.webp",
+          "width": 1440
         }
       ]
     }
   },
   "mentors/luo-man.jpg": {
-    "width": 1000,
-    "height": 1250,
+    "width": 1440,
+    "height": 1800,
     "formats": {
       "avif": [
         {
@@ -47,8 +55,12 @@
           "width": 768
         },
         {
-          "src": "/media/derived/mentors/luo-man-1000.avif",
-          "width": 1000
+          "src": "/media/derived/mentors/luo-man-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/mentors/luo-man-1440.avif",
+          "width": 1440
         }
       ],
       "webp": [
@@ -61,15 +73,61 @@
           "width": 768
         },
         {
-          "src": "/media/derived/mentors/luo-man-1000.webp",
-          "width": 1000
+          "src": "/media/derived/mentors/luo-man-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/mentors/luo-man-1440.webp",
+          "width": 1440
+        }
+      ]
+    }
+  },
+  "mentors/pei-shu.jpg": {
+    "width": 1440,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/mentors/pei-shu-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/mentors/pei-shu-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/mentors/pei-shu-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/mentors/pei-shu-1440.avif",
+          "width": 1440
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/mentors/pei-shu-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/mentors/pei-shu-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/mentors/pei-shu-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/mentors/pei-shu-1440.webp",
+          "width": 1440
         }
       ]
     }
   },
   "mentors/shen-zhibai.jpg": {
-    "width": 1000,
-    "height": 1250,
+    "width": 1440,
+    "height": 1800,
     "formats": {
       "avif": [
         {
@@ -81,8 +139,12 @@
           "width": 768
         },
         {
-          "src": "/media/derived/mentors/shen-zhibai-1000.avif",
-          "width": 1000
+          "src": "/media/derived/mentors/shen-zhibai-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/mentors/shen-zhibai-1440.avif",
+          "width": 1440
         }
       ],
       "webp": [
@@ -95,15 +157,61 @@
           "width": 768
         },
         {
-          "src": "/media/derived/mentors/shen-zhibai-1000.webp",
-          "width": 1000
+          "src": "/media/derived/mentors/shen-zhibai-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/mentors/shen-zhibai-1440.webp",
+          "width": 1440
+        }
+      ]
+    }
+  },
+  "mentors/tan-wei.jpg": {
+    "width": 1440,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/mentors/tan-wei-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/mentors/tan-wei-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/mentors/tan-wei-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/mentors/tan-wei-1440.avif",
+          "width": 1440
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/mentors/tan-wei-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/mentors/tan-wei-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/mentors/tan-wei-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/mentors/tan-wei-1440.webp",
+          "width": 1440
         }
       ]
     }
   },
   "mentors/xu-qinghe.jpg": {
-    "width": 1000,
-    "height": 1250,
+    "width": 1440,
+    "height": 1800,
     "formats": {
       "avif": [
         {
@@ -115,8 +223,12 @@
           "width": 768
         },
         {
-          "src": "/media/derived/mentors/xu-qinghe-1000.avif",
-          "width": 1000
+          "src": "/media/derived/mentors/xu-qinghe-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/mentors/xu-qinghe-1440.avif",
+          "width": 1440
         }
       ],
       "webp": [
@@ -129,58 +241,484 @@
           "width": 768
         },
         {
-          "src": "/media/derived/mentors/xu-qinghe-1000.webp",
-          "width": 1000
+          "src": "/media/derived/mentors/xu-qinghe-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/mentors/xu-qinghe-1440.webp",
+          "width": 1440
         }
       ]
     }
   },
-  "studio.jpg": {
-    "width": 2000,
-    "height": 1125,
+  "studio/01.jpg": {
+    "width": 1800,
+    "height": 1200,
     "formats": {
       "avif": [
         {
-          "src": "/media/derived/studio-480.avif",
+          "src": "/media/derived/studio/01-480.avif",
           "width": 480
         },
         {
-          "src": "/media/derived/studio-768.avif",
+          "src": "/media/derived/studio/01-768.avif",
           "width": 768
         },
         {
-          "src": "/media/derived/studio-1200.avif",
+          "src": "/media/derived/studio/01-1200.avif",
           "width": 1200
         },
         {
-          "src": "/media/derived/studio-1800.avif",
+          "src": "/media/derived/studio/01-1800.avif",
           "width": 1800
-        },
-        {
-          "src": "/media/derived/studio-2000.avif",
-          "width": 2000
         }
       ],
       "webp": [
         {
-          "src": "/media/derived/studio-480.webp",
+          "src": "/media/derived/studio/01-480.webp",
           "width": 480
         },
         {
-          "src": "/media/derived/studio-768.webp",
+          "src": "/media/derived/studio/01-768.webp",
           "width": 768
         },
         {
-          "src": "/media/derived/studio-1200.webp",
+          "src": "/media/derived/studio/01-1200.webp",
           "width": 1200
         },
         {
-          "src": "/media/derived/studio-1800.webp",
+          "src": "/media/derived/studio/01-1800.webp",
           "width": 1800
+        }
+      ]
+    }
+  },
+  "studio/02.jpg": {
+    "width": 1800,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/studio/02-480.avif",
+          "width": 480
         },
         {
-          "src": "/media/derived/studio-2000.webp",
-          "width": 2000
+          "src": "/media/derived/studio/02-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/studio/02-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/studio/02-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/studio/02-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/studio/02-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/studio/02-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/studio/02-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "studio/03.jpg": {
+    "width": 1800,
+    "height": 1350,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/studio/03-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/studio/03-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/studio/03-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/studio/03-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/studio/03-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/studio/03-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/studio/03-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/studio/03-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "studio/04.jpg": {
+    "width": 1800,
+    "height": 1013,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/studio/04-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/studio/04-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/studio/04-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/studio/04-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/studio/04-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/studio/04-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/studio/04-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/studio/04-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "studio/05.jpg": {
+    "width": 1200,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/studio/05-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/studio/05-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/studio/05-1200.avif",
+          "width": 1200
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/studio/05-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/studio/05-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/studio/05-1200.webp",
+          "width": 1200
+        }
+      ]
+    }
+  },
+  "works/a-hundred-bricks/01.jpg": {
+    "width": 1200,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/01-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/01-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/01-1200.avif",
+          "width": 1200
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/01-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/01-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/01-1200.webp",
+          "width": 1200
+        }
+      ]
+    }
+  },
+  "works/a-hundred-bricks/02.jpg": {
+    "width": 1800,
+    "height": 1350,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/02-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/02-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/02-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/02-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/02-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/02-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/02-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/02-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/a-hundred-bricks/03.jpg": {
+    "width": 1800,
+    "height": 1440,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/03-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/03-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/03-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/03-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/03-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/03-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/03-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/03-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/a-hundred-bricks/04.jpg": {
+    "width": 1800,
+    "height": 1440,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/04-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/04-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/04-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/04-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/04-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/04-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/04-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/04-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/a-hundred-bricks/05.jpg": {
+    "width": 1200,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/05-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/05-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/05-1200.avif",
+          "width": 1200
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/05-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/05-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/05-1200.webp",
+          "width": 1200
+        }
+      ]
+    }
+  },
+  "works/a-hundred-bricks/06.jpg": {
+    "width": 1200,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/06-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/06-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/06-1200.avif",
+          "width": 1200
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/06-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/06-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/06-1200.webp",
+          "width": 1200
+        }
+      ]
+    }
+  },
+  "works/a-hundred-bricks/cover.jpg": {
+    "width": 1800,
+    "height": 1200,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/cover-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/cover-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/cover-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/cover-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/a-hundred-bricks/cover-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/cover-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/cover-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/a-hundred-bricks/cover-1800.webp",
+          "width": 1800
         }
       ]
     }
@@ -228,8 +766,8 @@
     }
   },
   "works/edible-house/01.jpg": {
-    "width": 1600,
-    "height": 2000,
+    "width": 1800,
+    "height": 1350,
     "formats": {
       "avif": [
         {
@@ -245,8 +783,8 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/edible-house/01-1600.avif",
-          "width": 1600
+          "src": "/media/derived/works/edible-house/01-1800.avif",
+          "width": 1800
         }
       ],
       "webp": [
@@ -263,15 +801,15 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/edible-house/01-1600.webp",
-          "width": 1600
+          "src": "/media/derived/works/edible-house/01-1800.webp",
+          "width": 1800
         }
       ]
     }
   },
   "works/edible-house/02.jpg": {
     "width": 1800,
-    "height": 1012,
+    "height": 1800,
     "formats": {
       "avif": [
         {
@@ -312,8 +850,8 @@
     }
   },
   "works/edible-house/03.jpg": {
-    "width": 1400,
-    "height": 1400,
+    "width": 1800,
+    "height": 1440,
     "formats": {
       "avif": [
         {
@@ -329,8 +867,8 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/edible-house/03-1400.avif",
-          "width": 1400
+          "src": "/media/derived/works/edible-house/03-1800.avif",
+          "width": 1800
         }
       ],
       "webp": [
@@ -347,8 +885,134 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/edible-house/03-1400.webp",
-          "width": 1400
+          "src": "/media/derived/works/edible-house/03-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/edible-house/04.jpg": {
+    "width": 1440,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/edible-house/04-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/edible-house/04-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/edible-house/04-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/edible-house/04-1440.avif",
+          "width": 1440
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/edible-house/04-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/edible-house/04-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/edible-house/04-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/edible-house/04-1440.webp",
+          "width": 1440
+        }
+      ]
+    }
+  },
+  "works/edible-house/05.jpg": {
+    "width": 1800,
+    "height": 1350,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/edible-house/05-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/edible-house/05-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/edible-house/05-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/edible-house/05-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/edible-house/05-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/edible-house/05-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/edible-house/05-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/edible-house/05-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/edible-house/06.jpg": {
+    "width": 1800,
+    "height": 1350,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/edible-house/06-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/edible-house/06-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/edible-house/06-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/edible-house/06-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/edible-house/06-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/edible-house/06-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/edible-house/06-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/edible-house/06-1800.webp",
+          "width": 1800
         }
       ]
     }
@@ -396,8 +1060,8 @@
     }
   },
   "works/kiln-and-corridor/01.jpg": {
-    "width": 1600,
-    "height": 2000,
+    "width": 1800,
+    "height": 1350,
     "formats": {
       "avif": [
         {
@@ -413,8 +1077,8 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/kiln-and-corridor/01-1600.avif",
-          "width": 1600
+          "src": "/media/derived/works/kiln-and-corridor/01-1800.avif",
+          "width": 1800
         }
       ],
       "webp": [
@@ -431,15 +1095,15 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/kiln-and-corridor/01-1600.webp",
-          "width": 1600
+          "src": "/media/derived/works/kiln-and-corridor/01-1800.webp",
+          "width": 1800
         }
       ]
     }
   },
   "works/kiln-and-corridor/02.jpg": {
     "width": 1800,
-    "height": 1012,
+    "height": 1350,
     "formats": {
       "avif": [
         {
@@ -480,8 +1144,8 @@
     }
   },
   "works/kiln-and-corridor/03.jpg": {
-    "width": 1400,
-    "height": 1400,
+    "width": 1800,
+    "height": 1800,
     "formats": {
       "avif": [
         {
@@ -497,8 +1161,8 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/kiln-and-corridor/03-1400.avif",
-          "width": 1400
+          "src": "/media/derived/works/kiln-and-corridor/03-1800.avif",
+          "width": 1800
         }
       ],
       "webp": [
@@ -515,8 +1179,126 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/kiln-and-corridor/03-1400.webp",
-          "width": 1400
+          "src": "/media/derived/works/kiln-and-corridor/03-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/kiln-and-corridor/04.jpg": {
+    "width": 1800,
+    "height": 1200,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/kiln-and-corridor/04-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/04-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/04-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/04-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/kiln-and-corridor/04-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/04-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/04-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/04-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/kiln-and-corridor/05.jpg": {
+    "width": 1200,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/kiln-and-corridor/05-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/05-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/05-1200.avif",
+          "width": 1200
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/kiln-and-corridor/05-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/05-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/05-1200.webp",
+          "width": 1200
+        }
+      ]
+    }
+  },
+  "works/kiln-and-corridor/06.jpg": {
+    "width": 1800,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/kiln-and-corridor/06-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/06-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/06-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/06-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/kiln-and-corridor/06-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/06-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/06-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/kiln-and-corridor/06-1800.webp",
+          "width": 1800
         }
       ]
     }
@@ -564,8 +1346,8 @@
     }
   },
   "works/letters-to-a-riverbed/01.jpg": {
-    "width": 1600,
-    "height": 2000,
+    "width": 1800,
+    "height": 1200,
     "formats": {
       "avif": [
         {
@@ -581,8 +1363,8 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/letters-to-a-riverbed/01-1600.avif",
-          "width": 1600
+          "src": "/media/derived/works/letters-to-a-riverbed/01-1800.avif",
+          "width": 1800
         }
       ],
       "webp": [
@@ -599,15 +1381,15 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/letters-to-a-riverbed/01-1600.webp",
-          "width": 1600
+          "src": "/media/derived/works/letters-to-a-riverbed/01-1800.webp",
+          "width": 1800
         }
       ]
     }
   },
   "works/letters-to-a-riverbed/02.jpg": {
-    "width": 1800,
-    "height": 1012,
+    "width": 1440,
+    "height": 1800,
     "formats": {
       "avif": [
         {
@@ -623,8 +1405,8 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/letters-to-a-riverbed/02-1800.avif",
-          "width": 1800
+          "src": "/media/derived/works/letters-to-a-riverbed/02-1440.avif",
+          "width": 1440
         }
       ],
       "webp": [
@@ -641,15 +1423,15 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/letters-to-a-riverbed/02-1800.webp",
-          "width": 1800
+          "src": "/media/derived/works/letters-to-a-riverbed/02-1440.webp",
+          "width": 1440
         }
       ]
     }
   },
   "works/letters-to-a-riverbed/03.jpg": {
-    "width": 1400,
-    "height": 1400,
+    "width": 1800,
+    "height": 1350,
     "formats": {
       "avif": [
         {
@@ -665,8 +1447,8 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/letters-to-a-riverbed/03-1400.avif",
-          "width": 1400
+          "src": "/media/derived/works/letters-to-a-riverbed/03-1800.avif",
+          "width": 1800
         }
       ],
       "webp": [
@@ -683,8 +1465,92 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/letters-to-a-riverbed/03-1400.webp",
-          "width": 1400
+          "src": "/media/derived/works/letters-to-a-riverbed/03-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/letters-to-a-riverbed/04.jpg": {
+    "width": 1800,
+    "height": 1200,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/04-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/04-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/04-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/04-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/04-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/04-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/04-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/04-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/letters-to-a-riverbed/05.jpg": {
+    "width": 1800,
+    "height": 1013,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/05-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/05-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/05-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/05-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/05-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/05-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/05-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/letters-to-a-riverbed/05-1800.webp",
+          "width": 1800
         }
       ]
     }
@@ -732,8 +1598,8 @@
     }
   },
   "works/nine-grey-rooms/01.jpg": {
-    "width": 1600,
-    "height": 2000,
+    "width": 1200,
+    "height": 1800,
     "formats": {
       "avif": [
         {
@@ -747,10 +1613,6 @@
         {
           "src": "/media/derived/works/nine-grey-rooms/01-1200.avif",
           "width": 1200
-        },
-        {
-          "src": "/media/derived/works/nine-grey-rooms/01-1600.avif",
-          "width": 1600
         }
       ],
       "webp": [
@@ -765,17 +1627,13 @@
         {
           "src": "/media/derived/works/nine-grey-rooms/01-1200.webp",
           "width": 1200
-        },
-        {
-          "src": "/media/derived/works/nine-grey-rooms/01-1600.webp",
-          "width": 1600
         }
       ]
     }
   },
   "works/nine-grey-rooms/02.jpg": {
     "width": 1800,
-    "height": 1012,
+    "height": 1200,
     "formats": {
       "avif": [
         {
@@ -810,6 +1668,132 @@
         },
         {
           "src": "/media/derived/works/nine-grey-rooms/02-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/nine-grey-rooms/03.jpg": {
+    "width": 1800,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/nine-grey-rooms/03-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/03-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/03-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/03-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/nine-grey-rooms/03-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/03-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/03-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/03-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/nine-grey-rooms/04.jpg": {
+    "width": 1800,
+    "height": 1013,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/nine-grey-rooms/04-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/04-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/04-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/04-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/nine-grey-rooms/04-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/04-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/04-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/04-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/nine-grey-rooms/05.jpg": {
+    "width": 1800,
+    "height": 1440,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/nine-grey-rooms/05-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/05-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/05-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/05-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/nine-grey-rooms/05-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/05-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/05-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/nine-grey-rooms/05-1800.webp",
           "width": 1800
         }
       ]
@@ -858,8 +1842,8 @@
     }
   },
   "works/paper-topography/01.jpg": {
-    "width": 1600,
-    "height": 2000,
+    "width": 1800,
+    "height": 1350,
     "formats": {
       "avif": [
         {
@@ -875,8 +1859,8 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/paper-topography/01-1600.avif",
-          "width": 1600
+          "src": "/media/derived/works/paper-topography/01-1800.avif",
+          "width": 1800
         }
       ],
       "webp": [
@@ -893,15 +1877,15 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/paper-topography/01-1600.webp",
-          "width": 1600
+          "src": "/media/derived/works/paper-topography/01-1800.webp",
+          "width": 1800
         }
       ]
     }
   },
   "works/paper-topography/02.jpg": {
     "width": 1800,
-    "height": 1012,
+    "height": 1440,
     "formats": {
       "avif": [
         {
@@ -942,8 +1926,8 @@
     }
   },
   "works/paper-topography/03.jpg": {
-    "width": 1400,
-    "height": 1400,
+    "width": 1800,
+    "height": 1013,
     "formats": {
       "avif": [
         {
@@ -959,8 +1943,8 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/paper-topography/03-1400.avif",
-          "width": 1400
+          "src": "/media/derived/works/paper-topography/03-1800.avif",
+          "width": 1800
         }
       ],
       "webp": [
@@ -977,8 +1961,126 @@
           "width": 1200
         },
         {
-          "src": "/media/derived/works/paper-topography/03-1400.webp",
-          "width": 1400
+          "src": "/media/derived/works/paper-topography/03-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/paper-topography/04.jpg": {
+    "width": 1200,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/paper-topography/04-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/paper-topography/04-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/paper-topography/04-1200.avif",
+          "width": 1200
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/paper-topography/04-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/paper-topography/04-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/paper-topography/04-1200.webp",
+          "width": 1200
+        }
+      ]
+    }
+  },
+  "works/paper-topography/05.jpg": {
+    "width": 1800,
+    "height": 1440,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/paper-topography/05-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/paper-topography/05-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/paper-topography/05-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/paper-topography/05-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/paper-topography/05-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/paper-topography/05-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/paper-topography/05-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/paper-topography/05-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/paper-topography/06.jpg": {
+    "width": 1800,
+    "height": 1013,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/paper-topography/06-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/paper-topography/06-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/paper-topography/06-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/paper-topography/06-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/paper-topography/06-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/paper-topography/06-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/paper-topography/06-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/paper-topography/06-1800.webp",
+          "width": 1800
         }
       ]
     }
@@ -1020,6 +2122,780 @@
         },
         {
           "src": "/media/derived/works/paper-topography/cover-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/salt-and-scaffold/01.jpg": {
+    "width": 1800,
+    "height": 1350,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/01-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/01-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/01-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/01-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/01-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/01-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/01-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/01-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/salt-and-scaffold/02.jpg": {
+    "width": 1800,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/02-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/02-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/02-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/02-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/02-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/02-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/02-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/02-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/salt-and-scaffold/03.jpg": {
+    "width": 1800,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/03-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/03-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/03-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/03-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/03-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/03-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/03-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/03-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/salt-and-scaffold/04.jpg": {
+    "width": 1800,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/04-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/04-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/04-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/04-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/04-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/04-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/04-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/04-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/salt-and-scaffold/05.jpg": {
+    "width": 1800,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/05-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/05-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/05-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/05-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/05-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/05-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/05-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/05-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/salt-and-scaffold/06.jpg": {
+    "width": 1800,
+    "height": 1440,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/06-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/06-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/06-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/06-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/06-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/06-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/06-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/06-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/salt-and-scaffold/cover.jpg": {
+    "width": 1800,
+    "height": 1200,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/cover-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/cover-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/cover-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/cover-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/salt-and-scaffold/cover-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/cover-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/cover-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/salt-and-scaffold/cover-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/the-long-table/01.jpg": {
+    "width": 1800,
+    "height": 1200,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/the-long-table/01-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/the-long-table/01-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/the-long-table/01-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/the-long-table/01-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/the-long-table/01-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/the-long-table/01-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/the-long-table/01-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/the-long-table/01-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/the-long-table/02.jpg": {
+    "width": 1200,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/the-long-table/02-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/the-long-table/02-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/the-long-table/02-1200.avif",
+          "width": 1200
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/the-long-table/02-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/the-long-table/02-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/the-long-table/02-1200.webp",
+          "width": 1200
+        }
+      ]
+    }
+  },
+  "works/the-long-table/03.jpg": {
+    "width": 1200,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/the-long-table/03-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/the-long-table/03-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/the-long-table/03-1200.avif",
+          "width": 1200
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/the-long-table/03-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/the-long-table/03-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/the-long-table/03-1200.webp",
+          "width": 1200
+        }
+      ]
+    }
+  },
+  "works/the-long-table/04.jpg": {
+    "width": 1800,
+    "height": 1013,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/the-long-table/04-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/the-long-table/04-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/the-long-table/04-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/the-long-table/04-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/the-long-table/04-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/the-long-table/04-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/the-long-table/04-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/the-long-table/04-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/the-long-table/05.jpg": {
+    "width": 1800,
+    "height": 1350,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/the-long-table/05-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/the-long-table/05-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/the-long-table/05-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/the-long-table/05-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/the-long-table/05-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/the-long-table/05-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/the-long-table/05-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/the-long-table/05-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/the-long-table/cover.jpg": {
+    "width": 1800,
+    "height": 1200,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/the-long-table/cover-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/the-long-table/cover-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/the-long-table/cover-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/the-long-table/cover-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/the-long-table/cover-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/the-long-table/cover-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/the-long-table/cover-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/the-long-table/cover-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/weather-for-a-room/01.jpg": {
+    "width": 1800,
+    "height": 1200,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/weather-for-a-room/01-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/01-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/01-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/01-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/weather-for-a-room/01-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/01-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/01-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/01-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/weather-for-a-room/02.jpg": {
+    "width": 1800,
+    "height": 1440,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/weather-for-a-room/02-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/02-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/02-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/02-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/weather-for-a-room/02-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/02-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/02-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/02-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/weather-for-a-room/03.jpg": {
+    "width": 1200,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/weather-for-a-room/03-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/03-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/03-1200.avif",
+          "width": 1200
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/weather-for-a-room/03-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/03-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/03-1200.webp",
+          "width": 1200
+        }
+      ]
+    }
+  },
+  "works/weather-for-a-room/04.jpg": {
+    "width": 1800,
+    "height": 1800,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/weather-for-a-room/04-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/04-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/04-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/04-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/weather-for-a-room/04-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/04-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/04-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/04-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/weather-for-a-room/05.jpg": {
+    "width": 1800,
+    "height": 1440,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/weather-for-a-room/05-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/05-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/05-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/05-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/weather-for-a-room/05-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/05-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/05-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/05-1800.webp",
+          "width": 1800
+        }
+      ]
+    }
+  },
+  "works/weather-for-a-room/cover.jpg": {
+    "width": 1800,
+    "height": 1200,
+    "formats": {
+      "avif": [
+        {
+          "src": "/media/derived/works/weather-for-a-room/cover-480.avif",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/cover-768.avif",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/cover-1200.avif",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/cover-1800.avif",
+          "width": 1800
+        }
+      ],
+      "webp": [
+        {
+          "src": "/media/derived/works/weather-for-a-room/cover-480.webp",
+          "width": 480
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/cover-768.webp",
+          "width": 768
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/cover-1200.webp",
+          "width": 1200
+        },
+        {
+          "src": "/media/derived/works/weather-for-a-room/cover-1800.webp",
           "width": 1800
         }
       ]

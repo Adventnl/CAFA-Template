@@ -7,3 +7,12 @@
   display: grid;
   row-gap: var(--space-xl);
 }
+
+/*
+ * The receiving end of the works index. The same name is on the index's hover
+ * backdrop, so the browser pairs the two and moves one photograph from full
+ * bleed to this column instead of crossfading two. styles/motion.css times it.
+ */
+.hero {
+  view-transition-name: var(--vt-cover);
+}

@@ -9,7 +9,50 @@
   background-color: var(--c-paper);
   inset-block-start: 0;
   position: sticky;
+  /* Lifts the header out of the page snapshot during a navigation so it can be
+     held still. What that name then does is in styles/motion.css. */
+  view-transition-name: var(--vt-header);
   z-index: 2;
+}
+
+/*
+ * The rule under the header only exists once the page has moved. At the top
+ * there is nothing to separate the header from and the line is one mark the
+ * design does not need; a scroll away it is what stops the bar dissolving into
+ * the content passing behind it.
+ *
+ * A scroll() timeline rather than a listener: no JS, and the browser runs it on
+ * the compositor. CLAUDE.md §7 rules out scroll handlers for exactly this.
+ */
+.header::after {
+  background-color: var(--c-ink-16);
+  block-size: 1px;
+  content: '';
+  inset-block-end: 0;
+  inset-inline: 0;
+  opacity: 0;
+  position: absolute;
+}
+
+@supports (animation-timeline: scroll()) {
+  .header::after {
+    animation: header-rule linear both;
+    animation-range: 0 var(--space-xl);
+    animation-timeline: scroll();
+  }
+}
+
+@keyframes header-rule {
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header::after {
+    animation: none !important;
+    opacity: 1 !important;
+  }
 }
 
 .bar {
