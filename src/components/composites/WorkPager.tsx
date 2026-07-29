@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { Text } from '@/components/primitives/Text';
+import { scenes, sceneAttrs } from '@/lib/choreography';
 import { routes } from '@/lib/routes';
 import type { Locale, Work } from '@/lib/types';
 
@@ -24,7 +25,11 @@ export function WorkPager({
   className,
 }: WorkPagerProps) {
   return (
-    <nav aria-label={navLabel} className={[styles.pager, className].filter(Boolean).join(' ')}>
+    <nav
+      aria-label={navLabel}
+      className={[styles.pager, className].filter(Boolean).join(' ')}
+      {...sceneAttrs(scenes.workPager)}
+    >
       <Step locale={locale} work={previous} label={labels.previous} />
       <Step locale={locale} work={next} label={labels.next} align="end" />
     </nav>

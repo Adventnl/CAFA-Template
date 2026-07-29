@@ -1,0 +1,32 @@
+/*
+ * enter-work — the index opening a work. MOTION.md §3, the move the whole site
+ * is judged on.
+ *
+ * The cover carries the eye: it morphs from the full-bleed backdrop into the
+ * media column (styles/motion/base.css times that, the same photograph moving,
+ * paired by cover-{slug}). Around it, the detail's own parts arrive *after* the
+ * cover has set out, so the page assembles rather than appearing at once — the
+ * metadata rises in behind the photograph, and the pager last of all, from
+ * below. The index's "Works" heading has no counterpart here, so it leaves.
+ *
+ * The full §3 choreography — the thirteen unclicked rows unzipping, the list
+ * compressing into a persistent rail — needs the rail, which is Phase 6. This is
+ * the cover-and-parts spine it hangs on.
+ */
+
+/* The old section heading ("Works") fades as the surface recedes under it. */
+:root[data-figure='enter-work']::view-transition-old(heading) {
+  animation: var(--dur-base) var(--ease-io) both vt-fade-out;
+}
+
+/* The metadata rises in behind the cover, once the cover is on its way. */
+:root[data-figure='enter-work']::view-transition-new(meta) {
+  animation: var(--dur-slow) var(--ease-lead) var(--figure-lead) both vt-rise-in;
+}
+
+/* The pager last, from below — the detail is fully settled only when it lands.
+   One stagger step behind the metadata, so the two do not arrive together. */
+:root[data-figure='enter-work']::view-transition-new(pager) {
+  animation: var(--dur-slow) var(--ease-lead) calc(var(--figure-lead) + var(--stagger-step)) both
+    vt-rise-in;
+}

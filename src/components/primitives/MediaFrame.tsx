@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 import type { ImageEntry, ImageVariant } from '@/lib/image-manifest';
 
 import styles from './MediaFrame.module.css';
@@ -14,6 +16,8 @@ interface MediaFrameProps {
   /** The one image above the fold on a given page. Everything else stays lazy. */
   priority?: boolean;
   className?: string;
+  /** So a caller can set a per-slug view-transition-name (the touch cover morph). */
+  style?: CSSProperties;
 }
 
 const srcset = (variants: ImageVariant[]) =>
@@ -25,12 +29,19 @@ const srcset = (variants: ImageVariant[]) =>
  * the manifest — which would put every derivative URL on the site into the
  * bundle. Media wraps it for the server case.
  */
-export function MediaFrame({ entry, alt, sizes, priority = false, className }: MediaFrameProps) {
+export function MediaFrame({
+  entry,
+  alt,
+  sizes,
+  priority = false,
+  className,
+  style,
+}: MediaFrameProps) {
   const fallback = entry.formats.webp.at(-1);
   if (fallback === undefined) throw new Error('An image entry has no WebP derivatives');
 
   return (
-    <picture className={[styles.frame, className].filter(Boolean).join(' ')}>
+    <picture className={[styles.frame, className].filter(Boolean).join(' ')} style={style}>
       <source type="image/avif" srcSet={srcset(entry.formats.avif)} sizes={sizes} />
       <source type="image/webp" srcSet={srcset(entry.formats.webp)} sizes={sizes} />
       {/* width/height give the browser the ratio, so there is no wrapper box

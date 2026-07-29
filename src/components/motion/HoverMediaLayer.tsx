@@ -20,7 +20,19 @@ import styles from './HoverMediaLayer.module.css';
  */
 type Slots = { front: 0 | 1; entries: [ImageEntry | null, ImageEntry | null] };
 
-export function HoverMediaLayer({ entry }: { entry: ImageEntry | null }) {
+interface HoverMediaLayerProps {
+  entry: ImageEntry | null;
+  /**
+   * The per-slug morph name for the cover currently shown, or undefined when
+   * nothing is previewed. Set on the layer (not a slot) so the paper veil below
+   * travels with the photograph and the picture comes up to strength as it
+   * arrives rather than snapping. Undefined means the layer is not a transition
+   * element at all — there is nothing to carry. MOTION.md §3.
+   */
+  name?: string;
+}
+
+export function HoverMediaLayer({ entry, name }: HoverMediaLayerProps) {
   const [slots, setSlots] = useState<Slots>({ front: 0, entries: [null, null] });
 
   // Derived during render, which React re-runs without committing the first
@@ -33,7 +45,12 @@ export function HoverMediaLayer({ entry }: { entry: ImageEntry | null }) {
   }
 
   return (
-    <div className={styles.layer} data-visible={entry === null ? undefined : ''} aria-hidden="true">
+    <div
+      className={styles.layer}
+      data-visible={entry === null ? undefined : ''}
+      aria-hidden="true"
+      style={{ viewTransitionName: name }}
+    >
       {slots.entries.map((slot, index) => {
         const fallback = slot?.formats.webp.at(-1);
         if (slot === null || fallback === undefined) return null;

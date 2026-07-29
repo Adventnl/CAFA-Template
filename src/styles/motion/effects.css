@@ -1,0 +1,217 @@
+/*
+ * The effect vocabulary. MOTION.md §5.4.
+ *
+ * An effect is one keyframe set plus a depth (0–3) that scales its magnitude, so
+ * one definition yields four behaviours. The effect only ever names its keyframes
+ * (into --eff-name) and sets its parameters; the *trigger* (styles/motion/
+ * triggers.css) is what binds that name to a timeline and a range. So an element
+ * with an effect but no trigger holds still — there is no timeline to drive it —
+ * which is why the effect never sets animation-name itself.
+ *
+ * Composition is by nesting, not by stacking two effects on one element: "focus
+ * + drift" is a focus scene wrapping a drift scene (the Focus component over the
+ * Parallax frame), each animating its own element. Only transform, opacity,
+ * filter and clip-path move — CLAUDE.md §7.
+ */
+
+/* The depth scalar every magnitude below multiplies by. */
+[data-scene] {
+  --eff-depth: var(--depth-1);
+}
+[data-depth='0'] {
+  --eff-depth: var(--depth-0);
+}
+[data-depth='1'] {
+  --eff-depth: var(--depth-1);
+}
+[data-depth='2'] {
+  --eff-depth: var(--depth-2);
+}
+[data-depth='3'] {
+  --eff-depth: var(--depth-3);
+}
+
+/* ── Which keyframes each effect runs, and its parameters ─────────────────── */
+
+[data-effect='rise'] {
+  --eff-name: eff-rise;
+}
+[data-effect='fall'] {
+  --eff-name: eff-fall;
+}
+[data-effect='slide'] {
+  --eff-name: eff-slide;
+  /* Which way a slide comes from. On its own it leans from the leading edge
+     (-1, the left); an `enter` scene ties it to the navigation direction instead,
+     so a page that arrives from the right slides in from the right. §5.4. */
+  --slide-sign: -1;
+}
+[data-scene='enter'][data-effect='slide'] {
+  --slide-sign: var(--nav-sign);
+}
+[data-effect='drift'] {
+  --eff-name: eff-drift;
+}
+[data-effect='unmask'] {
+  --eff-name: eff-unmask;
+}
+[data-effect='dim'] {
+  --eff-name: eff-dim;
+}
+[data-effect='tilt'] {
+  --eff-name: eff-tilt;
+}
+[data-effect='recede'] {
+  --eff-name: eff-recede;
+}
+
+/* Focus keeps a distinct min-scale and blur per depth; §6 tunes them by hand. */
+[data-effect='focus'] {
+  --eff-name: eff-focus;
+  --f-min: var(--focus-min-2);
+  --f-blur: var(--focus-blur-2);
+}
+[data-effect='focus'][data-depth='0'] {
+  --f-min: var(--focus-min-0);
+  --f-blur: var(--focus-blur-0);
+}
+[data-effect='focus'][data-depth='1'] {
+  --f-min: var(--focus-min-1);
+  --f-blur: var(--focus-blur-1);
+}
+[data-effect='focus'][data-depth='3'] {
+  --f-min: var(--focus-min-3);
+  --f-blur: var(--focus-blur-3);
+}
+
+/* Blur is desktop-only and the first term to drop if the frame budget moves. §6. */
+@media (width < 1024px) {
+  [data-effect='focus'] {
+    --f-blur: 0px;
+  }
+}
+
+/* ── The keyframes ────────────────────────────────────────────────────────── */
+
+/* A settle in from below / a settle out downward. */
+@keyframes eff-rise {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--eff-rise) * var(--eff-depth)));
+  }
+}
+@keyframes eff-fall {
+  to {
+    opacity: 0;
+    transform: translateY(calc(var(--eff-rise) * var(--eff-depth)));
+  }
+}
+
+/* A slide in from the side, leaning the way the navigation is going. */
+@keyframes eff-slide {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--eff-slide) * var(--eff-depth) * var(--slide-sign)));
+  }
+}
+
+/*
+ * The focus curve — biggest at the centre of its pass, shrinking away at both
+ * edges, continuous and symmetric so it reads the same scrolling up or down. §6.
+ */
+@keyframes eff-focus {
+  from {
+    opacity: var(--focus-dim);
+    transform: scale(var(--f-min));
+    filter: blur(var(--f-blur));
+  }
+  50% {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+  to {
+    opacity: var(--focus-dim);
+    transform: scale(var(--f-min));
+    filter: blur(var(--f-blur));
+  }
+}
+
+/* Internal pan inside a clipped frame — the drift half of a focus/drift pair. */
+@keyframes eff-drift {
+  from {
+    transform: translateY(calc(var(--drift) * var(--eff-depth)));
+  }
+  to {
+    transform: translateY(calc(var(--drift) * var(--eff-depth) * -1));
+  }
+}
+
+/* A clip-path wipe, top to bottom, with the opacity coming up under it. */
+@keyframes eff-unmask {
+  from {
+    opacity: 0;
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* For a thing losing attention: it dims toward the floor, never to nothing. */
+@keyframes eff-dim {
+  to {
+    opacity: var(--dim);
+  }
+}
+
+/* A hair of rotation as it passes, perspective supplied by the trigger. */
+@keyframes eff-tilt {
+  from {
+    transform: rotate3d(1, 0, 0, calc(var(--eff-tilt) * var(--eff-depth)));
+  }
+  to {
+    transform: rotate3d(1, 0, 0, calc(var(--eff-tilt) * var(--eff-depth) * -1));
+  }
+}
+
+/* Scale and dim on the way out — the same figure a navigation makes. */
+@keyframes eff-recede {
+  to {
+    opacity: var(--recede-fade);
+    transform: scale(var(--recede-scale));
+  }
+}
+
+/*
+ * Shear is not keyframed: it reads the live scroll velocity ScrollField writes
+ * and answers immediately, so media leans a fraction of a degree into a fast
+ * scroll and settles the instant it stops. It composes with a focus/drift pair
+ * by sitting on its own element. MOTION.md §4, §5.4.
+ */
+@supports (animation-timeline: view()) {
+  [data-effect='shear'] {
+    transform: scaleY(calc(1 + var(--scroll-v) * var(--eff-shear) * var(--eff-depth)));
+    transform-origin: 50% 50%;
+  }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────── */
+
+/*
+ * globals.css collapses durations, but a scroll-driven animation is position-,
+ * not time-driven, so a zero duration does not stop it — it has to be cancelled
+ * outright and the resting state stated. The same trap Reveal already handles;
+ * every effect repeats it. MOTION.md §9.
+ */
+@media (prefers-reduced-motion: reduce) {
+  [data-scene],
+  [data-scene] > * {
+    animation: none !important;
+    clip-path: none !important;
+    filter: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

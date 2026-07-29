@@ -1,0 +1,26 @@
+/*
+ * exit-work — a work closing back to the index. MOTION.md §3: "exit-work is this
+ * sequence reversed, which is why the back button will stop feeling like a
+ * different animation." The parts leave in the reverse order they arrived — pager
+ * and metadata settle down and out first — and the index's heading returns. The
+ * old cover has no counterpart on the index (nothing is previewed on arrival), so
+ * base.css fades it rather than morphing it.
+ *
+ * The common way out of a work is the back button, which is `restore`, not this;
+ * this is the forward exit, a click on a link back to the index.
+ */
+
+/* The returning section heading fades in as the surface arrives under it. */
+:root[data-figure='exit-work']::view-transition-new(heading) {
+  animation: var(--dur-slow) var(--ease-out) var(--figure-lead) both vt-fade-in;
+}
+
+/* The metadata falls away first. */
+:root[data-figure='exit-work']::view-transition-old(meta) {
+  animation: var(--dur-base) var(--ease-io) both vt-fall-out;
+}
+
+/* The pager with it, a touch sooner — it was the last thing in. */
+:root[data-figure='exit-work']::view-transition-old(pager) {
+  animation: var(--dur-base) var(--ease-io) both vt-fall-out;
+}

@@ -16,6 +16,7 @@ export const zh = {
     primaryNav: '主导航',
     localeSwitch: '切换语言',
     worksList: '作品目录',
+    worksRail: '作品编号',
     workPager: '作品导航',
   },
 

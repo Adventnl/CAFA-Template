@@ -1,0 +1,16 @@
+/*
+ * locale — the same page in the other language. MOTION.md §2. It is not a
+ * journey: the reader is standing still and the words change under them, so the
+ * surface only cross-fades, without the scale a navigation carries. The shared
+ * parts (a heading, a work's metadata, its cover) pair by name across the switch
+ * — same box, changed text — so base.css cross-fades their content in place and
+ * a cover that is the very same photograph simply holds.
+ */
+
+:root[data-figure='locale']::view-transition-old(.stage) {
+  animation: var(--dur-base) var(--ease-io) both vt-fade-out;
+}
+
+:root[data-figure='locale']::view-transition-new(.stage) {
+  animation: var(--dur-base) var(--ease-io) both vt-fade-in;
+}

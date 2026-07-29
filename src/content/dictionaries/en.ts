@@ -13,6 +13,7 @@ export const en: Dictionary = {
     primaryNav: 'Primary',
     localeSwitch: 'Change language',
     worksList: 'Index of works',
+    worksRail: 'Work numbers',
     workPager: 'Works navigation',
   },
 

@@ -117,16 +117,89 @@
 
   /*
    * Shared-element identities. A view-transition-name has to be the same ident
-   * in two different stylesheets for the browser to pair the elements up, so it
-   * is declared once here rather than written twice as a literal — CLAUDE.md §4.
+   * in the component that carries it and the figure stylesheet that animates it,
+   * so the structural ones are declared once here rather than written twice as a
+   * literal — CLAUDE.md §4, MOTION.md §3. The per-slug names (cover-{slug},
+   * rail-{slug}) cannot be tokens — there is one per work — and live in
+   * lib/vt-names.ts, set through inline style and matched by class.
+   *
+   * `stage` is not here: it is React's ViewTransition `default` class on the
+   * page surface, never set by a component, so it needs no token.
    */
   --vt-header: site-header;
-  --vt-cover: work-cover;
+  --vt-rail: rail;
+  --vt-heading: heading;
+  --vt-meta: meta;
+  --vt-pager: pager;
+  --vt-chrome-nav: chrome-nav;
+
+  /* The view-transition-class the per-slug parts carry, so one figure rule can
+     reach every work's cover (or rail entry) by class rather than by name. The
+     ident matches lib/vt-names.ts and the ::view-transition-group(.cover) selectors. */
+  --vt-class-cover: cover;
+  --vt-class-rail-entry: rail-entry;
 
   /* §6 Scroll-driven motion. Small numbers: the calm comes from barely moving. */
   --drift: 3.5%; /* how far media travels across one view() pass */
   --recede-scale: 0.94; /* what a block shrinks to as it leaves the top */
   --recede-fade: 0.35; /* and how far it dims, never to nothing */
+
+  /*
+   * MOTION.md §3, §9 — the navigation figures. One easing addition and one
+   * duration exception, both named in §9:
+   *   --ease-lead is overshoot-free, for a part that must arrive ahead of its
+   *     neighbours (the cover leads, the metadata follows). It never overshoots,
+   *     so it does not read as bouncy.
+   *   --dur-figure is the one duration over --dur-scene, and it is only for
+   *     enter-work / exit-work: a 720ms move with a stagger inside it needs the
+   *     headroom or it reads as clipped. Every other figure stays at or under
+   *     --dur-scene.
+   */
+  --ease-lead: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --dur-figure: 720ms;
+
+  --stage-shift: 6%; /* how far the page surface slides on a lateral/descend move */
+  --part-rise: 24px; /* how far a part (meta, pager) rises in as it arrives */
+  --figure-lead: 200ms; /* how long the cover leads before the parts arrive; §3 */
+
+  /*
+   * MOTION.md §4 — scroll as continuous state. ScrollField writes these each
+   * frame it is awake; the neutral resting values are declared here so an effect
+   * that reads them resolves to "not moving" before the loop runs, when it is
+   * parked, and if JavaScript never arrives at all.
+   */
+  --scroll-v: 0; /* smoothed signed velocity, clamped to ±1 */
+  --scroll-dir: 1; /* latched scroll direction, 1 down / -1 up */
+  --scroll-p: 0; /* progress through the document, 0…1 */
+  --px: 0.5; /* pointer x as a fraction of the viewport (desktop only) */
+  --py: 0.5; /* pointer y as a fraction of the viewport (desktop only) */
+
+  /*
+   * MOTION.md §5.4 / §6 — the effect magnitudes. Each effect travels this far at
+   * full depth; the depth scalar below multiplies it down, so one keyframe set
+   * yields four behaviours. The focus curve keeps a distinct min-scale and blur
+   * per depth because §6 tunes them individually rather than by a single scale.
+   */
+  --depth-0: 0.25; /* the four depths, as the fraction of full travel each takes */
+  --depth-1: 0.5;
+  --depth-2: 0.75;
+  --depth-3: 1;
+
+  --eff-slide: 2rem; /* slide travel at full depth */
+  --eff-rise: 2.5rem; /* rise / fall travel at full depth */
+  --eff-tilt: 1.5deg; /* tilt at full depth */
+  --eff-shear: 0.02; /* scaleY added per unit of scroll velocity */
+  --eff-unmask: 8%; /* how far a clip-path wipe starts open from */
+
+  --focus-dim: 0.55; /* how far media dims at the edges of its pass; §6 */
+  --focus-min-0: 0.96;
+  --focus-min-1: 0.92;
+  --focus-min-2: 0.88;
+  --focus-min-3: 0.82;
+  --focus-blur-0: 0px;
+  --focus-blur-1: 1px;
+  --focus-blur-2: 2px;
+  --focus-blur-3: 3px;
 
   /* §7 Component states */
   --focus-ring:

@@ -9,10 +9,14 @@
 }
 
 /*
- * The receiving end of the works index. The same name is on the index's hover
- * backdrop, so the browser pairs the two and moves one photograph from full
- * bleed to this column instead of crossfading two. styles/motion.css times it.
+ * The receiving end of the works index. Its per-slug view-transition-name is set
+ * inline (MediaSequence); this class adds the `cover` view-transition-class the
+ * figure stylesheets animate, so the browser pairs backdrop and hero by the same
+ * cover-{slug} and moves one photograph from full bleed into this column instead
+ * of crossfading two. The per-slug name is also what keeps two *different* works'
+ * covers from pairing when paging — cover-a has no cover-a to morph into on the
+ * next work, so it exits and the new one enters. MOTION.md §3.
  */
 .hero {
-  view-transition-name: var(--vt-cover);
+  view-transition-class: var(--vt-class-cover);
 }

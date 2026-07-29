@@ -28,6 +28,12 @@
    */
   .drift {
     animation: drift linear both;
+    /* Explicit, not inherited. MOTION.md §0.2: without this the range defaulted
+       to `cover 0% cover 100%` silently, and reading it off the default was how
+       the drift ended up compounding with a Reveal's downward offset at entry —
+       the "images drop down" defect. Stated here it is one pan across the whole
+       view() pass, centred at `cover 50%`, and nothing depends on a default. */
+    animation-range: cover 0% cover 100%;
     animation-timeline: view();
   }
 }

@@ -1,0 +1,110 @@
+/*
+ * The trigger vocabulary. MOTION.md §5.1–5.3.
+ *
+ * A trigger binds an effect's keyframes (named in --eff-name) to a timeline and
+ * a range — it is the "when", the effect is the "what". Everything here sits
+ * inside @supports (animation-timeline: view()), which is also the fallback:
+ * MOTION.md §5.6 wants old browsers to get a calm, static site, and that falls
+ * out for free — without the feature the trigger rules never apply, no
+ * animation-name is ever bound, and every scene simply shows its content at rest.
+ * No per-element JavaScript handler is the whole point (§5.7).
+ *
+ * The named-timeline mechanism (§5.1) — a `link` trigger declaring a timeline a
+ * different element consumes via timeline-scope — is the rail's in Phase 6, wired
+ * where the two ends are, rather than generalised here.
+ */
+
+@supports (animation-timeline: view()) {
+  /* scrub — tied to the whole view() pass, linear. ScrollTrigger scrub: true. */
+  [data-scene='scrub'] {
+    animation-name: var(--eff-name);
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-timeline: view();
+    animation-range: cover 0% cover 100%;
+  }
+
+  /* enter — plays once on the way in, non-linear. ScrollTrigger toggleActions. */
+  [data-scene='enter'] {
+    animation-name: var(--eff-name);
+    animation-fill-mode: both;
+    animation-timing-function: var(--ease-out);
+    animation-timeline: view();
+    /* Finishes before the element is centred; arriving at something already
+       read is a glitch, not motion. Same reasoning as the old Reveal. */
+    animation-range: entry 0% entry 80%;
+  }
+
+  /* progress — driven by the document scrollbar. animation-timeline: scroll(root). */
+  [data-scene='progress'] {
+    animation-name: var(--eff-name);
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-timeline: scroll(root);
+  }
+
+  /*
+   * batch — one shared timeline on the container, its children staggered along it
+   * by range rather than by delay (a scroll timeline ignores time delays). As the
+   * container enters, the children reveal in quick succession. ScrollTrigger.batch.
+   */
+  [data-scene='batch'] {
+    timeline-scope: --batch;
+    view-timeline-name: --batch;
+    view-timeline-axis: block;
+  }
+  [data-scene='batch'] > * {
+    animation-name: var(--eff-name);
+    animation-fill-mode: both;
+    animation-timing-function: var(--ease-out);
+    animation-timeline: --batch;
+    animation-range: entry 0% entry 50%;
+  }
+  [data-scene='batch'] > *:nth-child(2) {
+    animation-range: entry 6% entry 56%;
+  }
+  [data-scene='batch'] > *:nth-child(3) {
+    animation-range: entry 12% entry 62%;
+  }
+  [data-scene='batch'] > *:nth-child(4) {
+    animation-range: entry 18% entry 68%;
+  }
+  /* Beyond four the stagger caps, or a long list would still be arriving after
+     the reader has scrolled well past its top. */
+  [data-scene='batch'] > *:nth-child(n + 5) {
+    animation-range: entry 24% entry 74%;
+  }
+
+  /*
+   * pin / pin-scrub — a sticky child inside a tall track buys scroll distance
+   * while the child holds still. The component supplies the structure (a
+   * data-track wrapping a data-pinned); the trigger supplies the timeline. For
+   * pin-scrub the inner content is driven across exactly the pinned span
+   * (`contain`), which is the frames where the track fully covers the viewport.
+   */
+  [data-scene='pin'],
+  [data-scene='pin-scrub'] {
+    view-timeline-name: --pin;
+    view-timeline-axis: block;
+  }
+  [data-scene='pin'] [data-pinned],
+  [data-scene='pin-scrub'] [data-pinned] {
+    position: sticky;
+    inset-block-start: 0;
+  }
+  [data-scene='pin-scrub'] [data-pinned] > * {
+    animation-name: var(--eff-name);
+    animation-fill-mode: both;
+    animation-timing-function: linear;
+    animation-timeline: --pin;
+    animation-range: contain 0% contain 100%;
+  }
+
+  /* snap — nothing but scroll snapping on the section; ScrollTrigger snap. */
+  [data-scene='snap'] {
+    scroll-snap-type: y proximity;
+  }
+  [data-scene='snap'] > * {
+    scroll-snap-align: start;
+  }
+}

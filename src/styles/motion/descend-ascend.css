@@ -1,0 +1,33 @@
+/*
+ * descend / ascend — leaving the home page for a section, and coming back to it.
+ * MOTION.md §2. Home is the quiet, near-empty ground (DESIGN-SYSTEM.md §1); the
+ * sections sit "below" it in the site's mental model, so descending brings the
+ * next surface up from below and ascending lets it sink back down. Neither has a
+ * direction along the nav — the figure is the same however you got there.
+ */
+
+/* Descend: home fades, the section rises up into its place, heading after it. */
+:root[data-figure='descend']::view-transition-old(.stage) {
+  animation: var(--dur-base) var(--ease-io) both vt-fade-out;
+}
+
+:root[data-figure='descend']::view-transition-new(.stage) {
+  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-stage-up-in;
+}
+
+:root[data-figure='descend']::view-transition-new(heading) {
+  animation: var(--dur-slow) var(--ease-lead) var(--figure-lead) both vt-rise-in;
+}
+
+/* Ascend: the section sinks away, home fades back in underneath it. */
+:root[data-figure='ascend']::view-transition-old(.stage) {
+  animation: var(--dur-base) var(--ease-io) both vt-stage-down-out;
+}
+
+:root[data-figure='ascend']::view-transition-new(.stage) {
+  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-fade-in;
+}
+
+:root[data-figure='ascend']::view-transition-old(heading) {
+  animation: var(--dur-base) var(--ease-io) both vt-fall-out;
+}

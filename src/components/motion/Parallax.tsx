@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 import styles from './Parallax.module.css';
 
@@ -13,9 +13,18 @@ import styles from './Parallax.module.css';
  * No 'use client'. The entire behaviour is a scroll-driven animation, which
  * means the browser runs it on the compositor and this ships nothing at all.
  */
-export function Parallax({ children, className }: { children: ReactNode; className?: string }) {
+export function Parallax({
+  children,
+  className,
+  style,
+}: {
+  children: ReactNode;
+  className?: string;
+  /** So the frame can carry a per-slug view-transition-name (the media hero). */
+  style?: CSSProperties;
+}) {
   return (
-    <div className={[styles.frame, className].filter(Boolean).join(' ')}>
+    <div className={[styles.frame, className].filter(Boolean).join(' ')} style={style}>
       <div className={styles.drift}>{children}</div>
     </div>
   );

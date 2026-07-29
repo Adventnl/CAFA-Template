@@ -1,0 +1,247 @@
+/*
+ * The navigation figures. MOTION.md §2–§3.
+ *
+ * Every ::view-transition-* rule on the site lives under styles/motion/, because
+ * the pseudo-element tree is document-scoped — it hangs off :root, not off any
+ * component, so a CSS Module cannot reach it. This file is the shared ground the
+ * per-figure files build on: the quiet cross-fade of the page surface, the parts
+ * that never move, the keyframes the figures reuse, and the reduced-motion
+ * bypass. Each figure file then overrides the parts that should move, keyed off
+ * the `data-figure` NavStage writes onto <html>.
+ *
+ * The division of labour: `stage` (the page surface) only ever cross-fades — it
+ * carries all the un-named content, whose two snapshots differ in height, and a
+ * cross-fade is the one move that does not stretch that mismatch. The visible
+ * choreography rides on the *parts* (heading, meta, pager, covers, chrome-nav),
+ * whose two snapshots share a geometry and so can be moved without distortion.
+ * Nothing here animates anything but transform, opacity and filter — CLAUDE.md §7.
+ */
+
+/* The sign of the current navigation, so a keyframe can lean the right way. */
+:root {
+  --nav-sign: 1;
+}
+:root[data-dir='-1'] {
+  --nav-sign: -1;
+}
+
+/* ── The keyframes the figures share ─────────────────────────────────────── */
+
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* A part arriving: it rises the last few pixels into place as it fades in. */
+@keyframes vt-rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--part-rise));
+  }
+}
+
+/* A part leaving: it settles down and out, the reverse of the arrival. */
+@keyframes vt-fall-out {
+  to {
+    opacity: 0;
+    transform: translateY(var(--part-rise));
+  }
+}
+
+/* The page surface receding / arriving — a hair of scale under the cross-fade. */
+@keyframes vt-stage-recede {
+  to {
+    opacity: 0;
+    transform: scale(var(--page-recede));
+  }
+}
+
+@keyframes vt-stage-arrive {
+  from {
+    opacity: 0;
+    transform: scale(var(--page-arrive));
+  }
+}
+
+/* The surface coming up from below (descend) or sinking away (ascend). */
+@keyframes vt-stage-up-in {
+  from {
+    opacity: 0;
+    transform: translateY(var(--stage-shift));
+  }
+}
+
+@keyframes vt-stage-down-out {
+  to {
+    opacity: 0;
+    transform: translateY(var(--stage-shift));
+  }
+}
+
+/* Lateral: the surface leans out against the direction of travel and the next
+   leans in with it, so a rightward move reads as rightward. */
+@keyframes vt-slide-lead-out {
+  to {
+    opacity: 0;
+    transform: translateX(calc(var(--stage-shift) * var(--nav-sign) * -1));
+  }
+}
+
+@keyframes vt-slide-lead-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(var(--stage-shift) * var(--nav-sign)));
+  }
+}
+
+/* The blur at the midpoint of a cover morph, hiding the resample between two
+   very different rectangles and resolving to nothing at both ends. */
+@keyframes vt-morph-soften {
+  40% {
+    filter: blur(var(--morph-soften));
+  }
+}
+
+/* ── The page surface: a cross-fade that does not stretch ─────────────────── */
+
+/*
+ * height: auto is the whole trick. Without it a snapshot is stretched to fill
+ * its group box (object-fit defaults to fill), so a 2200px index squashed into a
+ * 5500px detail box is the "squashed rubber" of MOTION.md §0.1. Held to their
+ * own heights and top-anchored, the two surfaces cross-fade instead. The group
+ * is pinned so it does not tween between the two heights either.
+ */
+::view-transition-group(.stage) {
+  animation: none;
+}
+
+::view-transition-old(.stage),
+::view-transition-new(.stage) {
+  block-size: auto;
+  inset-block-start: 0;
+}
+
+::view-transition-old(.stage) {
+  animation: var(--dur-base) var(--ease-io) both vt-stage-recede;
+}
+
+::view-transition-new(.stage) {
+  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-stage-arrive;
+}
+
+/* ── The chrome that does not travel ──────────────────────────────────────── */
+
+/*
+ * The header is identical on every page, so moving it would be motion carrying
+ * no information — and it is the one fixed thing the eye can hold while the
+ * content moves. display: none on the old snapshot rather than opacity: the two
+ * are pixel-identical, and painting both at once doubles the type's antialiasing.
+ */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 20;
+}
+
+::view-transition-old(site-header) {
+  display: none;
+}
+
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+/* The nav list is pinned by default; only `lateral` gives it a move. */
+::view-transition-group(chrome-nav) {
+  animation: none;
+  z-index: 21;
+}
+
+/* ── The rail: the works index compressing into a column ──────────────────── */
+
+/*
+ * The full-width list and the compressed number column carry the same name, so
+ * the browser interpolates one into the other — the list is seen to compress
+ * rather than crossfade. block-size: auto keeps the two from stretching to each
+ * other's very different heights while the box narrows. The chosen number is a
+ * part of its own (.rail-entry) and travels ahead, on the lead easing. §7.
+ */
+::view-transition-group(rail) {
+  animation-duration: var(--dur-scene);
+  animation-timing-function: var(--ease-io);
+  z-index: 3;
+}
+
+::view-transition-old(rail),
+::view-transition-new(rail) {
+  block-size: auto;
+  inset-block-start: 0;
+}
+
+::view-transition-group(.rail-entry) {
+  animation-duration: var(--dur-figure);
+  animation-timing-function: var(--ease-lead);
+  z-index: 6;
+}
+
+/* ── z-order of the parts ─────────────────────────────────────────────────── */
+
+/* A cover is media and sits behind everything; text parts sit above it. */
+::view-transition-group(.cover) {
+  z-index: 1;
+}
+
+::view-transition-group(heading),
+::view-transition-group(meta),
+::view-transition-group(pager) {
+  z-index: 4;
+}
+
+/* ── The default cover morph ──────────────────────────────────────────────── */
+
+/*
+ * When one work's cover is present on both sides — the index backdrop and the
+ * detail hero, paired by cover-{slug} — the browser moves one photograph from
+ * full bleed into the media column. The blur softens the middle of that flight.
+ * A cover with no partner (a different work, or none) just fades, below.
+ */
+::view-transition-group(.cover) {
+  animation-duration: var(--dur-scene);
+  animation-timing-function: var(--ease-io);
+}
+
+::view-transition-image-pair(.cover) {
+  animation: var(--dur-scene) var(--ease-io) both vt-morph-soften;
+}
+
+::view-transition-old(.cover):only-child {
+  animation: var(--dur-scene) var(--ease-io) both vt-fade-out;
+}
+
+::view-transition-new(.cover):only-child {
+  animation: var(--dur-scene) var(--ease-io) both vt-fade-in;
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────── */
+
+/*
+ * globals.css collapses every duration under this query, but its rule is written
+ * against `*`, and a universal selector does not match a pseudo-element. Without
+ * this the whole transition would still play at full length for exactly the
+ * people who asked it not to. MOTION.md §9.
+ */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-image-pair(*) {
+    animation-delay: 0s !important;
+    animation-duration: 0s !important;
+  }
+}

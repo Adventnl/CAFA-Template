@@ -1,0 +1,72 @@
+/*
+ * The compressed rail. MOTION.md §7.
+ *
+ * Not rendered below --bp-lg — a rail on a phone costs width it cannot afford,
+ * and the pager answers the same question there. This is a real decision, not an
+ * omission, so it is a plain display: none rather than something conditional.
+ */
+.rail {
+  display: none;
+}
+
+@media (width >= 1024px) {
+  .rail {
+    /* A sticky full-height column at the far left; the metadata panel moves
+       inboard (the detail page's grid) to make room. */
+    align-self: start;
+    display: block;
+    inset-block-start: var(--space-header);
+    position: sticky;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    row-gap: var(--space-3xs);
+    /* Same name as the full list, so the two interpolate. */
+    view-transition-name: var(--vt-rail);
+  }
+
+  .entry {
+    align-items: baseline;
+    column-gap: var(--space-xs);
+    display: flex;
+    min-block-size: var(--tap-min);
+  }
+
+  .link {
+    align-items: center;
+    color: var(--c-ink-62);
+    display: inline-flex;
+    min-block-size: var(--tap-min);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-io);
+  }
+
+  .link[data-private] {
+    cursor: default;
+  }
+
+  /* The active number holds full ink; the rest sit back, the ium inversion. */
+  .entry[data-active] .link,
+  .entry[data-active] .number {
+    color: var(--c-ink);
+  }
+
+  .title {
+    color: var(--c-ink-70);
+  }
+
+  .railEntry {
+    view-transition-class: var(--vt-class-rail-entry);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    color: var(--c-ink);
+  }
+}

@@ -1,0 +1,20 @@
+/*
+ * The navigation figures, imported once. MOTION.md §3 keeps these split by figure
+ * — one file per figure, plus the shared base — because forty-odd keyframe sets
+ * in a single file would be unnavigable, and because ::view-transition-* is
+ * document-scoped and cannot live in a CSS Module. base.css first: it holds the
+ * defaults the figures override, and its overrides are keyed by :root[data-figure]
+ * so they win on specificity regardless of order.
+ */
+@import './base.css';
+@import './enter-work.css';
+@import './exit-work.css';
+@import './step-work.css';
+@import './lateral.css';
+@import './descend-ascend.css';
+@import './locale.css';
+@import './restore.css';
+
+/* §5 the trigger system: effects (the "what") then triggers (the "when"). */
+@import './effects.css';
+@import './triggers.css';

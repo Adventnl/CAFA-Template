@@ -33,13 +33,14 @@
 }
 
 /*
- * The touch half of the shared-element morph. Where there is a hover backdrop
- * this element is display: none a few rules down, so it is never captured and
- * never collides with the backdrop over the same name — only one of the two is
- * ever rendered on a given device.
+ * The touch half of the cover morph. Its per-slug name is set inline; this class
+ * adds the `cover` view-transition-class the figure stylesheets animate. Where
+ * there is a hover backdrop this element is display: none a few rules down, so it
+ * is never captured and never collides with the backdrop over the same name —
+ * only one of the two is ever rendered on a given device.
  */
 .morphing {
-  view-transition-name: var(--vt-cover);
+  view-transition-class: var(--vt-class-cover);
 }
 
 /*
@@ -56,6 +57,12 @@
 
 .number {
   color: var(--c-ink-62);
+}
+
+/* The chosen number's per-slug name is inline; this adds the class the rail
+   figure targets, so it can travel independently of the row around it. §7. */
+.railEntry {
+  view-transition-class: var(--vt-class-rail-entry);
 }
 
 .discipline {

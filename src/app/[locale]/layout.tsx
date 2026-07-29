@@ -3,14 +3,18 @@ import type { ReactNode } from 'react';
 
 import { SiteFooter } from '@/components/composites/SiteFooter';
 import { SiteHeader } from '@/components/composites/SiteHeader';
+import { NavStage } from '@/components/motion/NavStage';
 import { PageTransition } from '@/components/motion/PageTransition';
+import { ScrollField } from '@/components/motion/ScrollField';
 import { Text } from '@/components/primitives/Text';
-import { getDictionary, getSite, requireLocale } from '@/lib/content';
+import { getDictionary, getSite, getWorks, requireLocale } from '@/lib/content';
+import { sectionSegment, type NavContext } from '@/lib/nav-intent';
+import { routes } from '@/lib/routes';
 
 import '@/styles/tokens.css';
 import '@/styles/fonts.css';
 import '@/styles/globals.css';
-import '@/styles/motion.css';
+import '@/styles/motion/index.css';
 import styles from './layout.module.css';
 
 /**
@@ -41,6 +45,24 @@ export async function generateMetadata({
   };
 }
 
+/**
+ * The lookup NavStage classifies against, built from content on the server so
+ * the works registry never has to reach the client to answer "which way is one
+ * work from another". Locale-independent — the probe locale only shapes paths.
+ */
+function navContext(): NavContext {
+  const site = getSite();
+  const probe = site.locales[0];
+  return {
+    locales: site.locales,
+    worksSection: sectionSegment(routes.work(probe, 'x')) ?? '',
+    workIndex: Object.fromEntries(getWorks().map((work) => [work.slug, work.index])),
+    sectionOrder: site.nav
+      .map((item) => sectionSegment(item.href(probe)))
+      .filter((segment): segment is string => segment !== undefined),
+  };
+}
+
 export default async function LocaleLayout({ children, params }: LocaleLayoutProps) {
   const locale = requireLocale((await params).locale);
   const site = getSite();
@@ -60,6 +82,12 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         />
       </head>
       <body>
+        {/* Both render nothing. NavStage writes each navigation's figure onto
+            <html> before the transition and owns scroll restoration (§2);
+            ScrollField publishes scroll velocity, direction and progress as
+            custom properties for the effects to read (§4). */}
+        <NavStage context={navContext()} />
+        <ScrollField />
         <a href="#main" className={styles.skip}>
           <Text role="label" as="span">
             {dictionary.a11y.skipToContent}

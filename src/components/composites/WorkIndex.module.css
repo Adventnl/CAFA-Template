@@ -17,4 +17,8 @@
   padding: 0;
   position: relative;
   z-index: 1;
+  /* The rail. The compressed number column on a work's own page answers to the
+     same name, so the browser interpolates the full-width list into that column
+     rather than crossfading them — the list genuinely compresses. MOTION.md §7. */
+  view-transition-name: var(--vt-rail);
 }

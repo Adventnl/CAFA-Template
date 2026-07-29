@@ -1,4 +1,5 @@
 import { Text } from '@/components/primitives/Text';
+import { scenes, sceneAttrs } from '@/lib/choreography';
 import type { Dictionary } from '@/lib/content';
 import type { Locale, SiteContent } from '@/lib/types';
 
@@ -20,7 +21,10 @@ export function ContactBlock({ site, locale, labels, className }: ContactBlockPr
   const { contact } = site;
 
   return (
-    <div className={[styles.block, className].filter(Boolean).join(' ')}>
+    <div
+      className={[styles.block, className].filter(Boolean).join(' ')}
+      {...sceneAttrs(scenes.contact)}
+    >
       <Text role="title" as="p" className={styles.email}>
         <a href={`mailto:${contact.email}`} className={styles.link}>
           {contact.email}

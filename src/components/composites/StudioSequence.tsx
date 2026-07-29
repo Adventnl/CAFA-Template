@@ -1,6 +1,7 @@
+import { Focus } from '@/components/motion/Focus';
 import { Parallax } from '@/components/motion/Parallax';
-import { Reveal } from '@/components/motion/Reveal';
 import { Media } from '@/components/primitives/Media';
+import { scenes } from '@/lib/choreography';
 import type { ImageRef, Locale } from '@/lib/types';
 
 import styles from './StudioSequence.module.css';
@@ -24,14 +25,15 @@ export function StudioSequence({ images, locale, className }: StudioSequenceProp
   return (
     <div className={[styles.sequence, className].filter(Boolean).join(' ')}>
       {images.map((image) => (
-        <Reveal key={image.src}>
+        // Full-bleed plates take the deepest focus (§6, depth 3). No entrance —
+        // they focus as they pass. None is ever the LCP element: the statement
+        // above them owns the first screen, which page.module.css enforces.
+        <Focus key={image.src} depth={scenes.studioPlate.depth}>
           <Parallax>
-            {/* Full bleed at every width, so `sizes` can only be 100vw. None of
-                these is ever the LCP element: the statement above them owns the
-                first screen, which is what page.module.css enforces. */}
+            {/* Full bleed at every width, so `sizes` can only be 100vw. */}
             <Media image={image} locale={locale} sizes="100vw" className={styles.plate} />
           </Parallax>
-        </Reveal>
+        </Focus>
       ))}
     </div>
   );

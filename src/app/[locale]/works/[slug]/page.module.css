@@ -3,10 +3,17 @@
   row-gap: var(--space-2xl);
 }
 
+.rail,
 .meta,
 .media,
 .pager {
   grid-column: 1 / -1;
+}
+
+/* The sticky metadata column is its own part: it rises in after the cover on
+   enter-work, and stays pinned while paging between works. §3. */
+.meta {
+  view-transition-name: var(--vt-meta);
 }
 
 .pager {
@@ -14,8 +21,15 @@
 }
 
 @media (width >= 1024px) {
+  /* The rail takes the far-left track; the metadata moves inboard to make room,
+     the media column stays where it was. MOTION.md §7. */
+  .rail {
+    grid-column: 1 / 2;
+    grid-row: 1;
+  }
+
   .meta {
-    grid-column: 1 / 5;
+    grid-column: 2 / 6;
   }
 
   .media {

@@ -1,6 +1,9 @@
 .heading {
   grid-column: 1 / -1;
   margin-block-end: var(--space-xl);
+  /* The section h1 is its own part, so a lateral move carries it across —
+     Works → Programmes → About slide together rather than cutting. §3. */
+  view-transition-name: var(--vt-heading);
 }
 
 @media (width >= 768px) {

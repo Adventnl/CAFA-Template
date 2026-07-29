@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { MediaSequence } from '@/components/composites/MediaSequence';
 import { WorkMetaPanel } from '@/components/composites/WorkMetaPanel';
 import { WorkPager } from '@/components/composites/WorkPager';
+import { WorkRail } from '@/components/composites/WorkRail';
 import { StickyColumn } from '@/components/motion/StickyColumn';
 import { Grid } from '@/components/primitives/Grid';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -14,6 +15,7 @@ import {
   getSite,
   getWork,
   getWorkNeighbours,
+  getWorks,
   requireLocale,
 } from '@/lib/content';
 import { creativeWorkJsonLd } from '@/lib/json-ld';
@@ -58,6 +60,13 @@ export default async function WorkPage({ params }: WorkParams) {
   return (
     <Grid className={styles.page}>
       <JsonLd data={creativeWorkJsonLd(work, locale, getCoverImage(work))} />
+      <WorkRail
+        locale={locale}
+        works={getWorks()}
+        activeSlug={work.slug}
+        label={dictionary.a11y.worksRail}
+        className={styles.rail}
+      />
       <StickyColumn className={styles.meta}>
         <WorkMetaPanel
           work={work}
@@ -67,6 +76,7 @@ export default async function WorkPage({ params }: WorkParams) {
         />
       </StickyColumn>
       <MediaSequence
+        slug={work.slug}
         cover={work.cover}
         media={work.media}
         locale={locale}

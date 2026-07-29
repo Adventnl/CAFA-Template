@@ -1,0 +1,19 @@
+/*
+ * lateral — moving along the nav bar, one section to another. MOTION.md §2: the
+ * direction comes from the order of the items in content/site.ts, which NavStage
+ * turns into data-dir. The surface leans out against the travel and the next
+ * leans in with it, so going rightward through the nav reads as rightward.
+ *
+ * The section heading is a shared part (Works ⇄ Programmes ⇄ About), so the
+ * browser pairs the two and cross-fades the words in place — base.css leaves its
+ * group free to do exactly that. Nothing else on a section page is a part, so the
+ * surface carries the move.
+ */
+
+:root[data-figure='lateral']::view-transition-old(.stage) {
+  animation: var(--dur-base) var(--ease-io) both vt-slide-lead-out;
+}
+
+:root[data-figure='lateral']::view-transition-new(.stage) {
+  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-slide-lead-in;
+}

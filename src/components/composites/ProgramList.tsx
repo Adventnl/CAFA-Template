@@ -1,5 +1,5 @@
-import { Reveal } from '@/components/motion/Reveal';
 import { Text } from '@/components/primitives/Text';
+import { scenes, sceneAttrs } from '@/lib/choreography';
 import type { Locale, Program } from '@/lib/types';
 
 import styles from './ProgramList.module.css';
@@ -18,11 +18,12 @@ interface ProgramListProps {
 export function ProgramList({ programs, locale, className }: ProgramListProps) {
   return (
     <ul className={[styles.list, className].filter(Boolean).join(' ')}>
-      {programs.map((program, index) => (
+      {programs.map((program) => (
         <li key={program.slug}>
-          {/* The Reveal *is* the entry rather than a wrapper around it: another
-              div here would sit between the grid and its two placed children. */}
-          <Reveal step={index} className={styles.entry}>
+          {/* The scene *is* the entry rather than a wrapper around it: another
+              div here would sit between the grid and its two placed children.
+              Each entry unmasks as it scrolls in. MOTION.md §5.5. */}
+          <div className={styles.entry} {...sceneAttrs(scenes.programmeEntry)}>
             <div className={styles.gutter}>
               <Text role="label" as="h2">
                 {program.name[locale]}
@@ -37,7 +38,7 @@ export function ProgramList({ programs, locale, className }: ProgramListProps) {
             <Text role="body" className={styles.summary}>
               {program.summary[locale]}
             </Text>
-          </Reveal>
+          </div>
         </li>
       ))}
     </ul>

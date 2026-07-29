@@ -1,5 +1,6 @@
 import { Grid } from '@/components/primitives/Grid';
 import { Text } from '@/components/primitives/Text';
+import { scenes, sceneAttrs } from '@/lib/choreography';
 import type { Dictionary } from '@/lib/content';
 import type { Locale, SiteContent } from '@/lib/types';
 
@@ -15,7 +16,7 @@ export function SiteFooter({ locale, site, dictionary }: SiteFooterProps) {
   return (
     // Full-bleed for the same reason as the header: the rule above it has to
     // reach the edges of the viewport, not the edges of the grid.
-    <footer className={styles.footer}>
+    <footer className={styles.footer} {...sceneAttrs(scenes.footer)}>
       <Grid className={styles.inner}>
         <Text role="meta" className={styles.note}>
           {dictionary.footer.note}

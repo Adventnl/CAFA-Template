@@ -1,0 +1,33 @@
+/*
+ * restore — the back and forward buttons. MOTION.md §0.3, §2: "Going back is a
+ * restoration, not a performance." NavStage has already put the scroll offset
+ * back and set data-restoring, which holds the scroll-driven entrances at their
+ * end state so nothing replays. The transition itself should match: a short,
+ * even cross-fade, no scale and no direction, so returning feels like the page
+ * was always there rather than being navigated to again.
+ */
+
+:root[data-figure='restore']::view-transition-old(.stage),
+:root[data-figure='restore']::view-transition-old(.cover),
+:root[data-figure='restore']::view-transition-old(.rail-entry),
+:root[data-figure='restore']::view-transition-old(rail),
+:root[data-figure='restore']::view-transition-old(heading),
+:root[data-figure='restore']::view-transition-old(meta),
+:root[data-figure='restore']::view-transition-old(pager) {
+  animation: var(--dur-base) var(--ease-io) both vt-fade-out;
+}
+
+:root[data-figure='restore']::view-transition-new(.stage),
+:root[data-figure='restore']::view-transition-new(.cover),
+:root[data-figure='restore']::view-transition-new(.rail-entry),
+:root[data-figure='restore']::view-transition-new(rail),
+:root[data-figure='restore']::view-transition-new(heading),
+:root[data-figure='restore']::view-transition-new(meta),
+:root[data-figure='restore']::view-transition-new(pager) {
+  animation: var(--dur-base) var(--ease-io) both vt-fade-in;
+}
+
+/* No midpoint blur on a cover here — it is not morphing, only fading. */
+:root[data-figure='restore']::view-transition-image-pair(.cover) {
+  animation: none;
+}

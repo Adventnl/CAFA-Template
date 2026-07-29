@@ -1,10 +1,13 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { HoverMediaLayer } from '@/components/motion/HoverMediaLayer';
+import { scenes, sceneAttrs } from '@/lib/choreography';
+import { durationMs } from '@/lib/css-duration';
 import type { ImageEntry } from '@/lib/image-manifest';
 import type { Locale, Work, WorkStatus } from '@/lib/types';
+import { vtName } from '@/lib/vt-names';
 
 import { WorkIndexRow } from './WorkIndexRow';
 import styles from './WorkIndex.module.css';
@@ -32,10 +35,26 @@ export function WorkIndex({ locale, works, covers, statusLabels, listLabel }: Wo
    * the time the navigation starts — pointerleave fires when the finger lifts,
    * and the click that follows is what navigates — so the inline cover would
    * have lost its shared-element name before the browser took the snapshot.
-   * This is set on pointerdown and deliberately never cleared.
+   * Set on pointerdown; released one scene later.
+   *
+   * MOTION.md §0.4: it used to be "deliberately never cleared", but a name that
+   * outlives its transition can end up on the page at the same moment the hover
+   * backdrop claims the same identity on a hybrid device, and two elements
+   * sharing a view-transition-name make the browser abort the whole transition.
+   * A successful navigation unmounts this component and clears it; the timer is
+   * the safety net for a gesture that does not navigate.
    */
   const [chosen, setChosen] = useState<string | null>(null);
+  const releaseChosen = useRef<ReturnType<typeof setTimeout>>(undefined);
   const preloaded = useRef(false);
+
+  useEffect(() => () => clearTimeout(releaseChosen.current), []);
+
+  function choose(slug: string) {
+    setChosen(slug);
+    clearTimeout(releaseChosen.current);
+    releaseChosen.current = setTimeout(() => setChosen(null), durationMs('--dur-scene', 700));
+  }
 
   // The topmost row that publishes a cover: the LCP element on a touch device.
   const firstCover = works.find((work) => covers[work.slug] !== undefined)?.slug;
@@ -72,7 +91,10 @@ export function WorkIndex({ locale, works, covers, statusLabels, listLabel }: Wo
         if (event.pointerType === 'mouse') preloadCovers();
       }}
     >
-      <HoverMediaLayer entry={previewed === null ? null : (covers[previewed] ?? null)} />
+      <HoverMediaLayer
+        entry={previewed === null ? null : (covers[previewed] ?? null)}
+        name={previewed === null ? undefined : vtName.cover(previewed)}
+      />
       {/* data-previewing is a plain attribute, not a module class, so the rule
           that dims the siblings can live in WorkIndexRow.module.css next to the
           class it dims. */}
@@ -80,6 +102,7 @@ export function WorkIndex({ locale, works, covers, statusLabels, listLabel }: Wo
         aria-label={listLabel}
         className={styles.list}
         data-previewing={previewed === null ? undefined : ''}
+        {...sceneAttrs(scenes.worksRows)}
       >
         {works.map((work) => (
           <WorkIndexRow
@@ -91,7 +114,7 @@ export function WorkIndex({ locale, works, covers, statusLabels, listLabel }: Wo
             priority={work.slug === firstCover}
             morphing={work.slug === chosen}
             onPreview={setPreviewed}
-            onChoose={setChosen}
+            onChoose={choose}
           />
         ))}
       </ul>

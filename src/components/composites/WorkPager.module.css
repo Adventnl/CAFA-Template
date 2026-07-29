@@ -4,6 +4,9 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   padding-block-start: var(--space-l);
+  /* Its own part: it rises in last on entering a work and is pinned when paging
+     between works, so it reads as a fixture rather than something navigated. §3. */
+  view-transition-name: var(--vt-pager);
 }
 
 .step {

@@ -1,0 +1,39 @@
+/*
+ * step-work — paging from one work to the next, by the pager or (Phase 6) the
+ * rail. MOTION.md §3: "step-work keeps rail and meta pinned and moves only the
+ * media and the title, in the direction of data-dir — so the pager feels like
+ * paging, not navigating."
+ *
+ * The metadata column and the pager hold still; the header holds still (base).
+ * The media surface and the covers slide in the direction of travel — a forward
+ * step (dir 1) carries the old media out to the left and brings the new in from
+ * the right. Because covers are per-slug, the two works' covers never pair, so
+ * there is no crossfade of two different photographs: one leaves, one arrives.
+ */
+
+/* The fixtures do not move — the eye holds them while the work changes. The rail
+   is pinned too, so paging feels like the column staying put while its highlight
+   moves, not like the whole index being navigated. §3. */
+:root[data-figure='step-work']::view-transition-group(rail),
+:root[data-figure='step-work']::view-transition-group(meta),
+:root[data-figure='step-work']::view-transition-group(pager) {
+  animation: none;
+}
+
+/* The surface slides with the step rather than scaling. */
+:root[data-figure='step-work']::view-transition-old(.stage) {
+  animation: var(--dur-base) var(--ease-io) both vt-slide-lead-out;
+}
+
+:root[data-figure='step-work']::view-transition-new(.stage) {
+  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-slide-lead-in;
+}
+
+/* The covers travel with it, one out and one in. */
+:root[data-figure='step-work']::view-transition-old(.cover) {
+  animation: var(--dur-base) var(--ease-io) both vt-slide-lead-out;
+}
+
+:root[data-figure='step-work']::view-transition-new(.cover) {
+  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-slide-lead-in;
+}

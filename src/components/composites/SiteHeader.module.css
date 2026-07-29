@@ -80,6 +80,9 @@
 
 .nav {
   grid-column: 1 / -1;
+  /* Lifted out of the (pinned) header snapshot so a lateral move can slide it in
+     the direction of travel while the rest of the chrome holds still. §3. */
+  view-transition-name: var(--vt-chrome-nav);
 }
 
 .link {
