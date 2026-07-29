@@ -1,0 +1,32 @@
+/*
+ * ARCHITECTURE.md §5.3. The attribute is written by the observer; everything
+ * visible is this transition.
+ */
+.reveal[data-reveal] {
+  transition:
+    opacity var(--dur-slow) var(--ease-out),
+    transform var(--dur-slow) var(--ease-out);
+}
+
+.reveal[data-reveal='pending'] {
+  opacity: 0;
+  transform: translate3d(0, var(--reveal-rise), 0);
+}
+
+.reveal[data-reveal='visible'] {
+  opacity: 1;
+  transform: none;
+}
+
+/*
+ * The bypass, and the only place it is written. globals.css already collapses
+ * every duration to zero under this query; what it cannot do is cancel the
+ * pending state, which would otherwise leave everything below the fold
+ * invisible until it was scrolled past.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .reveal[data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

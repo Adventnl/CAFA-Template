@@ -1,0 +1,15 @@
+.frame {
+  background-color: var(--c-paper-raised);
+  display: block;
+}
+
+/*
+ * The intrinsic width/height attributes on the <img> supply the aspect ratio,
+ * so height: auto holds the box open before the bytes arrive. No fixed crop:
+ * DESIGN-SYSTEM.md §8 rule 5 — the column width is what stays constant, not the
+ * ratio.
+ */
+.frame img {
+  block-size: auto;
+  inline-size: 100%;
+}

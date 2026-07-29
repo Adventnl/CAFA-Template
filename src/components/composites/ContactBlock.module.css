@@ -1,0 +1,46 @@
+.block {
+  display: grid;
+  row-gap: var(--space-xl);
+}
+
+.link {
+  align-items: center;
+  color: var(--c-ink);
+  display: inline-flex;
+  min-block-size: var(--tap-min);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color var(--dur-fast) var(--ease-io);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    text-decoration-color: var(--c-ink-62);
+  }
+}
+
+.facts {
+  display: grid;
+  row-gap: var(--space-2xs);
+}
+
+.fact {
+  column-gap: var(--space-s);
+  display: grid;
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+}
+
+.factLabel {
+  color: var(--c-ink-62);
+  padding-block-start: var(--space-3xs);
+}
+
+.factValue {
+  color: var(--c-ink-70);
+  margin-inline-start: 0;
+}
+
+.note {
+  color: var(--c-ink-70);
+  max-inline-size: var(--measure);
+}

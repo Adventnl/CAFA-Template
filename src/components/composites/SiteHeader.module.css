@@ -1,0 +1,71 @@
+/*
+ * Sticky, not fixed: it keeps its place in flow so no page needs a top offset,
+ * and --space-header stays the single number the detail page's sticky column
+ * measures against. Below --bp-md the bar takes two rows and simply gets
+ * taller — the sticky column that reads --space-header only exists above
+ * --bp-lg, where the bar is one row again.
+ */
+.header {
+  background-color: var(--c-paper);
+  inset-block-start: 0;
+  position: sticky;
+  z-index: 2;
+}
+
+.bar {
+  align-items: center;
+  min-block-size: var(--space-header);
+  padding-block: var(--space-2xs);
+}
+
+.brand {
+  align-items: center;
+  color: var(--c-ink);
+  display: flex;
+  grid-column: 1 / -1;
+  min-block-size: var(--tap-min);
+  text-decoration: none;
+}
+
+.nav,
+.links {
+  align-items: center;
+  column-gap: var(--space-s);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.nav {
+  grid-column: 1 / -1;
+}
+
+.link {
+  align-items: center;
+  color: var(--c-ink-70);
+  display: flex;
+  min-block-size: var(--tap-min);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-io);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link:hover {
+    color: var(--c-ink);
+  }
+}
+
+@media (width >= 768px) {
+  .brand {
+    grid-column: 1 / 5;
+  }
+
+  .nav,
+  .links {
+    column-gap: var(--space-m);
+  }
+
+  .nav {
+    grid-column: 5 / -1;
+    justify-content: flex-end;
+  }
+}

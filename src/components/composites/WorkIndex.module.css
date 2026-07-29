@@ -1,0 +1,20 @@
+/* The list sits above the fixed backdrop, which is at z-index 0. */
+.index {
+  grid-column: 1 / -1;
+  position: relative;
+  z-index: 1;
+}
+
+/*
+ * Positioned on purpose. The backdrop is fixed at z-index 0, and a positioned
+ * element at z-index 0 paints above in-flow content — which would hide whichever
+ * row is at full opacity, since only the dimmed ones get a stacking context of
+ * their own.
+ */
+.list {
+  border-block-end: var(--hairline);
+  list-style: none;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}

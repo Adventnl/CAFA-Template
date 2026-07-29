@@ -1,0 +1,82 @@
+import type { Dictionary } from './zh';
+
+export const en: Dictionary = {
+  meta: {
+    title: 'c.a.f.a atelier 央艺',
+    titleTemplate: '%s — c.a.f.a atelier 央艺',
+    description:
+      'A portfolio mentorship atelier in Beijing. Architecture, space, visual communication and ceramics.',
+  },
+
+  a11y: {
+    skipToContent: 'Skip to content',
+    primaryNav: 'Primary',
+    localeSwitch: 'Change language',
+    worksList: 'Index of works',
+    workPager: 'Works navigation',
+  },
+
+  home: {
+    statement: 'We work with students on one project at a time, until it is finished.',
+    worksLink: 'Works',
+  },
+
+  works: {
+    title: 'Works',
+    description: 'Projects made by the studio together with its students.',
+    status: {
+      completed: 'Completed',
+      'in-progress': 'In progress',
+      private: 'Private',
+    },
+  },
+
+  work: {
+    index: 'Index',
+    status: 'Status',
+    year: 'Year',
+    discipline: 'Discipline',
+    credits: 'Credits',
+    previous: 'Previous',
+    next: 'Next',
+  },
+
+  programs: {
+    title: 'Programmes',
+    description:
+      'Four ways in, from one-to-one mentorship to a reading room that anyone can join.',
+    intro:
+      'There are only four. Every one of them asks you to make something; none of them can be sat through.',
+  },
+
+  about: {
+    title: 'About',
+    description: 'About c.a.f.a atelier 央艺 — who we are and how we work.',
+    body: [
+      'We are a small studio. There are no lectures and no batch tutoring, and never more than twenty students at once.',
+      'A portfolio is not coursework laid out neatly. It is one idea carried from the start to the point where it stands up on its own. So every project here begins at the choice of subject, and a good number of them get torn up halfway and begun again.',
+      'The studio is in Beijing. Its mentors come from architecture, visual communication, interiors and ceramics, and most days they are in the same room as the students, drawing.',
+    ],
+    mentorsTitle: 'Mentors',
+  },
+
+  contact: {
+    title: 'Contact',
+    description: 'Studio address, email, and how to apply.',
+    email: 'Email',
+    wechat: 'WeChat',
+    address: 'Address',
+    hours: 'Hours',
+    note: 'To apply, write to us directly and attach whatever you have on hand — it does not need tidying first. We usually answer within three working days and then arrange a conversation. There is no application form.',
+  },
+
+  notFound: {
+    title: 'There is no page here',
+    body: 'The address you asked for does not exist, or it has been renamed.',
+    home: 'Back to the home page',
+  },
+
+  footer: {
+    note: 'This site is built and maintained by the studio.',
+  },
+};

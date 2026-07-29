@@ -1,0 +1,13 @@
+.page {
+  align-content: center;
+  min-block-size: 100dvh;
+}
+
+.link {
+  align-items: center;
+  color: var(--c-ink);
+  display: inline-flex;
+  grid-column: 1 / -1;
+  justify-self: start;
+  min-block-size: var(--tap-min);
+}

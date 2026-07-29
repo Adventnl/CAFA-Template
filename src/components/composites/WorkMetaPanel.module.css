@@ -1,0 +1,46 @@
+.panel {
+  display: grid;
+  row-gap: var(--space-l);
+}
+
+.title {
+  text-wrap: balance;
+}
+
+.facts {
+  display: grid;
+  row-gap: var(--space-2xs);
+}
+
+/*
+ * Label left, values right, on one line. The label column is sized by its own
+ * content so the values line up down the panel whichever language is set.
+ */
+.fact {
+  column-gap: var(--space-s);
+  display: grid;
+  grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
+}
+
+.factLabel {
+  color: var(--c-ink-62);
+  padding-block-start: var(--space-3xs); /* optical: label caps against meta x-height */
+}
+
+.factValue {
+  color: var(--c-ink-70);
+  margin-inline-start: 0;
+}
+
+/*
+ * The values of a multi-value fact continue under the first, not beside the
+ * label again — the label column only holds a <dt>.
+ */
+.factValue:not(:first-of-type) {
+  grid-column: 2;
+}
+
+.summary {
+  color: var(--c-ink-70);
+  max-inline-size: var(--measure);
+}

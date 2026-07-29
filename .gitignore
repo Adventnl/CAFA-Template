@@ -4,3 +4,4 @@ out
 public/media/derived
 *.tsbuildinfo
 .cache
+.claude

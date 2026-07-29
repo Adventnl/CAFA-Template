@@ -1,0 +1,10 @@
+.heading {
+  grid-column: 1 / -1;
+  margin-block-end: var(--space-xl);
+}
+
+@media (width >= 768px) {
+  .heading {
+    grid-column: 1 / 8;
+  }
+}

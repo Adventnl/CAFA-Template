@@ -1,0 +1,120 @@
+/*
+ * Two switches, and they never overlap:
+ *   (hover: hover) and (pointer: fine)  → the backdrop exists, so no inline cover
+ *   width >= --bp-md                    → the ium four-part line, else stacked
+ * A tablet therefore gets a half-width cover above a full line; a narrow desktop
+ * window gets a backdrop above a stacked line. Neither leaves half the screen
+ * dead, and neither shows the same picture twice.
+ */
+.row {
+  border-block-start: var(--hairline);
+}
+
+.link {
+  color: var(--c-ink);
+  column-gap: var(--grid-gap);
+  display: grid;
+  grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  padding-block: var(--space-s);
+  row-gap: var(--space-xs);
+  text-decoration: none;
+  transition: opacity var(--dur-base) var(--ease-io);
+}
+
+.link[data-private] {
+  color: var(--c-ink-62);
+  cursor: default;
+}
+
+/* Placed in the row's own grid rather than sized with a percentage, so the
+   cover lands on the same columns everything else does. */
+.cover {
+  grid-column: 1 / -1;
+}
+
+/*
+ * The line spans the full row and repeats the same tracks, which resolve to the
+ * same positions because it is exactly as wide. It exists so the cover can sit
+ * on its own row without the text having to be placed by row number — the text
+ * simply moves up when the cover is display: none.
+ */
+.line {
+  display: grid;
+  grid-column: 1 / -1;
+  row-gap: var(--space-3xs);
+}
+
+.number {
+  color: var(--c-ink-62);
+}
+
+.discipline {
+  color: var(--c-ink-70);
+  column-gap: var(--space-s);
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.status {
+  color: var(--c-ink-62);
+  column-gap: var(--space-s);
+  display: flex;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cover {
+    display: none;
+  }
+
+  /*
+   * The ium inversion: the row under the pointer is left alone and its siblings
+   * step back. WorkIndex sets one attribute on the <ul>; which row is exempt is
+   * then decided by the browser, so nothing runs per row and nothing per frame.
+   *
+   * Opacity rather than colour because CLAUDE.md §7 permits only compositable
+   * properties to be animated. --dim is the alpha --c-ink-dim is built from.
+   */
+  [data-previewing] .link {
+    opacity: var(--dim);
+  }
+
+  [data-previewing] .link:hover,
+  [data-previewing] .link:focus-visible {
+    opacity: 1;
+  }
+}
+
+/* DESIGN-SYSTEM.md §5: number 1, title 2–5, discipline 6–8, year/status 11–12. */
+@media (width >= 768px) {
+  .link {
+    padding-block: var(--space-xs);
+  }
+
+  .cover {
+    grid-column: 1 / 7;
+  }
+
+  .line {
+    align-items: baseline;
+    column-gap: var(--grid-gap);
+    grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+    min-block-size: var(--tap-min);
+  }
+
+  .number {
+    grid-column: 1 / 2;
+  }
+
+  .title {
+    grid-column: 2 / 6;
+  }
+
+  .discipline {
+    grid-column: 6 / 9;
+  }
+
+  .status {
+    grid-column: 11 / -1;
+    justify-content: flex-end;
+  }
+}

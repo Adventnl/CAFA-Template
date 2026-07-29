@@ -1,0 +1,47 @@
+.section {
+  container-type: inline-size;
+}
+
+.heading {
+  border-block-end: var(--hairline);
+  color: var(--c-ink-62);
+  margin-block-end: var(--space-l);
+  padding-block-end: var(--space-2xs);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-l);
+  grid-template-columns: minmax(0, 1fr);
+  list-style: none;
+  padding: 0;
+}
+
+.portrait {
+  margin-block-end: var(--space-s);
+}
+
+.discipline {
+  color: var(--c-ink-70);
+}
+
+.note {
+  color: var(--c-ink-62);
+}
+
+/*
+ * Container queries, not breakpoints: the numbers are --bp-sm and --bp-md, but
+ * they are measured against this section's own width, so dropping the grid into
+ * a narrower column would still do the right thing. CLAUDE.md §9.
+ */
+@container (width >= 480px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 768px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

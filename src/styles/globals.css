@@ -16,15 +16,27 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/*
+ * The column keeps the footer off the middle of a short page — the 2560px
+ * failure mode CLAUDE.md §9 names — without any minimum height on the content.
+ */
 body {
   background-color: var(--c-paper);
   color: var(--c-ink);
+  display: flex;
+  flex-direction: column;
   font-family: var(--font-sans);
   font-feature-settings: var(--font-features);
   font-size: var(--type-body-size);
   font-synthesis: none; /* no faux 500 if the CJK face is still loading */
   font-weight: var(--type-body-weight);
   line-height: var(--type-body-leading);
+  min-block-size: 100dvh;
+}
+
+main {
+  flex: 1 0 auto;
+  padding-block-start: var(--space-xl);
 }
 
 img,

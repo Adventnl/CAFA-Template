@@ -1,0 +1,31 @@
+.page {
+  align-content: center;
+  min-block-size: 100dvh;
+  row-gap: var(--space-s);
+}
+
+.body,
+.link {
+  grid-column: 1 / -1;
+}
+
+.body {
+  color: var(--c-ink-70);
+}
+
+.link {
+  align-items: center;
+  color: var(--c-ink);
+  display: inline-flex;
+  justify-self: start;
+  margin-block-start: var(--space-l);
+  min-block-size: var(--tap-min);
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+}
+
+@media (width >= 768px) {
+  .body {
+    grid-column: 1 / 8;
+  }
+}
