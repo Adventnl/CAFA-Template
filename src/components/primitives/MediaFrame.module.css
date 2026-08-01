@@ -1,6 +1,16 @@
+/*
+ * No `display: block` here: globals.css already gives every <picture> one, at
+ * element specificity, where a caller's own `display` can still beat it. Setting
+ * it again on the class made it a 0-1-0 declaration that tied with the caller's
+ * — WorkIndexRow hiding this frame where the hover backdrop shows the cover
+ * instead — and a tie is settled by which module the bundler happens to emit
+ * last. Once the work-detail route's CSS loaded, this rule moved behind that one,
+ * the hidden cover came back, and it and the backdrop claimed the same
+ * view-transition-name: two elements, one identity, and the browser abandons the
+ * whole transition. A primitive must not be able to win that race.
+ */
 .frame {
   background-color: var(--c-paper-raised);
-  display: block;
 }
 
 /*

@@ -17,6 +17,15 @@ export function assertUniqueVtNames(): void {
   for (const element of document.querySelectorAll<HTMLElement>('*')) {
     const name = getComputedStyle(element).viewTransitionName;
     if (name === '' || name === 'none') continue;
+    // Only a rendered element is captured, so only a rendered element can
+    // collide. The two halves of the cover morph — the row's inline picture and
+    // the hover backdrop — deliberately carry one name between them and are
+    // told apart by a media query hiding one of the two; counting the hidden one
+    // would report a collision on every works index that has ever been hovered.
+    // checkVisibility()'s defaults are the right test: display and
+    // content-visibility exclude an element from capture, visibility and opacity
+    // do not.
+    if (!element.checkVisibility()) continue;
     const group = seen.get(name);
     if (group === undefined) seen.set(name, [element]);
     else group.push(element);

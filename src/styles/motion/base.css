@@ -117,9 +117,18 @@
  * 5500px detail box is the "squashed rubber" of MOTION.md §0.1. Held to their
  * own heights and top-anchored, the two surfaces cross-fade instead. The group
  * is pinned so it does not tween between the two heights either.
+ *
+ * `animation-name`, never the `animation` shorthand — and this is the rule for
+ * every pinned group on the site. The UA stylesheet gives
+ * ::view-transition-image-pair, -old and -new their timing by `inherit` from the
+ * group, so the shorthand's reset of animation-duration to 0s and
+ * animation-fill-mode to none travels down the whole subtree and deletes the
+ * cross-fade with it. Both snapshots then sit at full opacity for as long as the
+ * transition lasts, which is not a pinned part — it is two pages printed over
+ * each other. Pinning the box is `animation-name: none`; the timing stays.
  */
 ::view-transition-group(.stage) {
-  animation: none;
+  animation-name: none;
 }
 
 ::view-transition-old(.stage),
@@ -145,7 +154,7 @@
  * are pixel-identical, and painting both at once doubles the type's antialiasing.
  */
 ::view-transition-group(site-header) {
-  animation: none;
+  animation-name: none;
   z-index: 20;
 }
 
@@ -153,13 +162,21 @@
   display: none;
 }
 
+/* Nothing inherits from a leaf, so the shorthand would be harmless here — but it
+   is the same two words that are a defect one rule up, and the next person to
+   copy a line out of this file should not have to know which is which. */
 ::view-transition-new(site-header) {
-  animation: none;
+  animation-name: none;
 }
 
-/* The nav list is pinned by default; only `lateral` gives it a move. */
+/* The nav list is pinned by default; only `lateral` gives it a move. It is not
+   pixel-identical the way the header is — the current item changes — so unlike
+   the header both snapshots are painted, and they need the cross-fade the pin
+   would otherwise have taken away with it. The duration is stated rather than
+   left to the UA's own 0.25s, which is not on our scale. */
 ::view-transition-group(chrome-nav) {
-  animation: none;
+  animation-duration: var(--dur-base);
+  animation-name: none;
   z-index: 21;
 }
 

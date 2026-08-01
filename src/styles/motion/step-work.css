@@ -13,11 +13,30 @@
 
 /* The fixtures do not move — the eye holds them while the work changes. The rail
    is pinned too, so paging feels like the column staying put while its highlight
-   moves, not like the whole index being navigated. §3. */
+   moves, not like the whole index being navigated. §3.
+
+   Pinned is the *box*, not the contents: every word inside these three differs
+   between two works. `animation-name` alone, per base.css — the shorthand would
+   take the cross-fade below down with it. */
 :root[data-figure='step-work']::view-transition-group(rail),
 :root[data-figure='step-work']::view-transition-group(meta),
 :root[data-figure='step-work']::view-transition-group(pager) {
-  animation: none;
+  animation-name: none;
+}
+
+/* Inside the held box the two works change over: the outgoing metadata leaves
+   first and the incoming arrives behind it, on the same lead the surface takes,
+   so the column reads as one work replacing another rather than as both at once. */
+:root[data-figure='step-work']::view-transition-old(rail),
+:root[data-figure='step-work']::view-transition-old(meta),
+:root[data-figure='step-work']::view-transition-old(pager) {
+  animation: var(--dur-base) var(--ease-io) both vt-fade-out;
+}
+
+:root[data-figure='step-work']::view-transition-new(rail),
+:root[data-figure='step-work']::view-transition-new(meta),
+:root[data-figure='step-work']::view-transition-new(pager) {
+  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-fade-in;
 }
 
 /* The surface slides with the step rather than scaling. */

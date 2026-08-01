@@ -27,7 +27,9 @@
   animation: var(--dur-base) var(--ease-io) both vt-fade-in;
 }
 
-/* No midpoint blur on a cover here — it is not morphing, only fading. */
+/* No midpoint blur on a cover here — it is not morphing, only fading. Name only:
+   the shorthand on an image-pair zeroes the timing its old and new inherit, and
+   the fades above would be overridden into nothing. base.css says why. */
 :root[data-figure='restore']::view-transition-image-pair(.cover) {
-  animation: none;
+  animation-name: none;
 }
