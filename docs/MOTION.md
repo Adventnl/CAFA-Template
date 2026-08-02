@@ -245,9 +245,13 @@ One `passive` scroll listener that does nothing but set a dirty flag. One rAF lo
 The loop parks itself after 200 ms of stillness, so it costs nothing at rest.
 
 What it buys, all in CSS, no further JS: media shears imperceptibly with velocity
-(`scaleY(calc(1 + var(--scroll-v) * 0.02))`); the sticky meta column lags the scroll
-direction by a few pixels; hairlines strengthen while moving and settle when still;
-entrances know whether you are scrolling up or down and use the matching figure.
+(`scaleY(calc(1 + var(--scroll-v) * 0.02))`); hairlines strengthen while moving and settle
+when still; entrances know whether you are scrolling up or down and use the matching figure.
+
+This list once included "the sticky meta column lags the scroll direction by a few pixels".
+It is struck out and must not be built. A pinned column is the fixed thing a work is read
+against — the reason `--space-pin` exists is so it does not move even the once, when it
+catches. Lagging it would put the movement back by hand. Velocity belongs to the media.
 
 ---
 

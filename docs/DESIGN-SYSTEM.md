@@ -137,7 +137,16 @@ An 8 px base with a fluid multiplier. Nine steps, no more.
 
 --space-header: 4.5rem;      /* fixed header height; sticky offsets reference this */
 --space-gutter: clamp(1.25rem, 0.6rem + 2.6vw, 3.5rem);  /* page edge padding */
+
+--space-pin: calc(var(--space-header) + var(--space-xl));  /* resting line of a pinned column */
 ```
+
+`--space-pin`, not `--space-header`, is what a `position: sticky` column offsets by. The
+difference is the whole point: a column offset by the header height alone is not yet at
+that offset when the page is at rest — `<main>` has already pushed it `--space-xl` lower —
+so it slides up by that much on the first scroll and only then catches. Offset by
+`--space-pin` it is already on its line, and it does not move at all. The left column of a
+work is not a thing that moves; the media beside it is.
 
 The whitespace *is* the design. When a section feels wrong, the answer is almost always
 `--space-2xl` or `--space-3xl` above it, not a border or a background change.

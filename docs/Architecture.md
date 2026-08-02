@@ -247,8 +247,11 @@ Rules:
 Server component. No client JS except `Reveal`.
 
 - CSS Grid: `grid-template-columns: minmax(0, 5fr) minmax(0, 7fr)` above 1024 px.
-- Left cell contains `WorkMetaPanel` inside `StickyColumn` (`position: sticky; top: var(--space-header)`).
-  Pure CSS sticky — no scroll listener.
+- Left cell contains `WorkMetaPanel` inside `StickyColumn` (`position: sticky;
+  inset-block-start: var(--space-pin)`). Pure CSS sticky — no scroll listener. The offset is
+  `--space-pin` and not `--space-header` deliberately: it is the line the panel already
+  rests on, so it pins on the first pixel of scroll rather than sliding `--space-xl` upward
+  to meet the header first. The rail shares it. Neither column ever moves.
 - Right cell is `MediaSequence`. It takes `cover` and `media` as separate props: the cover
   leads the column, eager and `fetchPriority="high"`, and is also the half of the
   shared-element morph that lands here (§5.4). Starting the column at `media[0]` instead

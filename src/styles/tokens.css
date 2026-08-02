@@ -89,6 +89,18 @@
   --space-header: 4.5rem; /* fixed header height; sticky offsets reference this */
   --space-gutter: clamp(1.25rem, 0.6rem + 2.6vw, 3.5rem); /* page edge padding */
 
+  /*
+   * Where a pinned column comes to rest — and, deliberately, exactly where it
+   * already sits at scroll 0: the sticky header plus the top padding globals.css
+   * gives <main>. Offsetting a pinned column by --space-header alone is the
+   * obvious thing and it is wrong, because the column then slides --space-xl
+   * upward before it catches. The left column of a work is not a thing that
+   * moves; only the media beside it is. Change <main>'s padding-block-start and
+   * this has to change with it, which is why it is written as that sum rather
+   * than as a number.
+   */
+  --space-pin: calc(var(--space-header) + var(--space-xl));
+
   /* §5 Grid */
   --grid-cols: 12;
   --grid-gap: var(--space-m);

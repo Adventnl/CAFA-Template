@@ -12,10 +12,12 @@
 @media (width >= 1024px) {
   .rail {
     /* A sticky full-height column at the far left; the metadata panel moves
-       inboard (the detail page's grid) to make room. */
+       inboard (the detail page's grid) to make room. It shares the metadata
+       panel's --space-pin offset for the same reason and so the two hold the
+       same line: both are already sitting there, so neither travels. */
     align-self: start;
     display: block;
-    inset-block-start: var(--space-header);
+    inset-block-start: var(--space-pin);
     position: sticky;
   }
 

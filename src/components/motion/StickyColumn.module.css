@@ -4,7 +4,10 @@
        it, leaving it nothing to travel through, and sticky silently does
        nothing. */
     align-self: start;
-    inset-block-start: var(--space-header);
+    /* --space-pin, not --space-header: the panel is already at this offset when
+       the page is at rest, so it catches on the first pixel of scroll instead of
+       sliding up to meet the header first. */
+    inset-block-start: var(--space-pin);
     position: sticky;
   }
 }
