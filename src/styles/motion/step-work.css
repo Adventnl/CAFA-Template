@@ -39,19 +39,26 @@
   animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-fade-in;
 }
 
-/* The surface slides with the step rather than scaling. */
+/* The surface slides with the step rather than scaling. No delay on the arriving
+   half — base.css says why, and it matters most here: the pager is the one
+   control on the site a reader clicks repeatedly, so any dead air between press
+   and movement is paid over and over. */
 :root[data-figure='step-work']::view-transition-old(.stage) {
   animation: var(--dur-base) var(--ease-io) both vt-slide-lead-out;
 }
 
 :root[data-figure='step-work']::view-transition-new(.stage) {
-  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-slide-lead-in;
+  animation: var(--dur-slow) var(--ease-out) both vt-slide-lead-in;
 }
 
 /*
- * The covers travel with it, one out and one in — but only the ones with no
- * partner, which is what `:only-child` says. A paged step has exactly those: two
- * different works, two per-slug names, nothing to pair.
+ * The covers travel with it, one out and one in, and they lead: the photograph
+ * is what the reader is stepping between, so it is what moves first — hence
+ * --ease-lead and no delay on the arriving half.
+ *
+ * But only the covers with no partner, which is what `:only-child` says. A paged
+ * step has exactly those: two different works, two per-slug names, nothing to
+ * pair.
  *
  * Reach the next work from the rail instead and the cover under the pointer is
  * already on screen, full-bleed, holding cover-{next} (WorkRail). That name is
@@ -67,5 +74,5 @@
 }
 
 :root[data-figure='step-work']::view-transition-new(.cover):only-child {
-  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-slide-lead-in;
+  animation: var(--dur-slow) var(--ease-lead) both vt-slide-lead-in;
 }

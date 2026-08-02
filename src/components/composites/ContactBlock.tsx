@@ -1,3 +1,4 @@
+import { partClass } from '@/components/motion/Part';
 import { Text } from '@/components/primitives/Text';
 import { scenes, sceneAttrs } from '@/lib/choreography';
 import type { Dictionary } from '@/lib/content';
@@ -21,8 +22,10 @@ export function ContactBlock({ site, locale, labels, className }: ContactBlockPr
   const { contact } = site;
 
   return (
+    // The `panel` part, which styles/motion/pin.css gives its own arrival: the
+    // card is put on the board rather than faded onto it.
     <div
-      className={[styles.block, className].filter(Boolean).join(' ')}
+      className={[styles.block, partClass('panel'), className].filter(Boolean).join(' ')}
       {...sceneAttrs(scenes.contact)}
     >
       <Text role="title" as="p" className={styles.email}>

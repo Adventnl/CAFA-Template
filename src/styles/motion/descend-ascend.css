@@ -4,30 +4,91 @@
  * sections sit "below" it in the site's mental model, so descending brings the
  * next surface up from below and ascending lets it sink back down. Neither has a
  * direction along the nav — the figure is the same however you got there.
+ *
+ * The surface's up/down move is the frame. What happens inside it is the figure:
+ * an empty board gets things *put on it*, one at a time. Each part is held a
+ * little above the paper, leaning back, and hinges down onto its bottom edge —
+ * vt-lay-down, base.css — in the order a person would lay them: the title, then
+ * what it says, then the list. Ascending runs the same hand backwards, lifting
+ * the list off first and the title last, so the board is empty again by the time
+ * home has faded up underneath it.
+ *
+ * This is the one pair of figures where the 3D lean is doing real work rather
+ * than decorating: a sheet that arrives flat has been cross-faded, and a sheet
+ * that arrives leaning has been placed. Seven degrees at 900px of perspective is
+ * the whole difference, and it is deliberately at the edge of noticeable.
  */
 
-/* Descend: home fades, the section rises up into its place, heading after it. */
+/* ── Descend: the board is set ────────────────────────────────────────────── */
+
+/* Home fades rather than receding: it is the ground, and ground does not travel.
+   The section rises into its place over it. */
 :root[data-figure='descend']::view-transition-old(.stage) {
   animation: var(--dur-base) var(--ease-io) both vt-fade-out;
 }
 
 :root[data-figure='descend']::view-transition-new(.stage) {
-  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-stage-up-in;
+  animation: var(--dur-slow) var(--ease-out) both vt-stage-up-in;
 }
 
+/* The title goes down first, and everything else is timed off it. */
 :root[data-figure='descend']::view-transition-new(heading) {
-  animation: var(--dur-slow) var(--ease-lead) var(--figure-lead) both vt-rise-in;
+  animation: var(--dur-slow) var(--ease-lead) both vt-lay-down;
 }
 
-/* Ascend: the section sinks away, home fades back in underneath it. */
+/*
+ * Then the body, then the list. The groups are pinned for the same reason as in
+ * lateral: these parts have no counterpart on the home page, so their group has
+ * no old geometry to travel from and would simply hold still while the snapshot
+ * faded. Pinning the box and animating the snapshot is what makes it a placement.
+ */
+:root[data-figure='descend']::view-transition-group(intro),
+:root[data-figure='descend']::view-transition-group(listing),
+:root[data-figure='descend']::view-transition-group(panel) {
+  animation-name: none;
+}
+
+:root[data-figure='descend']::view-transition-new(intro),
+:root[data-figure='descend']::view-transition-new(panel) {
+  animation: var(--dur-slow) var(--ease-out) var(--stagger-step) both vt-lay-down;
+}
+
+:root[data-figure='descend']::view-transition-new(listing) {
+  animation: var(--dur-slow) var(--ease-out) calc(var(--stagger-step) * 2) both vt-lay-down;
+}
+
+/* ── Ascend: the board is cleared ─────────────────────────────────────────── */
+
 :root[data-figure='ascend']::view-transition-old(.stage) {
   animation: var(--dur-base) var(--ease-io) both vt-stage-down-out;
 }
 
 :root[data-figure='ascend']::view-transition-new(.stage) {
-  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-fade-in;
+  animation: var(--dur-slow) var(--ease-out) both vt-fade-in;
+}
+
+/*
+ * Reverse order, and shorter: --dur-base for the whole clearing, because an exit
+ * the reader has already committed to should not be a performance. The list goes
+ * first, the title last — the mirror of the descent, which is what stops the
+ * back-and-forth between home and a section from feeling like two unrelated
+ * animations bolted together.
+ */
+:root[data-figure='ascend']::view-transition-group(intro),
+:root[data-figure='ascend']::view-transition-group(listing),
+:root[data-figure='ascend']::view-transition-group(panel) {
+  animation-name: none;
+}
+
+:root[data-figure='ascend']::view-transition-old(listing) {
+  animation: var(--dur-base) var(--ease-io) both vt-lift-off;
+}
+
+:root[data-figure='ascend']::view-transition-old(intro),
+:root[data-figure='ascend']::view-transition-old(panel) {
+  animation: var(--dur-base) var(--ease-io) calc(var(--stagger-step) * 0.5) both vt-lift-off;
 }
 
 :root[data-figure='ascend']::view-transition-old(heading) {
-  animation: var(--dur-base) var(--ease-io) both vt-fall-out;
+  animation: var(--dur-base) var(--ease-io) var(--stagger-step) both vt-lift-off;
 }

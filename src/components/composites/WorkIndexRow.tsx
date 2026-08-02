@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 
+import { Focus } from '@/components/motion/Focus';
 import { MediaFrame } from '@/components/primitives/MediaFrame';
 import { Text } from '@/components/primitives/Text';
+import { scenes } from '@/lib/choreography';
 import type { ImageEntry } from '@/lib/image-manifest';
 import { routes } from '@/lib/routes';
 import type { Locale, Work } from '@/lib/types';
@@ -97,18 +99,29 @@ function RowContents({
       {cover !== null && (
         // Shown only where there is no hover backdrop, hidden by CSS elsewhere,
         // and lazy — so a pointer device never fetches it.
-        <MediaFrame
-          entry={cover}
-          alt={work.cover.alt === '' ? '' : work.cover.alt[locale]}
-          sizes="(min-width: 768px) 46vw, 92vw"
-          priority={priority}
-          className={[styles.cover, morphing === true && styles.morphing]
-            .filter(Boolean)
-            .join(' ')}
-          // The per-slug morph name, only on the row a press has committed to.
-          // The `cover` class it needs comes with .morphing in the module.
-          style={morphing === true ? { viewTransitionName: vtName.cover(work.slug) } : undefined}
-        />
+        //
+        // The focus curve goes on a wrapper rather than on the <picture>, and it
+        // has to: the picture may be carrying a per-slug view-transition-name,
+        // and a named element that is also running a scroll-driven transform is
+        // captured mid-scale — the morph would then start from whatever size the
+        // scroll happened to leave it at. Separating them means the row's cover
+        // scales as it passes *and* hands a clean rectangle to the navigation.
+        //
+        // .cover moves to the wrapper with the grid placement it carries, so the
+        // scene is the grid child and the display: none that hides this whole
+        // branch on a pointer device still hides all of it.
+        <Focus depth={scenes.worksRowCover.depth} className={styles.cover}>
+          <MediaFrame
+            entry={cover}
+            alt={work.cover.alt === '' ? '' : work.cover.alt[locale]}
+            sizes="(min-width: 768px) 46vw, 92vw"
+            priority={priority}
+            className={morphing === true ? styles.morphing : undefined}
+            // The per-slug morph name, only on the row a press has committed to.
+            // The `cover` class it needs comes with .morphing in the module.
+            style={morphing === true ? { viewTransitionName: vtName.cover(work.slug) } : undefined}
+          />
+        </Focus>
       )}
       <span className={styles.line}>
         {/* On the chosen row the number carries the per-slug rail name, so it

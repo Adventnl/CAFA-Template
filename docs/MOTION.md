@@ -166,9 +166,25 @@ Delete the page-level `<ViewTransition default="page">`. Replace with a name reg
 | `rail-{slug}` | each rail entry | the clicked entry travels; siblings unzip away |
 | `cover-{slug}` | hover backdrop ⇄ detail hero | the existing morph, now per-slug |
 | `heading` | page `h1` | |
+| `intro` | the block that says what the page is | Programmes' lead line, About's prose |
+| `listing` | the page's main body of repeated things | programme list, mentor grid |
+| `panel` | a self-contained card that *is* the page | contact only |
 | `meta` | sticky metadata column | |
 | `pager` | prev/next | |
 | `chrome-nav` | header nav list | |
+
+`intro`, `listing` and `panel` are named by **role, not by page**, and that is the whole
+reason the section-to-section figures have anything to do. Programmes' intro and About's
+prose share one identity, so the browser knows they occupy the same slot on the board and
+a lateral move is an *exchange in a known position* rather than two unrelated fades.
+Before they existed a section page named exactly one element — its heading — so every
+figure between two section pages had a single sheet to slide and nothing to slide it
+against. They all looked the same because they were the same.
+
+They share the `part` view-transition-class, so what is true of all three (hold your own
+height, hinge about your bottom edge) is written once in `base.css`. A fourth role should
+be resisted: a role only one page uses is a part with nothing to pair against, and the
+pairs are where the figures come from.
 
 Per-slug names are the unlock. Today both the index and the detail page use one shared
 `work-cover`, so only the cover can morph. With `rail-{slug}` and `cover-{slug}` the pager can
@@ -346,17 +362,56 @@ The rule is that every surface names a trigger. This table is the acceptance tes
 | home — opening statement | `pin-scrub` | `unmask` per line while pinned, then `recede` |
 | home — featured plate | `scrub` | `focus` d3 + `drift` d3 |
 | works index — rows | `batch` | `slide` d1 assembling: number → title → disciplines |
-| works index — hover backdrop | pointer + `scrub` | `drift` against `--px/--py` |
+| works index — row cover | `scrub` | `focus` d1 (touch only; a pointer device has the backdrop) |
+| works index — hover backdrop | pointer | `drift` against `--px/--py` |
 | works rail (detail) | `link` to media column | active number tracks the centred plate |
 | work detail — media | `scrub` | `focus` d2 + `drift` d2 + `shear` |
 | work detail — meta panel | `link` to media | `dim` while a plate is centred |
 | work detail — pager | `progress` | `rise` over the last 15% |
 | programmes — each entry | `pin-scrub` (brief) | `unmask` the description while pinned |
 | about — studio sequence | `pin` + `pan` | horizontal filmstrip under vertical scroll |
-| about — prose | `scrub` | `split` by line |
-| mentors — grid | `batch` | `focus` d1, staggered by column |
-| contact | `enter` | `slide` from `data-dir` |
+| about — prose | `batch` | `rise` d0 per paragraph |
+| mentors — grid | `batch` | `rise` d1, staggered by column |
+| mentors — portrait | `scrub` | `focus` d1, nested inside the card |
+| contact | `scrub` | `sway` d1 about the tack |
 | footer | `progress` | `rise` at document end |
+
+### 5.5a Ranged triggers and symmetric effects — a defect class
+
+Four rows above changed after the vocabulary met real markup, and two of them were
+fixing the same bug rather than changing our minds. Worth stating as a rule, because it
+will otherwise be reintroduced:
+
+**A symmetric effect must not ride a ranged trigger.** `focus` and `drift` go down, up and
+back down again; `enter` and `batch` bind an animation to a *slice* of the pass
+(`entry 0% → entry 50%`) with `animation-fill-mode: both`. So the curve completes during
+the entrance and then holds its final keyframe — which for `focus` is the dimmed, shrunk
+one. "mentors — grid: batch + focus d1" therefore left every mentor card permanently at
+0.9 scale and 55% opacity once it had scrolled in. It looked like a loading state that
+never resolved.
+
+Effects that end where they started (`rise`, `fall`, `slide`, `unmask`) are safe on any
+trigger. `focus` and `drift` belong on `scrub`, which runs the whole `cover 0% → 100%`
+pass, or nowhere.
+
+The fix is also the better design, which is usually the sign it is the right one: the
+card assembles (`batch` + `rise`) and the portrait inside it focuses (`scrub` + `focus`),
+each on its own element. That is the nesting §5.4 was built for, and it is what the
+original "focus d1, staggered by column" was reaching for.
+
+### 5.5b `pin` — a part figure, not a navigation figure
+
+`styles/motion/pin.css` is the one file in `styles/motion/` that is not keyed to a route
+change. The contact card is the only block on the site that is an *object* — a card with
+edges, on the paper, rather than a region of it — and an object should be put down the
+same way however you arrived at it. So the figure attaches to the `panel` part and
+overrides whichever navigation figure brought it, for `lateral` and `descend` only;
+`ascend` takes it off the board, and `locale` and `restore` leave it alone (a card that
+never left should not re-arrive).
+
+It wins on source order against equal specificity, which is why `index.css` imports it
+after every navigation figure. That is fragile in exactly one way — reordering the
+imports silently disables it — so both files say so.
 
 ### 5.6 Support and fallback
 
@@ -501,6 +556,19 @@ worse than a plain one. Build, measure, decide.
   pointer.
 - **§7 JS budget — held.** `NavStage` + `ScrollField` ≈ 2.5 KB gz; the trigger system ships
   zero. This is the argument for building it this way rather than reaching for GSAP.
+- **New rule: the incoming half of a transition never carries a delay.** A delay on the
+  *outgoing* half is free — the reader is still looking at a full-opacity page. A delay on
+  the incoming half is dead air between the press and any visible response, and every
+  figure here had inherited one of `--dur-fast`. 140 ms is well past the ~100 ms at which
+  a pointer interaction stops feeling connected to its result, so every navigation on the
+  site read as laggy, and was. The overlap the delay was buying is bought instead by
+  running the two halves concurrently at different durations. Parts may still be
+  staggered — that is choreography inside a move that has already visibly started.
+- **And its corollary: nothing expensive runs in the click handler.** The dev-only
+  duplicate-name audit was a `getComputedStyle` over every element in the document,
+  called synchronously before the transition. It is now scheduled onto a macrotask, which
+  still sees the outgoing DOM (React has not committed) and no longer sits between the
+  press and the first frame.
 - **§7 "only transform, opacity, filter, clip-path" — kept, without exception.** Not a style
   preference: animating layout properties drops the frame rate, and flow does not survive
   20 fps. Everything above is compositable.

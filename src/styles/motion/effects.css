@@ -65,6 +65,16 @@
   --eff-name: eff-recede;
 }
 
+/*
+ * A thing held at one edge turns about that edge as the page moves under it.
+ * The origin is part of the effect, not of whatever uses it: sway means "hangs",
+ * and a sway about the centre is a wobble, which is a different and worse idea.
+ */
+[data-effect='sway'] {
+  --eff-name: eff-sway;
+  transform-origin: 50% 0;
+}
+
 /* Focus keeps a distinct min-scale and blur per depth; §6 tunes them by hand. */
 [data-effect='focus'] {
   --eff-name: eff-focus;
@@ -173,6 +183,16 @@
   }
   to {
     transform: rotate3d(1, 0, 0, calc(var(--eff-tilt) * var(--eff-depth) * -1));
+  }
+}
+
+/* Hanging from its top edge, turning a fraction of a degree as it passes. */
+@keyframes eff-sway {
+  from {
+    transform: rotate(calc(var(--eff-sway) * var(--eff-depth)));
+  }
+  to {
+    transform: rotate(calc(var(--eff-sway) * var(--eff-depth) * -1));
   }
 }
 

@@ -4,15 +4,27 @@
  * the entire transition — a hard cut, with nothing logged. MOTION.md §0.4 asks
  * for an assertion that catches the regression before it ships.
  *
- * This is the assertion. It is called by NavStage immediately before a
- * navigation, walks the live DOM once, and warns on any duplicate. It is a
- * development aid only: the guard below is a literal `process.env.NODE_ENV`
- * compare, which the production bundler statically evaluates to `false` and then
- * tree-shakes the whole body away, so it ships no bytes.
+ * This is the assertion. NavStage schedules it from the click handler, it walks
+ * the live DOM once, and warns on any duplicate. It is a development aid only:
+ * the guard below is a literal `process.env.NODE_ENV` compare, which the
+ * production bundler statically evaluates to `false` and then tree-shakes the
+ * whole body away, so it ships no bytes.
+ *
+ * It is *scheduled*, never called inline, and that is a performance rule rather
+ * than a style choice: `getComputedStyle` on every element in the document is a
+ * full forced style recalculation, and run synchronously inside the click
+ * handler it lands squarely between the press and the first transition frame —
+ * tens of milliseconds of dead air on exactly the interaction the whole motion
+ * system is trying to make feel immediate. A timeout hands the click back to the
+ * browser first. The audit still sees the outgoing DOM: React has not committed
+ * the new route yet when a macrotask queued from the click handler runs.
  */
-export function assertUniqueVtNames(): void {
+export function scheduleVtNameAudit(): void {
   if (process.env.NODE_ENV === 'production') return;
+  setTimeout(auditVtNames, 0);
+}
 
+function auditVtNames(): void {
   const seen = new Map<string, Element[]>();
   for (const element of document.querySelectorAll<HTMLElement>('*')) {
     const name = getComputedStyle(element).viewTransitionName;

@@ -5,7 +5,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 
 import { durationMs } from '@/lib/css-duration';
 import { classifyNavigation, type NavContext, type NavIntent } from '@/lib/nav-intent';
-import { assertUniqueVtNames } from '@/lib/vt-uniqueness';
+import { scheduleVtNameAudit } from '@/lib/vt-uniqueness';
 
 /**
  * The one place a navigation is given its intent. MOTION.md §2.
@@ -70,7 +70,9 @@ export function NavStage({ context }: { context: NavContext }) {
       root.dataset.dir = String(intent.dir);
       if (restoring) root.dataset.restoring = '';
       else delete root.dataset.restoring;
-      assertUniqueVtNames();
+      // Scheduled, not called: it is a whole-document getComputedStyle, and the
+      // one place it must not run is between the press and the first frame.
+      scheduleVtNameAudit();
     }
 
     function onClick(event: MouseEvent) {

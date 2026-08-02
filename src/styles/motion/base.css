@@ -109,6 +109,68 @@
   }
 }
 
+/* ── The canvas figures ───────────────────────────────────────────────────── */
+
+/*
+ * The four moves a *part* can make on the board, as opposed to the two the page
+ * surface makes. The surface can only ever cross-fade or shift as one sheet;
+ * these are what let a route change read as an ensemble — several things going
+ * to several places, on their own clocks — which is the difference between a
+ * transition and a figure.
+ *
+ * Every one of them is `perspective()` written into the transform rather than
+ * `perspective` set as a property on an ancestor. The pseudo-element tree is
+ * group > image-pair > old/new, and the `perspective` property only establishes
+ * a viewing frustum for an element's *direct* children — set on the group it
+ * would reach the image-pair and stop, one level short of the snapshot that is
+ * actually rotating. The function form applies to the element it is written on,
+ * which is the only form that works here. Same depth token in all of them, so
+ * two parts leaning at once read as one space.
+ */
+
+/* Swept aside: the sheet slides off against the direction of travel, turning a
+   few degrees as it goes, the way a sheet pushed across a table does. */
+@keyframes vt-sweep-out {
+  to {
+    opacity: 0;
+    transform: perspective(var(--part-perspective))
+      translate3d(calc(var(--part-sweep) * var(--nav-sign) * -1), 0, 0)
+      rotateY(calc(var(--part-tilt) * var(--nav-sign)));
+  }
+}
+
+/* And the sheet that replaces it, arriving from the other side of the board. */
+@keyframes vt-sweep-in {
+  from {
+    opacity: 0;
+    transform: perspective(var(--part-perspective))
+      translate3d(calc(var(--part-sweep) * var(--nav-sign)), 0, 0)
+      rotateY(calc(var(--part-tilt) * var(--nav-sign) * -1));
+  }
+}
+
+/* Laid down: held just above the board, leaning back, then flat. The origin is
+   the bottom edge so it hinges down onto the surface rather than sinking
+   through it — the one detail that separates "placed" from "faded in". */
+@keyframes vt-lay-down {
+  from {
+    opacity: 0;
+    transform: perspective(var(--part-perspective))
+      translate3d(0, calc(var(--part-rise) * -1), 0) rotateX(var(--part-tilt))
+      scale(var(--part-lift));
+  }
+}
+
+/* And lifted off it again, the same hinge in reverse. */
+@keyframes vt-lift-off {
+  to {
+    opacity: 0;
+    transform: perspective(var(--part-perspective))
+      translate3d(0, calc(var(--part-rise) * -1), 0) rotateX(var(--part-tilt))
+      scale(var(--part-lift));
+  }
+}
+
 /* ── The page surface: a cross-fade that does not stretch ─────────────────── */
 
 /*
@@ -137,12 +199,27 @@
   inset-block-start: 0;
 }
 
+/*
+ * The incoming surface starts at t=0, with no delay, and this is a rule for
+ * every figure in this directory rather than a preference about this one.
+ *
+ * It used to begin one --dur-fast late. A delay on the *outgoing* half is free —
+ * the reader is still looking at a full-opacity page — but a delay on the
+ * incoming half is 140ms in which the click has visibly done nothing, and 140ms
+ * is well above the ~100ms at which a pointer interaction stops feeling
+ * connected to its result. It read as lag on every navigation, and it was: the
+ * page really was blank-to-arriving for that long. The overlap the delay was
+ * buying is bought instead by the two halves running concurrently at different
+ * durations — the old recedes over --dur-base while the new arrives over
+ * --dur-slow, so the new is still nearly transparent while the old is legible,
+ * and no frame has two solid pages in it.
+ */
 ::view-transition-old(.stage) {
   animation: var(--dur-base) var(--ease-io) both vt-stage-recede;
 }
 
 ::view-transition-new(.stage) {
-  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-stage-arrive;
+  animation: var(--dur-slow) var(--ease-out) both vt-stage-arrive;
 }
 
 /* ── The chrome that does not travel ──────────────────────────────────────── */
@@ -218,6 +295,57 @@
 ::view-transition-group(meta),
 ::view-transition-group(pager) {
   z-index: 4;
+}
+
+/* ── The section-page parts ───────────────────────────────────────────────── */
+
+/*
+ * `intro`, `listing` and `panel` all carry the `part` class, so everything true
+ * of all three is stated once here and each figure only writes the move.
+ *
+ * block-size: auto is the §0.1 rule again, and it matters more here than
+ * anywhere: these parts pair by role across pages, so the browser is routinely
+ * asked to hold one box that was 300px on Programmes and 1400px on About. Held
+ * to their own heights and top-anchored they exchange cleanly; without it the
+ * taller one is crushed into the shorter one's box every time.
+ *
+ * The group is left free to animate — that is what carries a part from its
+ * position on one page to its position on the next, which is the "things move
+ * to where they now live" half of the canvas reading. Only figures that want a
+ * clean exchange rather than a journey pin it, and they do so by name.
+ */
+::view-transition-group(.part) {
+  animation-duration: var(--dur-slow);
+  animation-timing-function: var(--ease-io);
+  z-index: 3;
+}
+
+::view-transition-old(.part),
+::view-transition-new(.part) {
+  block-size: auto;
+  inset-block-start: 0;
+  /* The hinge for vt-lay-down / vt-lift-off: a sheet meets the board at its
+     bottom edge. Harmless to the sweeps, which pivot about a vertical axis. */
+  transform-origin: 50% 100%;
+}
+
+/*
+ * The default a part gets when a figure says nothing about it: laid onto the
+ * board on the way in, lifted off it on the way out. A figure that wants
+ * something else overrides on :root[data-figure], which outranks this on
+ * specificity regardless of import order — the same arrangement base.css
+ * already uses for the surface.
+ */
+::view-transition-old(.part) {
+  animation: var(--dur-base) var(--ease-io) both vt-lift-off;
+}
+
+/* --stagger-step, not --figure-lead: --figure-lead is the cover's head start in
+   enter-work, and 200ms + --dur-slow would put this default at 760ms — past the
+   --dur-scene ceiling that MOTION.md §9 raises for enter-work and exit-work only.
+   One stagger step lands it at 630ms, inside the rule. */
+::view-transition-new(.part) {
+  animation: var(--dur-slow) var(--ease-out) var(--stagger-step) both vt-lay-down;
 }
 
 /* ── The default cover morph ──────────────────────────────────────────────── */

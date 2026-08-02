@@ -1,0 +1,66 @@
+/*
+ * pin — the contact card being put on the board.
+ *
+ * This is a *part* figure rather than a navigation figure, and it is the only
+ * one, so it is worth saying what that means. Every other file in this directory
+ * answers "what does a route change look like"; this one answers "what does this
+ * particular thing do when it arrives", whichever route change brought it. The
+ * contact card is the one block on the site that is an object rather than a
+ * region — a card with edges, sitting on the paper — and an object should behave
+ * the same way every time you put it down.
+ *
+ * The move: it comes in from above and slightly turned, as if held, meets the
+ * board at the tack and settles flat. The rotation is monotonic — it starts a
+ * couple of degrees off level and arrives at level without passing through it.
+ * A card that swings past and comes back is a bouncier figure than anything else
+ * on this site does, and MOTION.md §8 rules it out; the sense of weight comes
+ * from the 3D lean and the origin instead, which cost nothing to read.
+ *
+ * transform-origin is the whole trick. Set at the top centre — where
+ * ContactBlock draws its tack — the card rotates *about the pin*, so the lean
+ * and the drop resolve at the one point that is supposed to be fixed. With the
+ * default centre origin the same keyframes read as a card sliding in at an
+ * angle, which is a slide, not a pinning.
+ *
+ * Import order matters and is deliberate: index.css puts this after every
+ * navigation figure. `:root[data-figure='lateral']::view-transition-new(panel)`
+ * and the selectors below have identical specificity, so the cascade falls to
+ * source order and the pin wins over the generic sweep. The figures it does
+ * *not* override are named rather than defaulted:
+ *
+ *   ascend    you are leaving; the card should come off the board, not go on it.
+ *   locale    the words changed, the card did not arrive. Re-pinning a card that
+ *             never left is the site animating for its own sake.
+ *   restore   §0.3. Going back is a restoration, not a performance.
+ */
+
+@keyframes vt-pin-down {
+  from {
+    opacity: 0;
+    transform: perspective(var(--part-perspective))
+      translate3d(0, calc(var(--pin-drop) * -1), 0) rotateX(var(--pin-tilt))
+      rotateZ(calc(var(--pin-swing) * -1)) scale(var(--part-lift));
+  }
+}
+
+/* And the reverse, for the one figure that takes it off again. */
+@keyframes vt-pin-up {
+  to {
+    opacity: 0;
+    transform: perspective(var(--part-perspective))
+      translate3d(0, calc(var(--pin-drop) * -1), 0) rotateX(var(--pin-tilt))
+      rotateZ(calc(var(--pin-swing) * -1)) scale(var(--part-lift));
+  }
+}
+
+:root[data-figure='lateral']::view-transition-new(panel),
+:root[data-figure='descend']::view-transition-new(panel) {
+  animation: var(--dur-slow) var(--ease-out) var(--stagger-step) both vt-pin-down;
+  transform-origin: 50% 0;
+}
+
+:root[data-figure='ascend']::view-transition-old(panel),
+:root[data-figure='lateral']::view-transition-old(panel) {
+  animation: var(--dur-base) var(--ease-io) both vt-pin-up;
+  transform-origin: 50% 0;
+}

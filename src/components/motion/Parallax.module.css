@@ -5,11 +5,11 @@
  */
 @keyframes drift {
   from {
-    transform: scale(1.08) translate3d(0, var(--drift), 0);
+    transform: scale(var(--drift-scale)) translate3d(0, var(--drift), 0);
   }
 
   to {
-    transform: scale(1.08) translate3d(0, calc(var(--drift) * -1), 0);
+    transform: scale(var(--drift-scale)) translate3d(0, calc(var(--drift) * -1), 0);
   }
 }
 
@@ -23,8 +23,10 @@
    * scroll-linked animation makes the page feel like it is fighting the
    * pointer. Easing belongs on things with a beginning and an end.
    *
-   * The 1.08 in the keyframes is what the drift travels inside — without it the
-   * translate would expose a sliver of paper at one edge or the other.
+   * --drift-scale in the keyframes is what the drift travels inside — without it
+   * the translate would expose a sliver of paper at one edge or the other. It is
+   * a token because it and --drift have to be raised together or the pan runs
+   * off its own overscale; tokens.css states that relationship where both live.
    */
   .drift {
     animation: drift linear both;

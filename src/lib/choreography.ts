@@ -29,7 +29,8 @@ export type SceneEffect =
   | 'tilt'
   | 'shear'
   | 'dim'
-  | 'recede';
+  | 'recede'
+  | 'sway';
 
 export type Depth = 0 | 1 | 2 | 3;
 
@@ -52,16 +53,49 @@ export const scenes = {
   studioPlate: { kind: 'scrub', effect: 'focus', depth: 3 },
   /** Works index rows: assemble as the list scrolls in. */
   worksRows: { kind: 'batch', effect: 'slide', depth: 1 },
+  /**
+   * The cover inside a works-index row, where one is rendered at all (a touch
+   * device; a pointer device shows the hover backdrop instead). Media, so it
+   * gets what all media gets: the focus curve rather than an entrance.
+   */
+  worksRowCover: { kind: 'scrub', effect: 'focus', depth: 1 },
   /** Work detail media column: the focus curve, at column depth. */
   workMedia: { kind: 'scrub', effect: 'focus', depth: 2 },
   /** Work detail pager: rises in as the document nears its end. */
   workPager: { kind: 'progress', effect: 'rise', depth: 1 },
   /** Programme entries: each unmasks as it enters. */
   programmeEntry: { kind: 'enter', effect: 'unmask', depth: 1 },
-  /** Mentor grid: a shallow focus, staggered by the batch. */
-  mentors: { kind: 'batch', effect: 'focus', depth: 1 },
-  /** Contact: slides in from the direction the navigation arrived. */
-  contact: { kind: 'enter', effect: 'slide', depth: 1 },
+  /** About prose: paragraph by paragraph, staggered as the block scrolls in. */
+  prose: { kind: 'batch', effect: 'rise', depth: 0 },
+  /**
+   * Mentor grid: the *cards* assemble, staggered by the batch.
+   *
+   * This used to read `focus`, and that was a defect rather than a taste
+   * question. `focus` is a symmetric scrub curve — down, up, down — and `batch`
+   * runs its children over `entry 0% → entry 50%` with `animation-fill-mode:
+   * both`. So the curve completed during the entrance and then *held its end
+   * keyframe*, which is the dimmed, shrunk one: every mentor card came to rest
+   * permanently at 0.9 scale and 55% opacity, and stayed there for as long as
+   * the page was open. Anything ending at its start state (`rise`, `slide`,
+   * `unmask`) is safe on a ranged trigger; the two symmetric effects, `focus`
+   * and `drift`, only ever belong on `scrub`, which runs the whole pass.
+   *
+   * The portraits still focus — see mentorPortrait, which nests a scrub inside
+   * each card. That is the composition the effect vocabulary is built for, and
+   * it is what the §5.5 audit's "focus d1" was actually asking for.
+   */
+  mentors: { kind: 'batch', effect: 'rise', depth: 1 },
+  /** And the portrait inside each card, on its own continuous pass. */
+  mentorPortrait: { kind: 'scrub', effect: 'focus', depth: 1 },
+  /**
+   * Contact. The card is put on the board by styles/motion/pin.css, which is a
+   * navigation figure, so its *scroll* behaviour is the other half of the same
+   * idea: pinned at the top edge, turning a fraction of a degree about the tack
+   * as the page moves under it. It is the only scene on the site whose reason is
+   * a story rather than a hierarchy, and it is a page of nine lines — there is
+   * nothing else here to be restrained about.
+   */
+  contact: { kind: 'scrub', effect: 'sway', depth: 1 },
   /** Footer: rises in at the end of the document. */
   footer: { kind: 'progress', effect: 'rise', depth: 1 },
 } as const satisfies Record<string, Scene>;

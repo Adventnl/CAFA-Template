@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 
 import { PageHeading } from '@/components/composites/PageHeading';
 import { ProgramList } from '@/components/composites/ProgramList';
+import { partClass } from '@/components/motion/Part';
 import { Grid } from '@/components/primitives/Grid';
 import { Text } from '@/components/primitives/Text';
 import { getDictionary, getPrograms, requireLocale } from '@/lib/content';
@@ -28,7 +29,7 @@ export default async function ProgramsPage({ params }: LocaleParams) {
   return (
     <Grid>
       <PageHeading title={dictionary.programs.title} />
-      <Text role="body" className={styles.intro}>
+      <Text role="body" className={`${styles.intro} ${partClass('intro')}`}>
         {dictionary.programs.intro}
       </Text>
       <ProgramList programs={getPrograms()} locale={locale} className={styles.list} />

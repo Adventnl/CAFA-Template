@@ -9,6 +9,7 @@
 
 :root[data-figure='restore']::view-transition-old(.stage),
 :root[data-figure='restore']::view-transition-old(.cover),
+:root[data-figure='restore']::view-transition-old(.part),
 :root[data-figure='restore']::view-transition-old(.rail-entry),
 :root[data-figure='restore']::view-transition-old(rail),
 :root[data-figure='restore']::view-transition-old(heading),
@@ -19,12 +20,24 @@
 
 :root[data-figure='restore']::view-transition-new(.stage),
 :root[data-figure='restore']::view-transition-new(.cover),
+:root[data-figure='restore']::view-transition-new(.part),
 :root[data-figure='restore']::view-transition-new(.rail-entry),
 :root[data-figure='restore']::view-transition-new(rail),
 :root[data-figure='restore']::view-transition-new(heading),
 :root[data-figure='restore']::view-transition-new(meta),
 :root[data-figure='restore']::view-transition-new(pager) {
   animation: var(--dur-base) var(--ease-io) both vt-fade-in;
+}
+
+/*
+ * And the parts' boxes are pinned with them. base.css leaves a part's group free
+ * so it can travel between two pages; on a restoration there is nothing to
+ * travel to — the reader is going back to a page they have already seen, and a
+ * part sliding into position is the site performing a move the reader did not
+ * ask for. §0.3: going back is a restoration, not a performance.
+ */
+:root[data-figure='restore']::view-transition-group(.part) {
+  animation-name: none;
 }
 
 /* No midpoint blur on a cover here — it is not morphing, only fading. Name only:

@@ -24,6 +24,22 @@
  * A scroll() timeline rather than a listener: no JS, and the browser runs it on
  * the compositor. CLAUDE.md §7 rules out scroll handlers for exactly this.
  */
+/*
+ * It also strengthens while the page is moving — MOTION.md §5.5, the first row
+ * of the audit, and the one ambient effect that is on every page of the site.
+ *
+ * The velocity term is squared rather than made positive with abs(): the sign
+ * has to go, because a rule that thins when you scroll up is nonsense, and
+ * multiplying a number by itself is the version of that which has been in CSS
+ * since calc() shipped. Squaring also gives the response a useful shape — a
+ * slow scroll barely touches it and a fast one is unmistakable — where abs()
+ * would ramp evenly from the first pixel.
+ *
+ * scaleY on a 1px box, anchored to its own bottom edge, so the line grows
+ * upward into the header rather than down into the content. A transform, not a
+ * block-size: CLAUDE.md §7 permits exactly four properties to move and height is
+ * not one of them.
+ */
 .header::after {
   background-color: var(--c-ink-16);
   block-size: 1px;
@@ -32,6 +48,8 @@
   inset-inline: 0;
   opacity: 0;
   position: absolute;
+  transform: scaleY(calc(1 + var(--scroll-v) * var(--scroll-v) * var(--rule-gain)));
+  transform-origin: 50% 100%;
 }
 
 @supports (animation-timeline: scroll()) {
@@ -48,10 +66,14 @@
   }
 }
 
+/* The animation is cancelled by name and the transform explicitly: the blanket
+   duration collapse in globals.css reaches neither a scroll-driven timeline nor
+   a live custom-property transform. */
 @media (prefers-reduced-motion: reduce) {
   .header::after {
     animation: none !important;
     opacity: 1 !important;
+    transform: none !important;
   }
 }
 

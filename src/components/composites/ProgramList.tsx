@@ -1,3 +1,4 @@
+import { partClass } from '@/components/motion/Part';
 import { Text } from '@/components/primitives/Text';
 import { scenes, sceneAttrs } from '@/lib/choreography';
 import type { Locale, Program } from '@/lib/types';
@@ -17,7 +18,9 @@ interface ProgramListProps {
  */
 export function ProgramList({ programs, locale, className }: ProgramListProps) {
   return (
-    <ul className={[styles.list, className].filter(Boolean).join(' ')}>
+    // The page's `listing` part: a route change carries this whole block as one
+    // thing, so it can arrive after the heading rather than with it. MOTION.md §3.
+    <ul className={[styles.list, partClass('listing'), className].filter(Boolean).join(' ')}>
       {programs.map((program) => (
         <li key={program.slug}>
           {/* The scene *is* the entry rather than a wrapper around it: another

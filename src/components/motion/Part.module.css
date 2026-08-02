@@ -1,0 +1,30 @@
+/*
+ * The three role names a section page's blocks can take, and the class all three
+ * share. The idents themselves live in tokens.css — a view-transition-name has to
+ * be the same word here and in the figure stylesheets that animate it, so it is
+ * written once as a token and read from both ends (CLAUDE.md §4, MOTION.md §3).
+ *
+ * `var()` in a view-transition-name is not a trick: substitution happens at
+ * computed-value time, before the property is parsed, so `var(--vt-intro)`
+ * resolves to the bare ident `intro`. WorkIndexRow.module.css already relies on
+ * exactly this for view-transition-class.
+ *
+ * Nothing here styles anything. A part is an identity, not an appearance — the
+ * block keeps whatever layout its own module gave it.
+ */
+
+.part {
+  view-transition-class: var(--vt-class-part);
+}
+
+.intro {
+  view-transition-name: var(--vt-intro);
+}
+
+.listing {
+  view-transition-name: var(--vt-listing);
+}
+
+.panel {
+  view-transition-name: var(--vt-panel);
+}

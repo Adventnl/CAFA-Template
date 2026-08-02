@@ -30,6 +30,10 @@
      */
     view-transition-class: var(--vt-class-cover);
     z-index: 0;
+    /* The slots are overscaled and lean against the pointer, so they need an
+       edge to lean inside. Without this the translated picture would show a
+       sliver of whatever is behind the fixed layer at one edge. */
+    overflow: clip;
   }
 
   .layer[data-visible] {
@@ -46,12 +50,40 @@
     position: absolute;
   }
 
+  /*
+   * MOTION.md §5.5, "works index — hover backdrop: pointer, drift against
+   * --px/--py". ScrollField publishes the pointer position as two unitless 0…1
+   * custom properties on :root; this is the only effect on the site that reads
+   * them, and it is the reason they are published at all.
+   *
+   * Subtracting 0.5 recentres them to ±0.5, and multiplying by a length turns a
+   * number into a distance — so the picture leans *away* from the pointer by up
+   * to half of --hover-parallax in each axis. Away, not toward: a backdrop that
+   * follows the cursor reads as attached to it, and this one is meant to read as
+   * sitting a long way behind the list.
+   *
+   * No transition on the transform, deliberately. --px and --py are rewritten
+   * every animation frame the pointer moves, so a transition would be chasing a
+   * target that has already moved and the lean would trail the cursor by its own
+   * duration. The opacity transition stays: that one is driven by a data
+   * attribute that changes once per row, which is exactly what transitions are
+   * for. The two are separate properties here rather than one shorthand for that
+   * reason alone.
+   */
   .slot {
     display: block;
     inset: 0;
     opacity: 0;
     position: absolute;
-    transition: opacity var(--dur-scene) var(--ease-io);
+    transform: scale(var(--drift-scale))
+      translate3d(
+        calc((var(--px) - 0.5) * var(--hover-parallax) * -1),
+        calc((var(--py) - 0.5) * var(--hover-parallax) * -1),
+        0
+      );
+    transition-duration: var(--dur-scene);
+    transition-property: opacity;
+    transition-timing-function: var(--ease-io);
   }
 
   .slot[data-front] {
@@ -62,5 +94,17 @@
     block-size: 100%;
     inline-size: 100%;
     object-fit: cover;
+  }
+}
+
+/*
+ * The pointer lean is a live transform, not an animation or a transition, so the
+ * blanket duration collapse in globals.css does not touch it — it would go on
+ * tracking the cursor for exactly the people who asked for no motion. The same
+ * trap the scroll-driven effects have, and it needs the same explicit cancel.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .slot {
+    transform: none !important;
   }
 }

@@ -143,14 +143,49 @@
   --vt-pager: pager;
   --vt-chrome-nav: chrome-nav;
 
+  /*
+   * The section-page parts. Before these existed a section page named exactly one
+   * element — its heading — so every figure between two section pages had nothing
+   * to choreograph and fell back to sliding the whole surface as one sheet. That
+   * is the "it is all just one fade" reading, and it was accurate: with one part
+   * there is no ensemble, only a page.
+   *
+   * They are named by *role*, not by page, so `intro` on Programmes and `intro`
+   * on About are the same identity and the browser pairs them. Whether a paired
+   * part morphs across (one block travelling to its new home) or sweeps out and
+   * back in (two sheets exchanged) is then the figure's decision, taken per
+   * figure in styles/motion/ — which is the whole point of naming by role.
+   */
+  --vt-intro: intro;
+  --vt-listing: listing;
+  --vt-panel: panel;
+
   /* The view-transition-class the per-slug parts carry, so one figure rule can
      reach every work's cover (or rail entry) by class rather than by name. The
      ident matches lib/vt-names.ts and the ::view-transition-group(.cover) selectors. */
   --vt-class-cover: cover;
   --vt-class-rail-entry: rail-entry;
+  /* Every role part above also carries this, so the one rule that keeps a
+     snapshot at its own height (base.css) is written once rather than per name. */
+  --vt-class-part: part;
 
-  /* §6 Scroll-driven motion. Small numbers: the calm comes from barely moving. */
-  --drift: 3.5%; /* how far media travels across one view() pass */
+  /*
+   * §6 Scroll-driven motion.
+   *
+   * These were tuned so low that the motion was technically present and visually
+   * deniable — a 0.88 floor on a plate half a viewport tall is a couple of
+   * pixels of travel, which reads as nothing moving at all. They are retuned to
+   * the depth the reference sites actually use: a plate now visibly comes up to
+   * size as it centres and eases back down as it leaves. Still one continuous
+   * symmetric curve, still linear against the scroll, still nothing but
+   * transform / opacity / filter.
+   *
+   * --drift-scale is the overscale the internal pan travels inside. It has to
+   * clear twice --drift or the translate exposes a sliver of paper at one edge:
+   * at ±5% the frame needs 10% of headroom, and 1.12 leaves a little over.
+   */
+  --drift: 5%; /* how far media travels across one view() pass */
+  --drift-scale: 1.12; /* the overscale that drift travels inside */
   --recede-scale: 0.94; /* what a block shrinks to as it leaves the top */
   --recede-fade: 0.35; /* and how far it dims, never to nothing */
 
@@ -171,6 +206,37 @@
   --stage-shift: 6%; /* how far the page surface slides on a lateral/descend move */
   --part-rise: 24px; /* how far a part (meta, pager) rises in as it arrives */
   --figure-lead: 200ms; /* how long the cover leads before the parts arrive; §3 */
+
+  /*
+   * The canvas figures. MOTION.md's brief is that the site is one surface the
+   * viewer moves across, not a stack of documents — so a route change moves
+   * *things on a board*: sheets slide aside, sheets are laid down, a card is
+   * pinned. These are the magnitudes those figures travel.
+   *
+   * --part-perspective is the one place a 3D depth is set. It lives on the
+   * transition root rather than per figure, because two parts leaning through
+   * different perspectives in the same move read as two unrelated animations.
+   * It is deliberately long: at 900px a 7° lean is a suggestion of depth, which
+   * is the taste rule in CLAUDE.md §2 applied to the third axis. Shorter values
+   * are where 3D starts looking like a slideshow template.
+   */
+  --part-sweep: 5rem; /* how far a part slides aside when the canvas pans */
+  --part-tilt: 7deg; /* the lean a part falls through as it is laid down */
+  --part-lift: 1.05; /* the scale it is held at, just above the board */
+  --part-perspective: 900px; /* one depth for every 3D figure on the site */
+
+  /*
+   * The pinned card (contact). It is dropped onto the board from slightly above
+   * and to one side, catches on its pin, and swings the last few degrees to
+   * rest. --pin-swing is the only overshoot-adjacent value in the system and it
+   * is not one: the card approaches its resting angle from a single side and
+   * stops, so it settles rather than bouncing. MOTION.md §9's "nothing bouncy"
+   * is about elastic easing, which no keyframe here uses.
+   */
+  --pin-drop: 2.5rem; /* how far above the board the card starts */
+  --pin-tilt: 12deg; /* the lean it falls through */
+  --pin-swing: 2.5deg; /* how far it swings past level before settling */
+  --pin-size: 0.5rem; /* 8px — the tack, a square set on its corner */
 
   /*
    * MOTION.md §4 — scroll as continuous state. ScrollField writes these each
@@ -201,11 +267,30 @@
   --eff-shear: 0.02; /* scaleY added per unit of scroll velocity */
   --eff-unmask: 8%; /* how far a clip-path wipe starts open from */
 
+  /* The effects MOTION.md §5.4 specified and §5.5 uses, added here as they land.
+     --eff-split is per *line*, so it is smaller than --eff-rise on purpose: a
+     paragraph whose lines each travel 2.5rem is a paragraph you cannot read. */
+  --eff-split: 0.75rem; /* per-line rise in a split paragraph */
+  /* An angle, not a length: a swaying thing hangs from a fixed point and turns
+     about it. Half a degree either side of level across a whole pass — at the
+     bottom edge of a card that is a few pixels, which is the intended reading.
+     Anything you can actually see here looks like a broken layout. */
+  --eff-sway: 1.5deg;
+
+  /* How far the works-index backdrop leans away from the pointer. It is the one
+     effect driven by --px/--py rather than by scroll position. */
+  --hover-parallax: 1.5rem;
+
+  /* How much thicker the header hairline gets at full scroll velocity, as a
+     multiple of itself. Two means a 1px rule reaches 3px while the page is
+     moving fast and settles back to 1px the moment it stops. */
+  --rule-gain: 2;
+
   --focus-dim: 0.55; /* how far media dims at the edges of its pass; §6 */
-  --focus-min-0: 0.96;
-  --focus-min-1: 0.92;
-  --focus-min-2: 0.88;
-  --focus-min-3: 0.82;
+  --focus-min-0: 0.94;
+  --focus-min-1: 0.9;
+  --focus-min-2: 0.84;
+  --focus-min-3: 0.76;
   --focus-blur-0: 0px;
   --focus-blur-1: 1px;
   --focus-blur-2: 2px;

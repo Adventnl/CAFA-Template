@@ -1,16 +1,90 @@
 /*
  * locale — the same page in the other language. MOTION.md §2. It is not a
- * journey: the reader is standing still and the words change under them, so the
- * surface only cross-fades, without the scale a navigation carries. The shared
- * parts (a heading, a work's metadata, its cover) pair by name across the switch
- * — same box, changed text — so base.css cross-fades their content in place and
- * a cover that is the very same photograph simply holds.
+ * journey: the reader is standing still and the words change under them. So this
+ * is the one figure with no travel in it at all — nothing slides, nothing is
+ * laid down, no surface moves. Every box stays exactly where it is and only its
+ * contents are exchanged.
+ *
+ * The exchange is vertical and small: the old text lifts away and the new comes
+ * up into the same slot from just below, like a departure board. Two things make
+ * that read as a translation rather than a transition. First, the box never
+ * moves, so the eye has a fixed frame to watch the change happen inside — which
+ * is exactly what a reader who just pressed 中文 is looking for. Second, the
+ * parts are staggered top-down, so the change *sweeps* down the page instead of
+ * happening everywhere at once, and a reader can follow it.
+ *
+ * A cover that is the very same photograph in both locales pairs and simply
+ * holds, which is right: the picture is not translated.
  */
 
+/* Half of --part-rise: this is a swap in place, and the full arrival distance
+   would read as the content having gone somewhere and come back. */
+@keyframes vt-swap-out {
+  to {
+    opacity: 0;
+    transform: translate3d(0, calc(var(--part-rise) * -0.5), 0);
+  }
+}
+
+@keyframes vt-swap-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, calc(var(--part-rise) * 0.5), 0);
+  }
+}
+
+/* The surface only cross-fades, without the scale a navigation carries. */
 :root[data-figure='locale']::view-transition-old(.stage) {
   animation: var(--dur-base) var(--ease-io) both vt-fade-out;
 }
 
 :root[data-figure='locale']::view-transition-new(.stage) {
   animation: var(--dur-base) var(--ease-io) both vt-fade-in;
+}
+
+/*
+ * Every box held still. These parts pair across the switch — same page, same
+ * position — so their groups would have nothing to interpolate anyway; pinning
+ * says so explicitly rather than relying on the two geometries happening to
+ * match, which they do not when a Chinese line wraps where an English one does
+ * not. Without the pin, that height difference alone would make the panel jump.
+ */
+:root[data-figure='locale']::view-transition-group(heading),
+:root[data-figure='locale']::view-transition-group(intro),
+:root[data-figure='locale']::view-transition-group(listing),
+:root[data-figure='locale']::view-transition-group(panel),
+:root[data-figure='locale']::view-transition-group(meta),
+:root[data-figure='locale']::view-transition-group(pager),
+:root[data-figure='locale']::view-transition-group(rail) {
+  animation-name: none;
+}
+
+/* The whole page's old text leaves together — it is the arrival that ripples. */
+:root[data-figure='locale']::view-transition-old(heading),
+:root[data-figure='locale']::view-transition-old(.part),
+:root[data-figure='locale']::view-transition-old(meta),
+:root[data-figure='locale']::view-transition-old(pager),
+:root[data-figure='locale']::view-transition-old(rail) {
+  animation: var(--dur-fast) var(--ease-io) both vt-swap-out;
+}
+
+/* Top-down, one step apart, so the new language arrives as a wave down the page.
+   --dur-base rather than --dur-slow: the reader is waiting to read, and a slow
+   arrival on text that has not moved is the page being decorative at them. */
+:root[data-figure='locale']::view-transition-new(heading) {
+  animation: var(--dur-base) var(--ease-out) var(--dur-fast) both vt-swap-in;
+}
+
+:root[data-figure='locale']::view-transition-new(intro),
+:root[data-figure='locale']::view-transition-new(panel),
+:root[data-figure='locale']::view-transition-new(meta) {
+  animation: var(--dur-base) var(--ease-out) calc(var(--dur-fast) + var(--stagger-step)) both
+    vt-swap-in;
+}
+
+:root[data-figure='locale']::view-transition-new(listing),
+:root[data-figure='locale']::view-transition-new(rail),
+:root[data-figure='locale']::view-transition-new(pager) {
+  animation: var(--dur-base) var(--ease-out) calc(var(--dur-fast) + var(--stagger-step) * 2) both
+    vt-swap-in;
 }

@@ -1,19 +1,110 @@
 /*
  * lateral — moving along the nav bar, one section to another. MOTION.md §2: the
  * direction comes from the order of the items in content/site.ts, which NavStage
- * turns into data-dir. The surface leans out against the travel and the next
- * leans in with it, so going rightward through the nav reads as rightward.
+ * turns into data-dir.
  *
- * The section heading is a shared part (Works ⇄ Programmes ⇄ About), so the
- * browser pairs the two and cross-fades the words in place — base.css leaves its
- * group free to do exactly that. Nothing else on a section page is a part, so the
- * surface carries the move.
+ * This is the figure the site spends most of its navigations in, and it used to
+ * be the thinnest: two rules, sliding the whole surface 6% as a single sheet.
+ * That is a page transition, not a figure — nothing on the board moved relative
+ * to anything else, so every lateral move looked identical and looked like a
+ * cross-fade with a lean.
+ *
+ * What it is now: the canvas pans, and the things on it go with it *at different
+ * rates*. The heading leads, the body follows a beat later, the listing last,
+ * each sweeping off against the travel and its replacement arriving from the
+ * other side. Because the parts are named by role, Programmes' intro and About's
+ * prose are the same identity — the browser is exchanging one sheet for another
+ * in a known position, which is why the move has somewhere to be rather than
+ * just a direction.
+ *
+ * The stagger is the whole effect. Everything leaving at once is a cross-fade
+ * however far it travels; things leaving in an order is a hand moving across a
+ * table. Three steps of --stagger-step, which §8 caps at three, and the longest
+ * total (--dur-slow + 2 steps) lands on --dur-scene exactly.
  */
+
+/* ── The surface ──────────────────────────────────────────────────────────── */
 
 :root[data-figure='lateral']::view-transition-old(.stage) {
   animation: var(--dur-base) var(--ease-io) both vt-slide-lead-out;
 }
 
 :root[data-figure='lateral']::view-transition-new(.stage) {
-  animation: var(--dur-slow) var(--ease-out) var(--dur-fast) both vt-slide-lead-in;
+  animation: var(--dur-slow) var(--ease-out) both vt-slide-lead-in;
+}
+
+/* ── The heading leads ────────────────────────────────────────────────────── */
+
+/*
+ * Pinned, then both snapshots animated by hand. Left free the group would
+ * interpolate between the two headings' boxes — and PageHeading puts every
+ * section's h1 on exactly the same grid position, so there is no box to
+ * interpolate: the heading would sit perfectly still and cross-fade its letters
+ * while the entire rest of the page swept past it. Pinning the box and sweeping
+ * the two snapshots is what makes the word travel with the board it is on.
+ */
+:root[data-figure='lateral']::view-transition-group(heading) {
+  animation-name: none;
+}
+
+:root[data-figure='lateral']::view-transition-old(heading) {
+  animation: var(--dur-base) var(--ease-io) both vt-sweep-out;
+}
+
+:root[data-figure='lateral']::view-transition-new(heading) {
+  animation: var(--dur-slow) var(--ease-lead) both vt-sweep-in;
+}
+
+/* ── The parts follow, in order ───────────────────────────────────────────── */
+
+/*
+ * Same pinning for the same reason, and one shared rule for the leaving half:
+ * everything on the outgoing board is swept off together, because a reader who
+ * has already decided to leave does not need to be shown the departure in
+ * detail. The *arrival* is where the stagger is spent.
+ */
+:root[data-figure='lateral']::view-transition-group(intro),
+:root[data-figure='lateral']::view-transition-group(listing),
+:root[data-figure='lateral']::view-transition-group(panel) {
+  animation-name: none;
+}
+
+:root[data-figure='lateral']::view-transition-old(.part) {
+  animation: var(--dur-base) var(--ease-io) both vt-sweep-out;
+}
+
+/* One step behind the heading: the lead paragraph, or the contact card. */
+:root[data-figure='lateral']::view-transition-new(intro),
+:root[data-figure='lateral']::view-transition-new(panel) {
+  animation: var(--dur-slow) var(--ease-out) var(--stagger-step) both vt-sweep-in;
+}
+
+/* Two steps behind it: the list, which is the largest thing on the board and
+   the one whose late arrival makes the page read as assembling. */
+:root[data-figure='lateral']::view-transition-new(listing) {
+  animation: var(--dur-slow) var(--ease-out) calc(var(--stagger-step) * 2) both vt-sweep-in;
+}
+
+/* ── The chrome ───────────────────────────────────────────────────────────── */
+
+/*
+ * The nav list is the one piece of chrome that moves, and only here — MOTION.md
+ * §2 reserves it for lateral, because this is the only figure where the nav is
+ * what you acted on. It travels a fraction of the surface's distance: enough to
+ * belong to the same gesture, not enough to look like it is leaving with the
+ * page. The header around it stays nailed down (base.css), which is what the eye
+ * holds on to while everything else moves.
+ */
+/* --part-sweep, not --stage-shift: a percentage in a translate resolves against
+   the element's own box, and the nav list is a few hundred pixels wide, so the
+   surface's 6% would be a pixel and a half here. A length keeps the lean the
+   same visible distance the sweep uses, scaled down to a seventh of it. */
+@keyframes vt-nav-lean {
+  50% {
+    transform: translate3d(calc(var(--part-sweep) * var(--nav-sign) * -0.15), 0, 0);
+  }
+}
+
+:root[data-figure='lateral']::view-transition-new(chrome-nav) {
+  animation: var(--dur-scene) var(--ease-io) both vt-nav-lean;
 }

@@ -1,6 +1,49 @@
+/*
+ * Contact is the one page that is a single object rather than a region of the
+ * site, so it is drawn as one: a card of raised paper on the board, square, a
+ * hairline for an edge, and a tack holding it at the top. Everything else on the
+ * site is ink directly on the ground; this is the exception that proves it.
+ *
+ * The restraint rules in CLAUDE.md §2 are kept rather than bent. No shadow — the
+ * card lifts off the page by tone and edge, which is what a raised paper token
+ * and a hairline are for. No radius — --radius is 0 and every corner here is
+ * square. The tack is a rotated square, not an icon: it is a mark of the same
+ * family as the hairlines, at the same weight, in the same ink.
+ */
 .block {
+  background-color: var(--c-paper-raised);
+  border: var(--hairline);
   display: grid;
+  padding: var(--space-l);
+  position: relative;
   row-gap: var(--space-xl);
+}
+
+/*
+ * The tack, straddling the top edge at the centre. A pseudo-element rather than
+ * a span because it is decoration and nothing else — there is no content here to
+ * hide from a screen reader, because there is no element.
+ *
+ * Its position is not arbitrary: styles/motion/pin.css sets the card's
+ * transform-origin to `50% 0`, the exact point this sits on, so the whole pin
+ * figure rotates about this mark. Move one and the other stops making sense —
+ * which is why both are expressed against --pin-size rather than by eye.
+ *
+ * translate/rotate as separate properties, not a transform shorthand: they
+ * compose in a defined order (translate, then rotate), so the -50% centring
+ * resolves against the unrotated box and the 45° turn happens about the mark's
+ * own middle afterwards. Written as one `transform` the two would fight.
+ */
+.block::before {
+  background-color: var(--c-ink);
+  block-size: var(--pin-size);
+  content: '';
+  inline-size: var(--pin-size);
+  inset-block-start: calc(var(--pin-size) / -2);
+  inset-inline-start: 50%;
+  position: absolute;
+  rotate: 45deg;
+  translate: -50% 0;
 }
 
 .link {
