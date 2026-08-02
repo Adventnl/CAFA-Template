@@ -9,10 +9,14 @@
   view-transition-name: var(--vt-pager);
 }
 
+/* The dim behind a rail preview sits on the links rather than on .pager, whose
+   own opacity belongs to its rise scene — and the links are what the pager's
+   snapshot paints anyway, so it travels into the transition. tokens.css. */
 .step {
   color: var(--c-ink);
   display: grid;
   min-block-size: var(--tap-min);
+  opacity: var(--preview-dim);
   row-gap: var(--space-3xs);
   text-decoration: none;
   transition: opacity var(--dur-fast) var(--ease-io);

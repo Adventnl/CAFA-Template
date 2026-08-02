@@ -257,6 +257,14 @@ Server component. No client JS except `Reveal`.
 - Under 1024 px the grid becomes one column, the meta panel un-sticks and sits above the
   media. `StickyColumn` handles this by only applying `position: sticky` inside the
   `min-width: 1024px` query.
+- The far-left rail (`WorkRail`, MOTION.md §7) is the one client component on the route, and
+  what makes it one is the hover figure rather than the navigation: it holds the same
+  `previewed` state `WorkIndex` does and renders the same `HoverMediaLayer`, so resting on a
+  number raises that work's cover full-bleed behind the page and clicking it morphs the
+  photograph into the next work's media column. Everything else is CSS on one data attribute —
+  the page reads `[data-previewing]` through `:has()` and each part dims itself to
+  `--preview-dim`, which §7.1 of the motion plan explains is not the same thing as dimming the
+  container.
 
 ### 5.3 Scroll reveal — the big.dk cadence
 

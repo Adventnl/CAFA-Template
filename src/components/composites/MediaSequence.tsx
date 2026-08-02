@@ -44,7 +44,7 @@ export function MediaSequence({ slug, cover, media, locale, className }: MediaSe
         // — the drift rides inside it. §6, §5.5 (work detail media: focus + drift).
         <Focus key={image.src} depth={scenes.workMedia.depth}>
           <Parallax>
-            <Media image={image} locale={locale} sizes={SIZES} />
+            <Media image={image} locale={locale} sizes={SIZES} className={styles.plate} />
           </Parallax>
         </Focus>
       ))}

@@ -445,6 +445,31 @@ Its trigger (§5.5): `link`ed to the media column, so the active number tracks w
 is centred as you scroll the work. The rail is a scroll position indicator and a navigation at
 once.
 
+### 7.1 The hover figure belongs to the rail too
+
+The rail is the index compressed, so it hovers like the index. Resting on a number fills the
+viewport behind the page with that work's cover — the same `HoverMediaLayer`, the same veil —
+and the click that follows morphs that photograph into the next work's media column. Index →
+work and work → work are then the same move, which is the whole argument for a persistent
+rail: if the compressed index behaved differently from the full one, it would be a different
+component wearing its name.
+
+Three things make it work, and each is somewhere the naive version fails:
+
+- **The figure does not change.** A rail click is still `step-work`. What turns the slide into
+  a morph is only that the backdrop is already holding `cover-{next}` when the navigation
+  starts, so that name is on both sides and the browser pairs it. `step-work.css` therefore
+  slides `::view-transition-old(.cover):only-child` — a cover with no partner — and leaves a
+  paired one to the morph in `base.css`. A pager click, which has no backdrop, is unchanged.
+- **The active entry previews nothing.** Its cover is already this page's hero, and two
+  elements holding `cover-{slug}` at once abort the transition rather than run it (§0.4).
+- **The page behind steps back to `--preview-dim`, part by part.** Not one opacity on a
+  container: a view-transition snapshot keeps an element's own opacity and drops its
+  ancestors', so a part dimmed from above is captured at full strength and flashes back to
+  full ink the instant you click. The hero, the metadata, the pager's links and the plates
+  each carry it, at the one level in their subtree that is neither animated by a scene nor
+  pinned by the reduced-motion rule.
+
 ---
 
 ## 8. Phase 7 — smooth scroll (last, and conditional)

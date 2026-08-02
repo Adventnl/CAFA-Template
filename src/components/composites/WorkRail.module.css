@@ -56,6 +56,11 @@
     color: var(--c-ink);
   }
 
+  .number,
+  .title {
+    transition: opacity var(--dur-base) var(--ease-io);
+  }
+
   .title {
     color: var(--c-ink-70);
   }
@@ -68,5 +73,27 @@
 @media (hover: hover) and (pointer: fine) {
   .link:hover {
     color: var(--c-ink);
+  }
+
+  /*
+   * The same inversion the index makes, for the same two reasons: the entry
+   * under the pointer is the only one being read, and it is the only one the
+   * veil over the backdrop was calibrated for — --c-ink-62 at 11px over an
+   * arbitrary photograph is not a contrast anyone can promise, so the numbers
+   * that are not being read step back rather than sit there illegible.
+   *
+   * On the number and the title themselves, not on the entry around them: the
+   * active number is a named part, and a snapshot keeps only its own opacity
+   * (tokens.css --preview-dim). Dimming from the <li> would look right and then
+   * flash at full ink the moment you clicked.
+   */
+  [data-previewing] .number,
+  [data-previewing] .title {
+    opacity: var(--dim);
+  }
+
+  [data-previewing] .link:hover .number,
+  [data-previewing] .link:focus-visible .number {
+    opacity: 1;
   }
 }

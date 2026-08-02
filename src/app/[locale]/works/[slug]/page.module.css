@@ -3,21 +3,51 @@
   row-gap: var(--space-2xl);
 }
 
+/*
+ * z-index, and it is not decoration: the rail's hover backdrop is a fixed layer
+ * at z-index 0, and a positioned element at z-index 0 paints above in-flow
+ * content. Without this the photograph would cover the page it is meant to sit
+ * behind. The same reason WorkIndex lifts its list. Grid items honour z-index
+ * without being positioned, so nothing here gains a `position` it did not need.
+ */
 .rail,
 .meta,
 .media,
 .pager {
   grid-column: 1 / -1;
+  z-index: 1;
 }
 
 /* The sticky metadata column is its own part: it rises in after the cover on
-   enter-work, and stays pinned while paging between works. §3. */
+   enter-work, and stays pinned while paging between works. §3. It steps back
+   with the rest of the page while the rail previews another work, below. */
 .meta {
+  opacity: var(--preview-dim);
+  transition: opacity var(--dur-base) var(--ease-io);
   view-transition-name: var(--vt-meta);
 }
 
 .pager {
   margin-block-start: var(--space-xl);
+}
+
+/*
+ * While the rail previews another work its cover fills the viewport behind this
+ * page, so the page steps back — the same inversion the index makes when a row
+ * is hovered, and the reason the photograph reads at all. The rail itself does
+ * not dim: it is the interface you are using, and its own hover already moves
+ * the number under the pointer to full ink.
+ *
+ * Only the switch lives here. Each part applies --preview-dim to itself, because
+ * a view-transition snapshot ignores an ancestor's opacity (tokens.css), and the
+ * parts are named ones — dimming them from this rule would look right until the
+ * moment you clicked. Guarded by the hover query for the same reason the index
+ * is: on a touch screen a tap raises pointerenter and there is no backdrop.
+ */
+@media (hover: hover) and (pointer: fine) {
+  .page:has(.rail[data-previewing]) {
+    --preview-dim: var(--dim);
+  }
 }
 
 @media (width >= 1024px) {
