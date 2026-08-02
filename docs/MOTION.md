@@ -13,6 +13,27 @@ the current transition machinery actively fights the thing we are building.
 that survives onto the detail page — option A, specced in §7. Real photography is coming;
 motion values are tuned generically for now and re-tuned against real plates later.
 
+**Decision taken (2026-08-02, later):** **contact stops being a page.** `/{locale}/contact`
+is deleted and the nav item opens a card pinned over whatever page you are already on,
+which the reader can then pick up and put anywhere. The reasoning is §5.5b, rewritten:
+this document had already called the contact card "the one block on the site that is an
+*object* rather than a region of it", and then made it a page anyway — so the object had
+to be *travelled to*, and the figure that put it down could only run on arrival. As an
+overlay the same figure runs wherever you are, and the object can be moved, which is what
+an object on a board does. Two things go with the page: the `panel` part role, which had
+no second user and therefore nothing to pair against, and the `sway` effect, which had no
+second surface. Both are recorded below rather than quietly deleted.
+
+**Decisions taken (2026-08-02):** the section pages catch up with the works pages. Three
+things, all of them things this document already asked for and none of which had been built:
+Programmes becomes a **stack** (§5.3), About carries the **studio filmstrip** (§5.2), and a
+listing's entries are **named parts of their own** so a list unzips on a route change instead
+of sliding as one sheet (§3). The gap they were closing is worth stating plainly, because it
+is the same one §0.5 named at the start: Works had eight figures and five scenes, and the
+section pages had `lateral` and two ranged entrances. The vocabulary was not missing — `pin`,
+`pin-scrub`, `pan`, `split` and `recede` were all specced here and unused. What was missing
+was surfaces that used it.
+
 ---
 
 ## 0. What is wrong now, precisely
@@ -168,23 +189,47 @@ Delete the page-level `<ViewTransition default="page">`. Replace with a name reg
 | `heading` | page `h1` | |
 | `intro` | the block that says what the page is | Programmes' lead line, About's prose |
 | `listing` | the page's main body of repeated things | programme list, mentor grid |
-| `panel` | a self-contained card that *is* the page | contact only |
 | `meta` | sticky metadata column | |
 | `pager` | prev/next | |
 | `chrome-nav` | header nav list | |
+| `item-{key}` | one entry *inside* a listing — a programme, a mentor | the list unzips |
 
-`intro`, `listing` and `panel` are named by **role, not by page**, and that is the whole
-reason the section-to-section figures have anything to do. Programmes' intro and About's
-prose share one identity, so the browser knows they occupy the same slot on the board and
-a lateral move is an *exchange in a known position* rather than two unrelated fades.
-Before they existed a section page named exactly one element — its heading — so every
-figure between two section pages had a single sheet to slide and nothing to slide it
-against. They all looked the same because they were the same.
+`item-{key}` is the one that made the section-page figures ensembles rather than slides, and
+it is the same insight as `rail-{slug}` one level down. A `listing` on its own is a single
+sheet: a figure can only move it as a block, so leaving Programmes and leaving About were
+literally the same animation. Named, the entries are hoisted out of the listing's snapshot
+and travel one at a time — the sheet goes as a sheet and the things printed on it go in
+order, which is `enter-work`'s unzip arriving on the pages that had nothing.
 
-They share the `part` view-transition-class, so what is true of all three (hold your own
-height, hinge about your bottom edge) is written once in `base.css`. A fourth role should
+They are keyed, never positional. `item-3` on two pages would *pair*, and the browser would
+morph a programme entry into a mentor card because they happened to be third. Keyed, they
+are always only-children, which is what every figure here actually wants. The stagger rides
+on three step classes alongside (`step-1`…`step-3`), because a `::view-transition-*`
+pseudo-element can be selected by name and class and by nothing else — there is no
+`:nth-child` on the far side of a snapshot. The step is published as a *number*
+(`--item-step`) rather than as a delay, so a figure overriding an item's move with the
+`animation` shorthand cannot silently reset the stagger; it multiplies the number out again.
+
+`intro` and `listing` are named by **role, not by page**, and that is the whole reason the
+section-to-section figures have anything to do. Programmes' intro and About's prose share
+one identity, so the browser knows they occupy the same slot on the board and a lateral
+move is an *exchange in a known position* rather than two unrelated fades. Before they
+existed a section page named exactly one element — its heading — so every figure between
+two section pages had a single sheet to slide and nothing to slide it against. They all
+looked the same because they were the same.
+
+They share the `part` view-transition-class, so what is true of both (hold your own
+height, hinge about your bottom edge) is written once in `base.css`. A third role should
 be resisted: a role only one page uses is a part with nothing to pair against, and the
 pairs are where the figures come from.
+
+There *was* a third, `panel` — "a self-contained card that is the page" — and contact was
+its only user, which is the rule in the paragraph above catching one of its own. Every
+figure had to name it explicitly alongside `intro` (`lateral.css`, `descend-ascend.css`,
+`locale.css` each carried the extra selector) and every one of those rules did exactly
+what the `intro` rule beside it did, because a part with no partner has no exchange to
+make. It went with the route. The card is now `components/motion/PinnedNote`, an overlay
+in the top layer, which no route change can reach and none needs to.
 
 Per-slug names are the unlock. Today both the index and the detail page use one shared
 `work-cover`, so only the cover can morph. With `rail-{slug}` and `cover-{slug}` the pager can
@@ -327,6 +372,7 @@ zero bytes).
 | `enter` | `toggleActions: play …` | `view()` + `animation-range: entry`, non-linear ease |
 | `pin` | `pin: true` | sticky child in a tall track |
 | `pin-scrub` | `pin` + `scrub` | above, `contain` range |
+| `stack` | `pin` down a list | per-entry track, sticky child, parts staggered on one timeline |
 | `link` | `trigger: A, animate B` | `view-timeline-name` + `timeline-scope` |
 | `progress` | document-level | `animation-timeline: scroll(root)` |
 | `batch` | `ScrollTrigger.batch` | one shared timeline, staggered `animation-delay` |
@@ -344,13 +390,29 @@ its magnitude, so one file yields four behaviours.
 | `rise` / `fall` | translate ±Y | direction from `--scroll-dir` |
 | `slide` | translate ±X | four directions, direction from `data-dir` |
 | `unmask` | `clip-path` wipe | four directions; compositable |
-| `split` | per-line type, staggered | one timeline, `nth-child` delays |
+| `split` | staggered type, masked from the leading edge | per *paragraph*, not per line — see below |
 | `tilt` | `rotate3d`, ≤1.5° | perspective on the section |
 | `shear` | `scaleY` from `--scroll-v` | the velocity term; §4 |
 | `dim` | opacity → `--dim` | for things losing attention |
-| `pan` | horizontal translate | under vertical scroll, §5.2 |
+| `pan` | horizontal translate | under vertical scroll, §5.2; **takes no depth** |
 | `swap` | cross-dissolve two plates | while pinned |
-| `recede` | scale + dim on exit | exists; retuned |
+| `recede` | scale + dim on exit | exists; also what `stack` uses to hand off |
+
+Two of these came out of the table differently from how they went in, and both are worth
+recording rather than quietly correcting:
+
+**`split` is per paragraph.** CSS cannot address a line box, so "per-line type, staggered"
+has no honest implementation — the unit is the element the copy is authored in. The stagger
+therefore comes from the *trigger* (`batch`, which ranges its children along one timeline)
+rather than from `nth-child` delays inside a block, which is also why it composes with
+anything else in this table instead of being a special case.
+
+**`pan` takes no depth, and that is the exception that proves the rule.** Every other
+magnitude here is a taste decision scaled 0–3. This one is a measurement: a filmstrip must
+travel exactly far enough that its last frame lands on the far edge of its window, and a
+quarter of that distance is not a subtler pan, it is four photographs the reader never sees.
+It reads `100cqi` off the pinned frame instead — which is also why `pin`/`pin-scrub` make
+that frame a container.
 
 Eight kinds × twelve effects × four depths is the range being asked for, out of about
 fourteen files. The combinations are data in `src/lib/choreography.ts`, not hand-written CSS
@@ -372,13 +434,21 @@ The rule is that every surface names a trigger. This table is the acceptance tes
 | work detail — media | `scrub` | `focus` d2 + `drift` d2 + `shear` |
 | work detail — meta panel | `link` to media | `dim` while a plate is centred |
 | work detail — pager | `progress` | `rise` over the last 15% |
-| programmes — each entry | `pin-scrub` (brief) | `unmask` the description while pinned |
-| about — studio sequence | `pin` + `pan` | horizontal filmstrip under vertical scroll |
-| about — prose | `batch` | `rise` d0 per paragraph |
+| programmes — each entry | `stack` | the entry's parts `slide` d2 in as it rises; `recede` as it hands off |
+| about — studio filmstrip | `pin-scrub` + `pan` | horizontal filmstrip under vertical scroll |
+| about — prose | `batch` | `split` d1 per paragraph |
 | mentors — grid | `batch` | `rise` d1, staggered by column |
 | mentors — portrait | `scrub` | `focus` d1, nested inside the card |
-| contact | `scrub` | `sway` d1 about the tack |
+| contact | — | not a surface; an overlay pinned over one. §5.5b |
 | footer | `progress` | `rise` at document end |
+
+The contact row used to read `scrub` + `sway` d1 — a card pinned at its top edge, turning
+a fraction of a degree as the page moved under it — and it is the one row this table has
+lost rather than retuned. A scroll-driven timeline describes an element's pass through the
+scrollport, and an overlay in the top layer does not have one: it does not move with the
+document, so there is nothing for `view()` to resolve against. `sway` had no second
+surface, so it went with the row rather than staying as vocabulary nothing speaks. If a
+hanging thing ever returns to the flow of a page, four lines bring it back.
 
 ### 5.5a Ranged triggers and symmetric effects — a defect class
 
@@ -403,19 +473,75 @@ card assembles (`batch` + `rise`) and the portrait inside it focuses (`scrub` + 
 each on its own element. That is the nesting §5.4 was built for, and it is what the
 original "focus d1, staggered by column" was reaching for.
 
-### 5.5b `pin` — a part figure, not a navigation figure
+### 5.5b Where the pinned scenes catch, and why it is not zero
 
-`styles/motion/pin.css` is the one file in `styles/motion/` that is not keyed to a route
-change. The contact card is the only block on the site that is an *object* — a card with
-edges, on the paper, rather than a region of it — and an object should be put down the
-same way however you arrived at it. So the figure attaches to the `panel` part and
-overrides whichever navigation figure brought it, for `lateral` and `descend` only;
-`ascend` takes it off the board, and `locale` and `restore` leave it alone (a card that
-never left should not re-arrive).
+`pin`, `pin-scrub` and `stack` all park content at the top of the viewport, and §5.2's
+sketch pinned it at `0`. That sketch predates the chrome. The header on this site is
+`position: sticky` at the top of every page, so a scene pinned at `0` parks its content
+*underneath* it. `pin`/`pin-scrub` therefore catch at `--space-header` and size their child
+`calc(100svh - var(--space-header))` — the two have to move together, because the offset
+decides where the child catches and the block-size decides that its bottom edge lands on the
+viewport's. `stack` catches at `--space-pin`, the same rest position the work detail's
+metadata column uses, because a stacked entry and a pinned column are the same promise.
 
-It wins on source order against equal specificity, which is why `index.css` imports it
-after every navigation figure. That is fragile in exactly one way — reordering the
-imports silently disables it — so both files say so.
+### 5.5c The reduced-motion trap the effect vocabulary does not cover
+
+`prefers-reduced-motion` cancelling a *scrubbed* animation is not enough for a scene that is
+also *scaffolding*. A pinned scene is a screen of content parked behind a tall empty track;
+cancel the pan and leave the pin, and the reader gets three viewport-heights of nothing and
+four photographs they can never reach. So the reduced-motion rules come in two halves, in
+two files, and both are required: `effects.css` cancels the animations, `triggers.css`
+collapses the tracks, releases the sticky and un-clips the window. What the released content
+then *does* with the room is the component's decision — it is the only thing that knows
+whether its overflow was a strip, a column or a caption. The filmstrip wraps into a gallery;
+it deliberately does not become a horizontal scroller, which would be a scroll container a
+keyboard cannot always reach, offered to exactly the readers least served by having to work
+for the content.
+
+The same trap has a second mouth: `effects.css` cancelled `[data-scene]` and `[data-scene] >
+*`, and both `pin-scrub` and `stack` drive an element *two* levels down. The selector list is
+written out per kind for that reason. Add a kind, add its line.
+
+### 5.5b `pin` — the one figure that is not attached to a route at all
+
+The contact card is the only block on this site that is an *object* — a card with edges,
+on the paper, rather than a region of it — and an object should be put down the same way
+however you arrived at it. That sentence was here before the card was built, and for a
+while it lived in `styles/motion/pin.css`: a figure attached to the `panel` part,
+overriding whichever navigation figure had brought it, winning on source order because
+`index.css` imported it last.
+
+Every part of that arrangement was working around the same mistake. A route change was
+the only thing that could trigger it, so the object could only be put down by *going to
+it*; the override existed because a navigation figure was going to move the card anyway;
+the source-order dependency existed because the override tied on specificity. Take the
+route away and all three go with it.
+
+So contact is not a page. `components/motion/PinnedNote` is a `popover` in the top layer,
+opened by the nav item from wherever the reader already is, and the figure runs on
+`:popover-open` instead of on `:root[data-figure]`. The move is unchanged — held above the
+board at `--part-lift`, leaning back through `--pin-tilt`, down onto the tack — and three
+things it could not have as a page fall out of it:
+
+- **It can be moved.** The reader picks the card up, it straightens off its tack and
+  lifts, and it goes wherever they put it. Held in a ref and published as two custom
+  properties, one write per frame, no React state and no DOM read after the press.
+- **The lean is static.** A card on one pin hangs a few degrees off level — `--pin-lean` —
+  and that is appearance rather than motion, so reduced motion leaves it alone while
+  cancelling everything else here.
+- **It outlives navigation.** The popover is mounted in the locale layout, not in a page,
+  so it survives a route change with the card still open and still where it was put.
+
+The drag is mouse-only. That is the `pointer: fine` decision §9 asks to be taken rather
+than inherited: dragging on touch means `touch-action: none`, which is a phone's scroll
+handed over to a card covering most of its screen. On touch, and for a keyboard, the note
+is a panel — which is what it is anyway, the drag being a way to move the card rather
+than a way to reach anything in it.
+
+The other half of "no JavaScript we do not need": the open, the close, Esc, light dismiss,
+the invoker's `aria-expanded` and the tab order from the button into the panel are all the
+platform's. The trigger is a plain `<button popovertarget>` in a server-rendered nav, so
+there is no open-state in React anywhere and the header never becomes a client component.
 
 ### 5.6 Support and fallback
 

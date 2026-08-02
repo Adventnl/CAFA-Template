@@ -47,12 +47,11 @@
  * position — so their groups would have nothing to interpolate anyway; pinning
  * says so explicitly rather than relying on the two geometries happening to
  * match, which they do not when a Chinese line wraps where an English one does
- * not. Without the pin, that height difference alone would make the panel jump.
+ * not. Without the pin, that height difference alone would make a block jump.
  */
 :root[data-figure='locale']::view-transition-group(heading),
 :root[data-figure='locale']::view-transition-group(intro),
 :root[data-figure='locale']::view-transition-group(listing),
-:root[data-figure='locale']::view-transition-group(panel),
 :root[data-figure='locale']::view-transition-group(meta),
 :root[data-figure='locale']::view-transition-group(pager),
 :root[data-figure='locale']::view-transition-group(rail) {
@@ -68,6 +67,33 @@
   animation: var(--dur-fast) var(--ease-io) both vt-swap-out;
 }
 
+/*
+ * The items are the one place this figure has real work to do rather than
+ * standing still, because they are also the one place both sides of the switch
+ * are genuinely the same object: item-summer-atelier is that programme in
+ * Chinese and that programme in English, and the browser pairs them by key.
+ *
+ * They still do not travel. Each entry stays in its own box and exchanges its
+ * text there — the departure board again, at the scale of a single row — and
+ * the stagger their step classes carry makes the change sweep down the list
+ * instead of happening to four paragraphs at once. Which is the whole reason a
+ * reader can follow a translation rather than just noticing that one happened.
+ *
+ * The arrival's delay is the one place a figure adds to the step rather than
+ * just multiplying it out: --dur-fast first, so the old line is gone before its
+ * replacement comes up into the same slot, then the step. Every other new(…)
+ * rule in this file carries that same --dur-fast head start, and an item that
+ * skipped it would print over its own outgoing text while its neighbours waited.
+ */
+:root[data-figure='locale']::view-transition-old(.item) {
+  animation: var(--dur-fast) var(--ease-io) both vt-swap-out;
+}
+
+:root[data-figure='locale']::view-transition-new(.item) {
+  animation: var(--dur-base) var(--ease-out)
+    calc(var(--dur-fast) + var(--stagger-step) * var(--item-step)) both vt-swap-in;
+}
+
 /* Top-down, one step apart, so the new language arrives as a wave down the page.
    --dur-base rather than --dur-slow: the reader is waiting to read, and a slow
    arrival on text that has not moved is the page being decorative at them. */
@@ -76,7 +102,6 @@
 }
 
 :root[data-figure='locale']::view-transition-new(intro),
-:root[data-figure='locale']::view-transition-new(panel),
 :root[data-figure='locale']::view-transition-new(meta) {
   animation: var(--dur-base) var(--ease-out) calc(var(--dur-fast) + var(--stagger-step)) both
     vt-swap-in;

@@ -1,7 +1,8 @@
-import { partClass } from '@/components/motion/Part';
+import { itemClass, partClass } from '@/components/motion/Part';
 import { Text } from '@/components/primitives/Text';
 import { scenes, sceneAttrs } from '@/lib/choreography';
 import type { Locale, Program } from '@/lib/types';
+import { vtName } from '@/lib/vt-names';
 
 import styles from './ProgramList.module.css';
 
@@ -13,20 +14,49 @@ interface ProgramListProps {
 
 /**
  * The big.dk gutter-label pattern: the name and its particulars sit small and
- * right-aligned in columns 1–2, the prose runs in 4–9, and a hairline separates
+ * right-aligned in the gutter, the prose runs beside them, and a hairline opens
  * each entry. DESIGN-SYSTEM.md §5.
+ *
+ * It is a `stack` scene, which is the whole difference between this page and the
+ * flat list it was. Each entry gets a track of its own, rises into the screen,
+ * catches at the pinned offset, holds still while it is read, then dims and
+ * lifts away as the next comes up into the place it left — MOTION.md §5.5's
+ * "programmes: pin-scrub", applied down a list instead of to one section. There
+ * are only four of them and each one asks something of the reader, which the
+ * copy says out loud; giving each a screen is that sentence in motion rather
+ * than a decoration on top of it.
+ *
+ * Below --bp-md the pin is dropped and this is a list in flow again (the trigger
+ * holds it back). A deck that spends 140svh an entry is scroll a phone cannot
+ * afford, and the entries still assemble as they arrive, so the figure survives
+ * at the size the pin does not.
  */
 export function ProgramList({ programs, locale, className }: ProgramListProps) {
   return (
-    // The page's `listing` part: a route change carries this whole block as one
-    // thing, so it can arrive after the heading rather than with it. MOTION.md §3.
-    <ul className={[styles.list, partClass('listing'), className].filter(Boolean).join(' ')}>
-      {programs.map((program) => (
-        <li key={program.slug}>
-          {/* The scene *is* the entry rather than a wrapper around it: another
-              div here would sit between the grid and its two placed children.
-              Each entry unmasks as it scrolls in. MOTION.md §5.5. */}
-          <div className={styles.entry} {...sceneAttrs(scenes.programmeEntry)}>
+    // The page's `listing` part, and the scene that drives its children. A route
+    // change carries the sheet; the entries on it are named separately below and
+    // travel one after another, which is what makes the list unzip rather than
+    // slide as a block. MOTION.md §3.
+    <ul
+      className={[styles.list, partClass('listing'), className].filter(Boolean).join(' ')}
+      {...sceneAttrs(scenes.programmes)}
+    >
+      {programs.map((program, index) => (
+        // The <li> is the track: it carries the timeline the entry inside it is
+        // driven by, and it is never the sticky one — a stuck element's view
+        // progress freezes over exactly the frames the figure needs to measure.
+        <li
+          key={program.slug}
+          className={itemClass(index)}
+          style={{ viewTransitionName: vtName.item(program.slug) }}
+        >
+          <article className={styles.entry} data-stuck="">
+            {/* Three children, and the count is load-bearing: the stack trigger
+                staggers them a beat apart along the track's timeline, so the
+                entry assembles as it rises instead of arriving already made. */}
+            <Text role="meta" as="p" className={styles.index}>
+              {String(index + 1).padStart(2, '0')}
+            </Text>
             <div className={styles.gutter}>
               <Text role="label" as="h2">
                 {program.name[locale]}
@@ -41,7 +71,7 @@ export function ProgramList({ programs, locale, className }: ProgramListProps) {
             <Text role="body" className={styles.summary}>
               {program.summary[locale]}
             </Text>
-          </div>
+          </article>
         </li>
       ))}
     </ul>

@@ -15,11 +15,6 @@
 @import './locale.css';
 @import './restore.css';
 
-/* After every navigation figure, and that is load-bearing: the pin overrides the
-   generic part move for the contact card on a tie in specificity, which it can
-   only win from source order. pin.css says so at length. */
-@import './pin.css';
-
 /* §5 the trigger system: effects (the "what") then triggers (the "when"). */
 @import './effects.css';
 @import './triggers.css';

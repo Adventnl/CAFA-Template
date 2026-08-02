@@ -1,0 +1,175 @@
+/*
+ * The card on the board: where it lands, how it is put down, and what it does
+ * while it is being carried. MOTION.md §5.5b.
+ *
+ * The move is the one styles/motion/pin.css used to run as a navigation figure,
+ * and it is the same move for the same reason: contact is the one block on this
+ * site that is an *object* rather than a region of the page, and an object should
+ * be put down the same way however you got to it. What changed is only that there
+ * is no longer a route change to hang it on. It is a transition on an overlay now
+ * — which is better, because the card can be pinned over any page instead of
+ * being a page, and because the reader can pick it up again afterwards.
+ *
+ * The restraint rules in CLAUDE.md §2 are kept rather than bent: no shadow, no
+ * radius, no accent. The card lifts off the paper by tone, edge and angle.
+ */
+
+.note {
+  /*
+   * Held above the board, leaning back, at the scale a sheet is held at — the
+   * same three values the navigation figures use for a part that has not been
+   * laid down yet, so the card arrives out of the same vocabulary as everything
+   * else. Named once and read from both the closed state and the starting style,
+   * because they are the same position: the card comes from where it goes back to.
+   */
+  --note-raised: perspective(var(--part-perspective))
+    translate3d(0, calc(var(--pin-drop) * -1), 0) rotateX(var(--pin-tilt))
+    scale(var(--part-lift));
+
+  /*
+   * The UA gives [popover] `inset: 0; margin: auto; width: fit-content; overflow:
+   * auto; border: solid; padding: 0.25em`, which centres a bordered box in the
+   * viewport. All of that is undone: this is a drop-down from the Contact item,
+   * so it hangs under the bar at the trailing edge, and the card inside draws its
+   * own paper and its own edge.
+   */
+  background: none;
+  border: 0;
+  color: inherit;
+  inline-size: var(--note-inline);
+  inset-block: var(--note-inset) auto;
+  inset-inline: auto var(--space-gutter);
+  margin: 0;
+
+  /*
+   * The card is sized by its contents, so on a short viewport — a phone held
+   * sideways is the honest case, 320px of height with a bar to clear — it is
+   * taller than the room it has. It scrolls there rather than running off the
+   * bottom edge, which is the only place on this site anything scrolls inside
+   * anything else.
+   *
+   * The padding is the tack's half. It straddles the card's top edge at
+   * -(--pin-size / 2), and a scroll container clips whatever is above its
+   * padding box, so half the mark would be cut off without exactly this much
+   * room — which is why both are written against the same token.
+   */
+  max-block-size: calc(100dvh - var(--note-inset) - var(--space-gutter));
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding-block: calc(var(--pin-size) / 2) 0;
+  padding-inline: 0;
+
+  /*
+   * translate / rotate as separate properties rather than one transform, and
+   * that is what lets the drag and the arrival share an element without
+   * overwriting each other: they compose in a defined order (translate, then
+   * rotate, then scale, then transform), so JavaScript owns the offset, the lean
+   * is declarative, and `transform` is left free for the drop-in below.
+   *
+   * The origin is the tack. ContactBlock draws its mark at exactly this point, so
+   * the card hangs from the thing holding it rather than turning about its own
+   * middle — which is the difference between a pinned note and a tilted div.
+   */
+  rotate: var(--pin-lean);
+  transform-origin: 50% 0;
+  translate: var(--note-x, 0) var(--note-y, 0);
+
+  /*
+   * Longhands rather than the `transition` shorthand: `allow-discrete` is the
+   * newest thing in this file, and a browser that does not know it drops the one
+   * declaration it appears in instead of taking the whole transition down with
+   * it. display and overlay are in the list because a popover is display: none
+   * when closed — without them the card would vanish on the first frame of its
+   * own exit and the transition would play to nobody.
+   */
+  opacity: 1;
+  transform: none;
+  transition-behavior: allow-discrete;
+  transition-duration: var(--dur-base);
+  transition-property: opacity, transform, rotate, scale, display, overlay;
+  transition-timing-function: var(--ease-out);
+}
+
+.note:not(:popover-open) {
+  opacity: 0;
+  transform: var(--note-raised);
+  /* Leaving is a state change, not an arrival. */
+  transition-timing-function: var(--ease-io);
+}
+
+@starting-style {
+  .note:popover-open {
+    opacity: 0;
+    transform: var(--note-raised);
+  }
+}
+
+/*
+ * Picking it up: it comes off its tack, straightens, and lifts. Nothing here
+ * transitions `translate` — a card that eases toward the pointer is a card that
+ * lags it, and direct manipulation is the one place motion must be instant.
+ */
+@media (hover: hover) and (pointer: fine) {
+  .note {
+    cursor: grab;
+  }
+}
+
+.note[data-dragging] {
+  cursor: grabbing;
+  rotate: 0deg;
+  scale: var(--part-lift);
+  user-select: none;
+}
+
+/*
+ * The close mark. Two hairlines crossed — the same mark, weight and ink as every
+ * other rule on the site, and the same decision the tack takes: a × typed into
+ * the component would be a display string in a .tsx file, which CLAUDE.md §4
+ * calls a defect, and an icon set would be a dependency. Its name comes from the
+ * dictionary, on aria-label.
+ *
+ * A full --tap-min target in the card's own corner, which is why ContactBlock
+ * keeps that corner clear.
+ */
+.close {
+  background: none;
+  block-size: var(--tap-min);
+  border: 0;
+  cursor: pointer;
+  inline-size: var(--tap-min);
+  /* Against the note's padding box, whose top edge is the tack's half-height
+     above the card — so this is what puts the mark in the *card's* corner. */
+  inset-block-start: calc(var(--pin-size) / 2);
+  inset-inline-end: 0;
+  padding: 0;
+  position: absolute;
+}
+
+.close::before,
+.close::after {
+  background-color: var(--c-ink-62);
+  block-size: 1px;
+  content: '';
+  inline-size: var(--space-xs);
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  position: absolute;
+  transition: background-color var(--dur-fast) var(--ease-io);
+  translate: -50% -50%;
+}
+
+.close::before {
+  rotate: 45deg;
+}
+
+.close::after {
+  rotate: -45deg;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .close:hover::before,
+  .close:hover::after {
+    background-color: var(--c-ink);
+  }
+}

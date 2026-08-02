@@ -300,8 +300,8 @@
 /* ── The section-page parts ───────────────────────────────────────────────── */
 
 /*
- * `intro`, `listing` and `panel` all carry the `part` class, so everything true
- * of all three is stated once here and each figure only writes the move.
+ * `intro` and `listing` both carry the `part` class, so everything true of both
+ * is stated once here and each figure only writes the move.
  *
  * block-size: auto is the §0.1 rule again, and it matters more here than
  * anywhere: these parts pair by role across pages, so the browser is routinely
@@ -346,6 +346,91 @@
    One stagger step lands it at 630ms, inside the rule. */
 ::view-transition-new(.part) {
   animation: var(--dur-slow) var(--ease-out) var(--stagger-step) both vt-lay-down;
+}
+
+/* ── The items inside a listing ───────────────────────────────────────────── */
+
+/*
+ * A listing is one sheet; its items are the things printed on it. Naming both is
+ * what lets a list *unzip* — the block goes as a block, and the entries on it go
+ * one after another — instead of the whole thing sliding as a single rectangle,
+ * which is what every section-to-section move did before these existed and why
+ * they all read as the same animation.
+ *
+ * Items never pair: they are keyed by slug (lib/vt-names.ts), so a programme
+ * entry and a mentor card are always two only-children rather than one morph
+ * between two unrelated boxes. Which means the group has nothing to interpolate
+ * and is pinned — the snapshot itself is what moves, and the figure decides how.
+ *
+ * They sit *inside* the listing they belong to, and a named descendant is
+ * hoisted out of its ancestor's snapshot, so the listing's own move carries only
+ * what is left: its rules, its heading, its ground. That is the intended
+ * division rather than an accident of the capture — the sheet and the things on
+ * it are two different moves in the same figure.
+ */
+::view-transition-group(.item) {
+  animation-name: none;
+  z-index: 3;
+}
+
+::view-transition-old(.item),
+::view-transition-new(.item) {
+  block-size: auto;
+  inset-block-start: 0;
+  /* The same hinge the parts use, so an item laid onto the board meets it at its
+     bottom edge rather than sinking through it. */
+  transform-origin: 50% 100%;
+}
+
+/*
+ * The default, and the ground every figure's item move is written on: laid down
+ * on the way in, lifted off on the way out — the same pair a part gets, so an
+ * item a figure says nothing about still belongs to the same hand.
+ *
+ * The stagger is carried by a custom property rather than by a delay, and that
+ * is the piece that makes this composable. Written as four rules each setting
+ * animation-delay, the first figure to override an item's move with the
+ * `animation` shorthand would reset the delay and take the whole stagger with
+ * it — silently, and the list would arrive as a block again, which is the exact
+ * failure these names exist to fix. As a number, the step survives any
+ * override, and a figure that wants the list to start a beat later writes its
+ * own delay in terms of it (locale.css does) instead of fighting for the
+ * property.
+ */
+::view-transition-new(.item) {
+  --item-step: 0;
+}
+
+::view-transition-new(.step-1) {
+  --item-step: 1;
+}
+
+::view-transition-new(.step-2) {
+  --item-step: 2;
+}
+
+::view-transition-new(.step-3) {
+  --item-step: 3;
+}
+
+/*
+ * On the arrival only. A reader who has decided to leave does not need the
+ * departure shown to them in detail, so the outgoing items all go together;
+ * lateral.css takes the same position for the parts and for the same reason.
+ * And the *first* item still starts at t=0, so a press has a visible result
+ * immediately and the rest of the list catches up — MOTION.md §9's rule that
+ * the incoming half of a figure never carries a delay is about the first frame,
+ * not about every element in it. Three steps, then it caps: beyond that a list
+ * is still arriving after the reader has scrolled past its top, the same reason
+ * the batch trigger stops at four.
+ */
+::view-transition-old(.item) {
+  animation: var(--dur-base) var(--ease-io) both vt-lift-off;
+}
+
+::view-transition-new(.item) {
+  animation: var(--dur-slow) var(--ease-out) calc(var(--stagger-step) * var(--item-step)) both
+    vt-lay-down;
 }
 
 /* ── The default cover morph ──────────────────────────────────────────────── */

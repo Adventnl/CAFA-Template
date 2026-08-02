@@ -167,10 +167,14 @@
    * part morphs across (one block travelling to its new home) or sweeps out and
    * back in (two sheets exchanged) is then the figure's decision, taken per
    * figure in styles/motion/ — which is the whole point of naming by role.
+   *
+   * There were three. `panel` — a self-contained card that *is* the page — went
+   * when contact stopped being a page: the card is now an overlay pinned to the
+   * board by PinnedNote, which no route change can reach. A part with no pair is
+   * a name with nothing to animate against, which MOTION.md §3 says to resist.
    */
   --vt-intro: intro;
   --vt-listing: listing;
-  --vt-panel: panel;
 
   /* The view-transition-class the per-slug parts carry, so one figure rule can
      reach every work's cover (or rail entry) by class rather than by name. The
@@ -180,6 +184,25 @@
   /* Every role part above also carries this, so the one rule that keeps a
      snapshot at its own height (base.css) is written once rather than per name. */
   --vt-class-part: part;
+
+  /*
+   * The repeated things *inside* a listing — one programme, one mentor. Naming
+   * them is what turns a listing's arrival from a single sheet into the unzip
+   * the works index already does on enter-work: the entries leave and arrive one
+   * after another rather than as a block. Their per-key names live in
+   * lib/vt-names.ts; this is the class every one of them also carries.
+   *
+   * The three step classes are the stagger, and they exist because a
+   * ::view-transition-* pseudo-element cannot be reached by :nth-child — the
+   * only handle a figure has on "the third one" is a class the element carried
+   * into the snapshot. Three, then the stagger caps, for the same reason the
+   * batch trigger caps at four: a long list would still be arriving after the
+   * reader has scrolled past its top.
+   */
+  --vt-class-item: item;
+  --vt-step-1: step-1;
+  --vt-step-2: step-2;
+  --vt-step-3: step-3;
 
   /*
    * §6 Scroll-driven motion.
@@ -238,17 +261,34 @@
   --part-perspective: 900px; /* one depth for every 3D figure on the site */
 
   /*
-   * The pinned card (contact). It is dropped onto the board from slightly above
-   * and to one side, catches on its pin, and swings the last few degrees to
-   * rest. --pin-swing is the only overshoot-adjacent value in the system and it
-   * is not one: the card approaches its resting angle from a single side and
-   * stops, so it settles rather than bouncing. MOTION.md §9's "nothing bouncy"
-   * is about elastic easing, which no keyframe here uses.
+   * The pinned card (contact). It is held above the board, leaning back, then
+   * comes down onto its tack and stays there — hanging a few degrees off level,
+   * because a card on a single pin does. --pin-lean is that resting angle and it
+   * is the one static rotation in the system: it is appearance, not motion, so
+   * reduced motion leaves it alone. Three degrees reads as "put there by hand"
+   * at every width; past about five it reads as a broken layout.
+   *
+   * The card straightens and lifts to --part-lift while it is being dragged,
+   * which is the same pair of values the navigation figures use for a sheet held
+   * off the board — one vocabulary, two surfaces. MOTION.md §5.5b.
    */
   --pin-drop: 2.5rem; /* how far above the board the card starts */
-  --pin-tilt: 12deg; /* the lean it falls through */
-  --pin-swing: 2.5deg; /* how far it swings past level before settling */
+  --pin-tilt: 12deg; /* the lean it falls through on the way down */
+  --pin-lean: 3deg; /* the angle it hangs at once it is on the tack */
   --pin-size: 0.5rem; /* 8px — the tack, a square set on its corner */
+
+  /*
+   * And where the card lands. It reads as a drop-down from the Contact item in
+   * the nav, so it hangs from just under the bar at the trailing edge — then the
+   * reader may put it anywhere, which is PinnedNote's business, not this file's.
+   *
+   * The inset is written as a sum rather than a number because it is one: the
+   * bar is a single row above --bp-md and two rows below it, so the offset has
+   * to carry a --tap-min the wide layout does not need. Change SiteHeader's rows
+   * and this changes with it, the same arrangement --space-pin already uses.
+   */
+  --note-inset: calc(var(--space-header) + var(--tap-min));
+  --note-inline: min(26rem, calc(100dvw - var(--space-gutter) * 2));
 
   /*
    * MOTION.md §4 — scroll as continuous state. ScrollField writes these each
@@ -279,15 +319,56 @@
   --eff-shear: 0.02; /* scaleY added per unit of scroll velocity */
   --eff-unmask: 8%; /* how far a clip-path wipe starts open from */
 
+  /*
+   * MOTION.md §5.2 — how much scroll a pinned scene buys. These are the one
+   * place the trigger system spends *length* rather than motion, so they are the
+   * two numbers to reach for when a pinned surface feels hurried or laboured.
+   *
+   * --pin-track is the whole track a pin-scrub scene occupies; the pinned span is
+   * that minus the one screen the sticky child holds, so 300svh is two screens of
+   * scrub.
+   *
+   * --stack-track is one entry's turn at the top, and 120svh is the smallest
+   * value that gives the figure all three of its beats. A track of exactly 100svh
+   * has a zero-length `contain` — the entry would begin stepping back the instant
+   * it finished arriving, while it was still pinned and still being read, which
+   * is the one thing a pin is for. The extra 20svh is that stillness. Much more
+   * than that and a page of four short paragraphs costs six screens of scroll,
+   * which is the figure charging the reader for itself. MOTION.md §5.5 says
+   * "brief" and means it.
+   *
+   * Below --bp-md neither applies — a phone gets the list in flow, which §9 calls
+   * a decision rather than an omission.
+   */
+  --pin-track: 300svh;
+  --stack-track: 120svh;
+
+  /*
+   * And the one surface that spends that scroll: the studio filmstrip on About.
+   * A plate stands at a fixed height and a fluid width, because a strip is read
+   * along a common horizon — letting each photograph keep its own proportions,
+   * which is right for a column (MediaFrame says so), would give a row a ragged
+   * top edge and no strip at all. The width is what flexes, and the crop with it.
+   *
+   * The width is a viewport fraction with a floor and *no ceiling*, and that is
+   * the whole reason it is written as max() rather than the clamp() this file
+   * otherwise prefers. `pan` travels the strip's width minus the window's, so a
+   * capped plate width means the strip stops growing while the window keeps
+   * going: at 2560px a 32rem cap left five plates barely wider than the screen,
+   * and the figure became three viewport-heights of scroll spent moving a
+   * photograph a few hundred pixels. Proportional, the travel is always about
+   * 100vw and the strip keeps pace with the scroll at every width — measured at
+   * 390, 768, 1440 and 2560, where the ratio lands between 0.86 and 1.08.
+   *
+   * The floor is what a phone needs instead: at 390px, 40vw is a contact sheet.
+   */
+  --strip-plate-block: 52svh;
+  --strip-plate-inline: max(15rem, 40vw);
+
   /* The effects MOTION.md §5.4 specified and §5.5 uses, added here as they land.
      --eff-split is per *line*, so it is smaller than --eff-rise on purpose: a
      paragraph whose lines each travel 2.5rem is a paragraph you cannot read. */
   --eff-split: 0.75rem; /* per-line rise in a split paragraph */
-  /* An angle, not a length: a swaying thing hangs from a fixed point and turns
-     about it. Half a degree either side of level across a whole pass — at the
-     bottom edge of a card that is a few pixels, which is the intended reading.
-     Anything you can actually see here looks like a broken layout. */
-  --eff-sway: 1.5deg;
 
   /* How far the works-index backdrop leans away from the pointer. It is the one
      effect driven by --px/--py rather than by scroll position. */
@@ -340,5 +421,13 @@
   :root {
     --type-index-size: 0.875rem; /* 14px */
     --type-meta-size: 0.75rem; /* 12px */
+  }
+}
+
+/* --bp-md is where the header bar collapses from two rows to one, so it is also
+   where the note stops having to clear a second row of nav. */
+@media (width >= 768px) {
+  :root {
+    --note-inset: calc(var(--space-header) + var(--space-s));
   }
 }

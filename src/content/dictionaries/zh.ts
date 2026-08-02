@@ -18,6 +18,9 @@ export const zh = {
     worksList: '作品目录',
     worksRail: '作品编号',
     workPager: '作品导航',
+    // The close mark on the contact card is drawn rather than written, so this
+    // is the only name it has.
+    close: '关闭',
   },
 
   home: {
@@ -61,12 +64,14 @@ export const zh = {
       '我们相信作品集不是把作业排版好，而是把一个想法从头做到能站住。因此这里的每一个项目都从选题开始，也常常在中途推翻重来。',
       '工作室在北京，导师来自建筑、视觉、室内与陶瓷。多数时候我们和学生一起待在同一个房间里画图。',
     ],
+    studioTitle: '工作室',
     mentorsTitle: '导师',
   },
 
+  // No `description`: contact stopped being a page, so there is no <meta> for it
+  // to fill. `title` stays — it is the card's accessible name.
   contact: {
     title: '联系',
-    description: '工作室地址、邮件与申请方式。',
     email: '邮件',
     wechat: '微信',
     address: '地址',

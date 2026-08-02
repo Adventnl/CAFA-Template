@@ -1,4 +1,4 @@
-import { routes } from '@/lib/routes';
+import { panels, routes } from '@/lib/routes';
 import type { SiteContent } from '@/lib/types';
 
 export const site: SiteContent = {
@@ -15,7 +15,9 @@ export const site: SiteContent = {
     { label: { zh: '作品', en: 'Works' }, href: routes.works },
     { label: { zh: '课程', en: 'Programmes' }, href: routes.programs },
     { label: { zh: '关于', en: 'About' }, href: routes.about },
-    { label: { zh: '联系', en: 'Contact' }, href: routes.contact },
+    // The one item that goes nowhere: it pins the contact card over the page you
+    // are on. Still last in the bar, so the nav reads the same as it always did.
+    { label: { zh: '联系', en: 'Contact' }, opens: panels.contact },
   ],
 
   studio: [

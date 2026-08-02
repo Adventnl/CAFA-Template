@@ -29,4 +29,16 @@ export const vtName = {
   cover: (slug: string): string => `cover-${slug}`,
   /** One rail entry: the clicked number travels, its siblings unzip away. */
   railEntry: (slug: string): string => `rail-${slug}`,
+  /**
+   * One repeated thing inside a listing — a programme, a mentor.
+   *
+   * Keyed rather than positional, and that is the whole design: `item-3` on two
+   * different pages would pair, and the browser would morph a programme entry
+   * into a mentor card because they happened to be third. Keyed by slug they
+   * never pair, so every one is an only child and leaves or arrives on its own
+   * — which is what the figures actually want. The staggering is carried by the
+   * step classes alongside (tokens.css, --vt-step-*), because a
+   * ::view-transition-* pseudo-element cannot be reached by :nth-child.
+   */
+  item: (key: string): string => `item-${key}`,
 } as const;

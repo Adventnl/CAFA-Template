@@ -10,6 +10,7 @@
 :root[data-figure='restore']::view-transition-old(.stage),
 :root[data-figure='restore']::view-transition-old(.cover),
 :root[data-figure='restore']::view-transition-old(.part),
+:root[data-figure='restore']::view-transition-old(.item),
 :root[data-figure='restore']::view-transition-old(.rail-entry),
 :root[data-figure='restore']::view-transition-old(rail),
 :root[data-figure='restore']::view-transition-old(heading),
@@ -18,9 +19,17 @@
   animation: var(--dur-base) var(--ease-io) both vt-fade-out;
 }
 
+/*
+ * The items fade with everything else and — the point of listing them here —
+ * with no stagger. Their step classes are still on the snapshots, so without
+ * this rule the list would ripple back into place one entry at a time, which is
+ * the most performative thing on the site happening at the one moment §0.3 says
+ * nothing should happen at all.
+ */
 :root[data-figure='restore']::view-transition-new(.stage),
 :root[data-figure='restore']::view-transition-new(.cover),
 :root[data-figure='restore']::view-transition-new(.part),
+:root[data-figure='restore']::view-transition-new(.item),
 :root[data-figure='restore']::view-transition-new(.rail-entry),
 :root[data-figure='restore']::view-transition-new(rail),
 :root[data-figure='restore']::view-transition-new(heading),

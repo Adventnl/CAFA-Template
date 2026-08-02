@@ -1,0 +1,90 @@
+/*
+ * Three elements and each has exactly one job, which is what lets the trigger
+ * own the motion and this file own only the shape:
+ *
+ *   the section  the track. Its height is the scroll the pan is spent over, and
+ *                every bit of that comes from the trigger — which is why it has
+ *                no class here at all.
+ *   .window      what sticks, and what `pan` measures itself against. The
+ *                trigger makes it a container and clips it; this only centres
+ *                its child and says what to do when there is no trigger.
+ *   .track       the strip itself, as wide as its contents. The one thing that
+ *                actually moves.
+ */
+
+.window {
+  align-items: center;
+  display: flex;
+  /*
+   * The fallback, and the reason it is here rather than in the trigger: without
+   * animation-timeline the whole @supports block never applies, so nothing pins
+   * and nothing pans — and a row several viewports wide with no clip would push
+   * the *document* sideways. A plain scroll container is the honest degradation:
+   * every photograph is still reachable, by hand, in order. MOTION.md §5.6.
+   */
+  overflow: auto hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+}
+
+.track {
+  align-items: center;
+  column-gap: var(--space-l);
+  display: flex;
+  /* max-content, and `pan` depends on it: the keyframe travels 100cqi − 100%,
+     and that 100% has to be the strip's real width. A flex item that shrank to
+     its window would resolve the whole distance to zero. */
+  flex: 0 0 max-content;
+  padding-inline: var(--space-gutter);
+}
+
+.title {
+  color: var(--c-ink-62);
+  flex: 0 0 auto;
+  padding-inline-end: var(--space-l);
+  /* The label is a mark on the strip, not a line of copy — it never wraps. */
+  white-space: nowrap;
+}
+
+.plate {
+  block-size: var(--strip-plate-block);
+  flex: 0 0 auto;
+  inline-size: var(--strip-plate-inline);
+  scroll-snap-align: center;
+}
+
+/*
+ * A common horizon: every plate the same height, cropped to fit. Selected
+ * through the <picture> rather than as `.plate img`, which would tie with
+ * MediaFrame's own rule at 0-1-1 and be settled by whichever module the bundler
+ * emitted last — the exact race that file's header warns about.
+ */
+.plate picture {
+  block-size: 100%;
+}
+
+.plate picture img {
+  block-size: 100%;
+  object-fit: cover;
+}
+
+/*
+ * Reduced motion. The trigger has already released the pin and un-clipped the
+ * window; what is left is a row several screens wide with nowhere to go, so the
+ * strip stops being a strip and becomes a gallery. Not a horizontal scroller:
+ * that would be a scroll container a keyboard cannot always reach, offered to
+ * exactly the readers least served by having to work for the content. Wrapped,
+ * every plate is simply on the page. MOTION.md §9.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .window {
+    overflow: visible;
+  }
+
+  .track {
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    padding-block: var(--space-l);
+    row-gap: var(--space-l);
+  }
+}

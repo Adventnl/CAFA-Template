@@ -77,20 +77,40 @@
 
   /*
    * pin / pin-scrub — a sticky child inside a tall track buys scroll distance
-   * while the child holds still. The component supplies the structure (a
-   * data-track wrapping a data-pinned); the trigger supplies the timeline. For
-   * pin-scrub the inner content is driven across exactly the pinned span
-   * (`contain`), which is the frames where the track fully covers the viewport.
+   * while the child holds still. The scene element *is* the track and takes its
+   * height from --pin-track; the component supplies only the [data-pinned] child
+   * and whatever goes in it. For pin-scrub that content is then driven across
+   * exactly the pinned span (`contain`), which is the frames where the track
+   * fully covers the viewport.
+   *
+   * The sticky offset is --space-header rather than 0, and the pinned child is a
+   * screen less that much, because the header on this site is sticky (not fixed)
+   * and sits at the top of every page. Pinning at 0 would park the content
+   * underneath it — the plan's example was written before the figure met the
+   * chrome. The pair has to move together: the offset decides where the child
+   * catches, the block-size decides that its bottom edge lands on the viewport's.
+   *
+   * container-type is what `pan` measures against (effects.css). It is declared
+   * here rather than in a component because the pinned child is a *window* — the
+   * one box in the scene whose inline size is the visible width — and an effect
+   * that travels the width of that window should not have to be told how wide it
+   * is. overflow: clip, not hidden: `hidden` would make this a scroll container,
+   * and a scroll container between the track and the viewport resolves the view
+   * timeline above against the wrong scrollport.
    */
   [data-scene='pin'],
   [data-scene='pin-scrub'] {
     view-timeline-name: --pin;
     view-timeline-axis: block;
+    block-size: var(--pin-track);
   }
   [data-scene='pin'] [data-pinned],
   [data-scene='pin-scrub'] [data-pinned] {
     position: sticky;
-    inset-block-start: 0;
+    inset-block-start: var(--space-header);
+    block-size: calc(100svh - var(--space-header));
+    container-type: inline-size;
+    overflow: clip;
   }
   [data-scene='pin-scrub'] [data-pinned] > * {
     animation-name: var(--eff-name);
@@ -100,11 +120,137 @@
     animation-range: contain 0% contain 100%;
   }
 
+  /*
+   * stack — the entries of a list take the screen one at a time: each rises,
+   * catches, holds still while it is read, then dims and lifts away as the next
+   * comes up into the place it left. ScrollTrigger's pin applied down a list
+   * rather than to one section.
+   *
+   * Three things, and each is on a different element on purpose:
+   *
+   *   the track   every child of the scene declares its own view timeline. It is
+   *               the track, so it is never the sticky one — a sticky element's
+   *               view progress freezes while it is stuck, which is exactly the
+   *               frames the whole figure needs to measure.
+   *   the block   [data-stuck] inside it catches at --space-pin and recedes as
+   *               its track leaves. That recede is built into the kind rather
+   *               than being the scene's effect, the same way `position: sticky`
+   *               is built into pin-scrub: it is what makes a stack a stack.
+   *   the parts   the block's own children are what the scene's effect drives,
+   *               staggered along the same timeline, so the entry *assembles* as
+   *               it rises instead of arriving already made.
+   *
+   * The name is declared on every track and looked up by ancestry, so each entry
+   * resolves its own: the lookup reaches the parent before the parent's earlier
+   * siblings, and stops there. No timeline-scope, and no ambiguity.
+   *
+   * Only the pin is held back to --bp-md. The parts still assemble on a phone —
+   * that costs nothing and is the same figure — but a track of --stack-track an
+   * entry on a 390px screen is scroll spent on choreography instead of content.
+   */
+  [data-scene='stack'] > * {
+    view-timeline-name: --stack;
+    view-timeline-axis: block;
+  }
+  /*
+   * The parts assemble over the *first two thirds* of the track's entry, not the
+   * last, and the reason is the first screen rather than the rhythm. A track is
+   * --stack-track tall, so its `entry` range is a whole viewport of scroll — and
+   * the first entry on the page begins life about halfway through its own. Ranged
+   * at 30–90% that entry was two thirds unbuilt at the moment the page finished
+   * loading: a reader arriving at Programmes got a heading, a lead line and an
+   * empty list, and had to scroll to find out there was anything on it. Ranged
+   * from 0% the same entry is fully assembled on arrival, and every entry after
+   * it — which enters from the bottom of the screen rather than from the middle —
+   * is still seen to build, and is finished well before it catches at the pin.
+   * Arriving at something already assembled is right; arriving at something
+   * blank is not.
+   */
+  [data-scene='stack'] [data-stuck] > * {
+    animation-name: var(--eff-name);
+    animation-fill-mode: both;
+    animation-timing-function: var(--ease-out);
+    animation-timeline: --stack;
+    animation-range: entry 0% entry 45%;
+  }
+  [data-scene='stack'] [data-stuck] > *:nth-child(2) {
+    animation-range: entry 12% entry 57%;
+  }
+  [data-scene='stack'] [data-stuck] > *:nth-child(n + 3) {
+    animation-range: entry 24% entry 69%;
+  }
+
+  @media (width >= 768px) {
+    [data-scene='stack'] > * {
+      min-block-size: var(--stack-track);
+    }
+    [data-scene='stack'] [data-stuck] {
+      position: sticky;
+      inset-block-start: var(--space-pin);
+      /*
+       * eff-recede — the same keyframes a block leaving the top of the viewport
+       * already uses on the home page, so the stack is not a new idea, it is
+       * that one applied down a list. The range is the track's exit, which
+       * begins at the exact frame the next track's top edge appears at the
+       * bottom of the screen: the entry steps back *because* its successor is
+       * arriving, not because it has run out of room.
+       *
+       * Ten per cent in, not zero, and this is the entry's stillness rather
+       * than a taste adjustment: the block is still pinned and still legible
+       * for most of `exit` — it does not let go until its track's bottom edge
+       * reaches it — so a recede starting at 0% would dim a paragraph the
+       * reader is in the middle of. Finished by 85%, so the step back is over
+       * while it can still be seen happening rather than completing off-screen.
+       */
+      animation: eff-recede linear both;
+      animation-timeline: --stack;
+      animation-range: exit 10% exit 85%;
+    }
+  }
+
   /* snap — nothing but scroll snapping on the section; ScrollTrigger snap. */
   [data-scene='snap'] {
     scroll-snap-type: y proximity;
   }
   [data-scene='snap'] > * {
     scroll-snap-align: start;
+  }
+}
+
+/*
+ * Reduced motion, the structural half. effects.css cancels the animations; this
+ * cancels the *scaffolding* they ran on, and it has to, because a pinned scene
+ * is not just an animation — it is a screen of content parked behind a tall
+ * empty track. Cancel the pan and leave the pin and the reader gets three
+ * viewport-heights of nothing and four photographs they can never reach.
+ *
+ * So: the track collapses to its content, the sticky child lets go, and the
+ * window stops cropping. The content is then simply on the page, in order, with
+ * no motion the reader did not start — MOTION.md §9's "final state", which for a
+ * pinned scene means the layout as well as the animation.
+ */
+@media (prefers-reduced-motion: reduce) {
+  [data-scene='pin'],
+  [data-scene='pin-scrub'],
+  [data-scene='stack'] > * {
+    block-size: auto;
+    min-block-size: 0;
+  }
+
+  [data-scene='pin'] [data-pinned],
+  [data-scene='pin-scrub'] [data-pinned],
+  [data-scene='stack'] [data-stuck] {
+    position: static;
+    block-size: auto;
+  }
+
+  /* And the window stops being one. It was a frame with content travelling past
+     it; with nothing travelling it is just a crop, and a crop is how the reader
+     loses the four photographs the pan was going to bring them. What the content
+     does with the room instead is the component's decision — it is the only
+     thing that knows whether its overflow was a strip, a column or a caption. */
+  [data-scene='pin'] [data-pinned],
+  [data-scene='pin-scrub'] [data-pinned] {
+    overflow: visible;
   }
 }

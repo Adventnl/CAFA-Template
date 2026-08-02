@@ -28,14 +28,32 @@ export function SiteHeader({ locale, site, dictionary }: SiteHeaderProps) {
         </Link>
 
         <div className={styles.nav}>
+          {/* Two kinds of item, and the branch is the whole difference between
+              them: a route is a Link, a panel is a button that opens a popover
+              where the reader stands. `popovertarget` needs no JavaScript and no
+              state up here — the browser owns the open/close, the Esc key and
+              the button's aria-expanded. components/motion/PinnedNote. */}
           <nav aria-label={dictionary.a11y.primaryNav} className={styles.links}>
-            {site.nav.map((item) => (
-              <Link key={item.href(locale)} href={item.href(locale)} className={styles.link}>
-                <Text role="label" as="span">
-                  {item.label[locale]}
-                </Text>
-              </Link>
-            ))}
+            {site.nav.map((item) =>
+              'href' in item ? (
+                <Link key={item.href(locale)} href={item.href(locale)} className={styles.link}>
+                  <Text role="label" as="span">
+                    {item.label[locale]}
+                  </Text>
+                </Link>
+              ) : (
+                <button
+                  key={item.opens}
+                  type="button"
+                  popoverTarget={item.opens}
+                  className={styles.link}
+                >
+                  <Text role="label" as="span">
+                    {item.label[locale]}
+                  </Text>
+                </button>
+              ),
+            )}
           </nav>
           <LocaleSwitch
             current={locale}

@@ -1,6 +1,4 @@
-import { partClass } from '@/components/motion/Part';
 import { Text } from '@/components/primitives/Text';
-import { scenes, sceneAttrs } from '@/lib/choreography';
 import type { Dictionary } from '@/lib/content';
 import type { Locale, SiteContent } from '@/lib/types';
 
@@ -10,24 +8,24 @@ interface ContactBlockProps {
   site: SiteContent;
   locale: Locale;
   labels: Dictionary['contact'];
-  className?: string;
 }
 
 /**
  * There is no form, and there will not be one: this site has no backend, and a
  * form that silently discards what someone typed is worse than an address. If a
  * form is ever wanted it is a link to whoever hosts it. ARCHITECTURE.md §7.
+ *
+ * This is the card and nothing else — the paper, the edge, the tack and nine
+ * lines of type. Where it sits, how it arrives and how it is moved belong to
+ * components/motion/PinnedNote, which is the only thing that renders it. It has
+ * stayed a server component through that: PinnedNote takes it as `children`, so
+ * the copy is in the prerendered HTML and none of it reaches the JS bundle.
  */
-export function ContactBlock({ site, locale, labels, className }: ContactBlockProps) {
+export function ContactBlock({ site, locale, labels }: ContactBlockProps) {
   const { contact } = site;
 
   return (
-    // The `panel` part, which styles/motion/pin.css gives its own arrival: the
-    // card is put on the board rather than faded onto it.
-    <div
-      className={[styles.block, partClass('panel'), className].filter(Boolean).join(' ')}
-      {...sceneAttrs(scenes.contact)}
-    >
+    <div className={styles.block}>
       <Text role="title" as="p" className={styles.email}>
         <a href={`mailto:${contact.email}`} className={styles.link}>
           {contact.email}

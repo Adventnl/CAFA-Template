@@ -18,7 +18,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     routes.works,
     routes.programs,
     routes.about,
-    routes.contact,
     ...getPublishedWorks().map(
       (work) => (locale: Locale) => routes.work(locale, work.slug),
     ),

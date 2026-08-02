@@ -107,11 +107,19 @@
   view-transition-name: var(--vt-chrome-nav);
 }
 
+/* One class for both kinds of nav item. The four resets are what a <button>
+   needs to sit in a row of links without announcing itself as a control — the
+   contact item opens a panel rather than going anywhere, and that is the only
+   difference the reader should be able to see. */
 .link {
   align-items: center;
+  background: none;
+  border: 0;
   color: var(--c-ink-70);
+  cursor: pointer;
   display: flex;
   min-block-size: var(--tap-min);
+  padding: 0;
   text-decoration: none;
   transition: color var(--dur-fast) var(--ease-io);
 }

@@ -43,18 +43,35 @@
  * faded. Pinning the box and animating the snapshot is what makes it a placement.
  */
 :root[data-figure='descend']::view-transition-group(intro),
-:root[data-figure='descend']::view-transition-group(listing),
-:root[data-figure='descend']::view-transition-group(panel) {
+:root[data-figure='descend']::view-transition-group(listing) {
   animation-name: none;
 }
 
-:root[data-figure='descend']::view-transition-new(intro),
-:root[data-figure='descend']::view-transition-new(panel) {
+:root[data-figure='descend']::view-transition-new(intro) {
   animation: var(--dur-slow) var(--ease-out) var(--stagger-step) both vt-lay-down;
 }
 
 :root[data-figure='descend']::view-transition-new(listing) {
   animation: var(--dur-slow) var(--ease-out) calc(var(--stagger-step) * 2) both vt-lay-down;
+}
+
+/*
+ * And last, the entries printed on it, dealt onto the sheet after the sheet is
+ * down. Two steps behind everything else — the list's own delay — plus the step
+ * each item carries, so the order of the whole descent is title, body, list,
+ * then the list's contents one at a time. That is the sentence at the top of
+ * this file taken all the way down.
+ *
+ * --dur-base rather than --dur-slow, and this is the arithmetic rather than a
+ * taste call: at --dur-slow the fourth item would finish at 910ms, well past the
+ * --dur-scene ceiling MOTION.md §9 raises for enter-work and exit-work and for
+ * nothing else. Shorter moves on smaller objects lands the last one at 630ms,
+ * inside the rule, and reads better anyway — an entry is a line of type, not a
+ * page, and it should not take a page's time to arrive.
+ */
+:root[data-figure='descend']::view-transition-new(.item) {
+  animation: var(--dur-base) var(--ease-out)
+    calc(var(--stagger-step) * (2 + var(--item-step))) both vt-lay-down;
 }
 
 /* ── Ascend: the board is cleared ─────────────────────────────────────────── */
@@ -75,8 +92,7 @@
  * animations bolted together.
  */
 :root[data-figure='ascend']::view-transition-group(intro),
-:root[data-figure='ascend']::view-transition-group(listing),
-:root[data-figure='ascend']::view-transition-group(panel) {
+:root[data-figure='ascend']::view-transition-group(listing) {
   animation-name: none;
 }
 
@@ -84,8 +100,7 @@
   animation: var(--dur-base) var(--ease-io) both vt-lift-off;
 }
 
-:root[data-figure='ascend']::view-transition-old(intro),
-:root[data-figure='ascend']::view-transition-old(panel) {
+:root[data-figure='ascend']::view-transition-old(intro) {
   animation: var(--dur-base) var(--ease-io) calc(var(--stagger-step) * 0.5) both vt-lift-off;
 }
 

@@ -6,6 +6,12 @@
   row-gap: var(--space-m);
 }
 
+/* Outside the Grid, so the strip runs edge to edge and its window is the whole
+   viewport — which is also what `pan` measures its travel against. */
+.studio {
+  margin-block-start: var(--space-3xl);
+}
+
 .mentors {
   grid-column: 1 / -1;
   margin-block-start: var(--space-3xl);

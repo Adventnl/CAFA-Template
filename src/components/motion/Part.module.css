@@ -1,8 +1,8 @@
 /*
- * The three role names a section page's blocks can take, and the class all three
- * share. The idents themselves live in tokens.css — a view-transition-name has to
- * be the same word here and in the figure stylesheets that animate it, so it is
- * written once as a token and read from both ends (CLAUDE.md §4, MOTION.md §3).
+ * The role names a section page's blocks can take, and the class they share. The
+ * idents themselves live in tokens.css — a view-transition-name has to be the
+ * same word here and in the figure stylesheets that animate it, so it is written
+ * once as a token and read from both ends (CLAUDE.md §4, MOTION.md §3).
  *
  * `var()` in a view-transition-name is not a trick: substitution happens at
  * computed-value time, before the property is parsed, so `var(--vt-intro)`
@@ -25,6 +25,25 @@
   view-transition-name: var(--vt-listing);
 }
 
-.panel {
-  view-transition-name: var(--vt-panel);
+/*
+ * The four stagger steps an item can be in. Each declares the whole
+ * view-transition-class value rather than composing with a base class, because
+ * two classes both setting view-transition-class do not merge — the cascade
+ * picks one and the other's idents are simply gone. So `item` is repeated in
+ * every rule, and there is no `.item` for them to be added to.
+ */
+.item0 {
+  view-transition-class: var(--vt-class-item);
+}
+
+.item1 {
+  view-transition-class: var(--vt-class-item) var(--vt-step-1);
+}
+
+.item2 {
+  view-transition-class: var(--vt-class-item) var(--vt-step-2);
+}
+
+.item3 {
+  view-transition-class: var(--vt-class-item) var(--vt-step-3);
 }

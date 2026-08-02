@@ -1,22 +1,27 @@
 /*
- * Contact is the one page that is a single object rather than a region of the
- * site, so it is drawn as one: a card of raised paper on the board, square, a
- * hairline for an edge, and a tack holding it at the top. Everything else on the
- * site is ink directly on the ground; this is the exception that proves it.
+ * Contact is the one thing on this site that is a single object rather than a
+ * region of it, so it is drawn as one: a card of raised paper on the board,
+ * square, a hairline for an edge, and a tack holding it at the top. Everything
+ * else here is ink directly on the ground; this is the exception that proves it.
  *
  * The restraint rules in CLAUDE.md §2 are kept rather than bent. No shadow — the
  * card lifts off the page by tone and edge, which is what a raised paper token
  * and a hairline are for. No radius — --radius is 0 and every corner here is
  * square. The tack is a rotated square, not an icon: it is a mark of the same
  * family as the hairlines, at the same weight, in the same ink.
+ *
+ * The spacing is a note's, not a page's. It was --space-l and --space-xl when
+ * this was a column on a page of its own and had a whole viewport to be generous
+ * in; a floating card sized to its own contents has to fit on a 320px screen
+ * without a scroll container to hide in, and at those steps it does not.
  */
 .block {
   background-color: var(--c-paper-raised);
   border: var(--hairline);
   display: grid;
-  padding: var(--space-l);
+  padding: var(--space-m);
   position: relative;
-  row-gap: var(--space-xl);
+  row-gap: var(--space-m);
 }
 
 /*
@@ -24,9 +29,9 @@
  * a span because it is decoration and nothing else — there is no content here to
  * hide from a screen reader, because there is no element.
  *
- * Its position is not arbitrary: styles/motion/pin.css sets the card's
- * transform-origin to `50% 0`, the exact point this sits on, so the whole pin
- * figure rotates about this mark. Move one and the other stops making sense —
+ * Its position is not arbitrary: PinnedNote sets the card's transform-origin to
+ * `50% 0`, the exact point this sits on, so the resting lean and the whole pin
+ * figure turn about this mark. Move one and the other stops making sense —
  * which is why both are expressed against --pin-size rather than by eye.
  *
  * translate/rotate as separate properties, not a transform shorthand: they
@@ -46,11 +51,26 @@
   translate: -50% 0;
 }
 
+/*
+ * The card's top-right corner belongs to PinnedNote's close mark — a --tap-min
+ * target sitting over this row. The address is the only line long enough to
+ * reach it, and only once the card is down to a phone's width, where it wraps.
+ * Reserving the corner here is the coupling admitted rather than hidden: this
+ * card is rendered in exactly one place and it is that overlay.
+ */
+.email {
+  padding-inline-end: var(--tap-min);
+}
+
 .link {
   align-items: center;
   color: var(--c-ink);
   display: inline-flex;
   min-block-size: var(--tap-min);
+  /* At 320px the address is wider than the card, and it is one unbreakable
+     token to a line-breaking algorithm — without this it sets the card's width
+     and pushes it off the screen. */
+  overflow-wrap: anywhere;
   text-decoration: underline;
   text-underline-offset: 0.22em;
   transition: text-decoration-color var(--dur-fast) var(--ease-io);

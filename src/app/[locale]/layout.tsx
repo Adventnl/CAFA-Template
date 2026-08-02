@@ -1,15 +1,17 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 
+import { ContactBlock } from '@/components/composites/ContactBlock';
 import { SiteFooter } from '@/components/composites/SiteFooter';
 import { SiteHeader } from '@/components/composites/SiteHeader';
 import { NavStage } from '@/components/motion/NavStage';
 import { PageTransition } from '@/components/motion/PageTransition';
+import { PinnedNote } from '@/components/motion/PinnedNote';
 import { ScrollField } from '@/components/motion/ScrollField';
 import { Text } from '@/components/primitives/Text';
 import { getDictionary, getSite, getWorks, requireLocale } from '@/lib/content';
 import { sectionSegment, type NavContext } from '@/lib/nav-intent';
-import { routes } from '@/lib/routes';
+import { panels, routes } from '@/lib/routes';
 
 import '@/styles/tokens.css';
 import '@/styles/fonts.css';
@@ -57,8 +59,12 @@ function navContext(): NavContext {
     locales: site.locales,
     worksSection: sectionSegment(routes.work(probe, 'x')) ?? '',
     workIndex: Object.fromEntries(getWorks().map((work) => [work.slug, work.index])),
+    // Only the items that are routes: `lateral`'s direction is the order of the
+    // *pages* along the bar, and the contact item opens a panel over the page
+    // you are on rather than being one of them.
     sectionOrder: site.nav
-      .map((item) => sectionSegment(item.href(probe)))
+      .flatMap((item) => ('href' in item ? [item.href(probe)] : []))
+      .map(sectionSegment)
       .filter((segment): segment is string => segment !== undefined),
   };
 }
@@ -101,6 +107,17 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           <PageTransition>{children}</PageTransition>
         </main>
         <SiteFooter locale={locale} site={site} dictionary={dictionary} />
+        {/* Contact is not a page: it is a card the nav's Contact button pins over
+            whichever page you are on. It lives here, outside <main>, because the
+            layout is the one thing that outlives a route change — so the card
+            survives navigating with it open, and stays where the reader put it. */}
+        <PinnedNote
+          id={panels.contact}
+          label={dictionary.contact.title}
+          closeLabel={dictionary.a11y.close}
+        >
+          <ContactBlock site={site} locale={locale} labels={dictionary.contact} />
+        </PinnedNote>
       </body>
     </html>
   );

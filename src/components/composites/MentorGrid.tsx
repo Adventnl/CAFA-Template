@@ -1,10 +1,11 @@
 import { Focus } from '@/components/motion/Focus';
 import { Parallax } from '@/components/motion/Parallax';
-import { partClass } from '@/components/motion/Part';
+import { itemClass, partClass } from '@/components/motion/Part';
 import { Media } from '@/components/primitives/Media';
 import { Text } from '@/components/primitives/Text';
 import { scenes, sceneAttrs } from '@/lib/choreography';
 import type { Locale, Mentor } from '@/lib/types';
+import { vtName } from '@/lib/vt-names';
 
 import styles from './MentorGrid.module.css';
 
@@ -28,8 +29,18 @@ export function MentorGrid({ mentors, locale, heading, className }: MentorGridPr
           is also the batch — each card rises in as the grid scrolls in,
           staggered by column. MOTION.md §5.5. */}
       <ul className={styles.grid} {...sceneAttrs(scenes.mentors)}>
-        {mentors.map((mentor) => (
-          <li key={mentor.slug}>
+        {mentors.map((mentor, index) => (
+          // Each card is an item: named, so a route change moves it on its own
+          // rather than sliding the whole grid as one rectangle, and stepped, so
+          // they arrive in sequence. It is the works index's unzip, on a grid —
+          // and because the stagger runs in DOM order across three columns, it
+          // reads as a diagonal, which is what the §5.5 audit's "staggered by
+          // column" was after. MOTION.md §3.
+          <li
+            key={mentor.slug}
+            className={itemClass(index)}
+            style={{ viewTransitionName: vtName.item(mentor.slug) }}
+          >
             {/* Focus outside, Parallax inside: the portrait comes up to size as
                 it crosses the viewport while the picture pans within its frame.
                 Two elements because they are two animations — §5.4 composes by

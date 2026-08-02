@@ -64,8 +64,7 @@
  * detail. The *arrival* is where the stagger is spent.
  */
 :root[data-figure='lateral']::view-transition-group(intro),
-:root[data-figure='lateral']::view-transition-group(listing),
-:root[data-figure='lateral']::view-transition-group(panel) {
+:root[data-figure='lateral']::view-transition-group(listing) {
   animation-name: none;
 }
 
@@ -73,9 +72,8 @@
   animation: var(--dur-base) var(--ease-io) both vt-sweep-out;
 }
 
-/* One step behind the heading: the lead paragraph, or the contact card. */
-:root[data-figure='lateral']::view-transition-new(intro),
-:root[data-figure='lateral']::view-transition-new(panel) {
+/* One step behind the heading: the lead paragraph. */
+:root[data-figure='lateral']::view-transition-new(intro) {
   animation: var(--dur-slow) var(--ease-out) var(--stagger-step) both vt-sweep-in;
 }
 
@@ -83,6 +81,36 @@
    the one whose late arrival makes the page read as assembling. */
 :root[data-figure='lateral']::view-transition-new(listing) {
   animation: var(--dur-slow) var(--ease-out) calc(var(--stagger-step) * 2) both vt-sweep-in;
+}
+
+/* ── And the things printed on the list ───────────────────────────────────── */
+
+/*
+ * The listing above is the sheet; these are the entries on it, and they are the
+ * difference between a list that slides and a list that *unzips*. A named
+ * descendant is hoisted out of its ancestor's snapshot, so the two moves do not
+ * fight: the sheet sweeps as one rectangle carrying its rules and its heading,
+ * and the four programmes — or the six mentors — sweep across it one after
+ * another, on the stagger their step classes carry.
+ *
+ * This is the works index's figure, arriving on the section pages. `enter-work`
+ * peels the rows away from the one you chose; here there is nothing chosen, so
+ * they simply go in order, which is what a lateral move along the nav bar is:
+ * the whole board pans, and the things on it go with it at their own rates.
+ *
+ * The delay is restated rather than inherited, and it has to be: the shorthand
+ * resets animation-delay, so an override that left it out would zero the stagger
+ * and hand back the block arrival this figure exists to break up. --item-step is
+ * the number base.css puts on each snapshot from its step class; every figure
+ * that gives items a move multiplies it out again.
+ */
+:root[data-figure='lateral']::view-transition-old(.item) {
+  animation: var(--dur-base) var(--ease-io) both vt-sweep-out;
+}
+
+:root[data-figure='lateral']::view-transition-new(.item) {
+  animation: var(--dur-slow) var(--ease-out) calc(var(--stagger-step) * var(--item-step)) both
+    vt-sweep-in;
 }
 
 /* ── The chrome ───────────────────────────────────────────────────────────── */

@@ -53,8 +53,7 @@ touches image markup.
     │       │   ├── page.tsx         # ium-style index
     │       │   └── [slug]/page.tsx  # ium-style detail
     │       ├── programs/page.tsx
-    │       ├── about/page.tsx
-    │       └── contact/page.tsx
+    │       └── about/page.tsx   # …and no contact/ — see §4
     ├── components/
     │   ├── primitives/
     │   │   ├── Media.tsx            # <picture>, srcset, intrinsic size, required alt
@@ -66,7 +65,8 @@ touches image markup.
     │   │   ├── Parallax.tsx         # media drifts inside a clipped frame
     │   │   ├── Recede.tsx           # a block shrinks as it leaves the top
     │   │   ├── StickyColumn.tsx     # position:sticky wrapper with bounds
-    │   │   └── HoverMediaLayer.tsx  # ium full-bleed hover backdrop
+    │   │   ├── HoverMediaLayer.tsx  # ium full-bleed hover backdrop
+    │   │   └── PinnedNote.tsx       # the contact card, pinned over any page and draggable
     │   ├── seo/
     │   │   └── JsonLd.tsx           # the only dangerouslySetInnerHTML in the codebase
     │   └── composites/
@@ -181,10 +181,16 @@ Rules:
 ```
 /                    → redirect (static) to /zh        via app/page.tsx
 /zh                  → home, Chinese
-/zh/works            /zh/works/[slug]    /zh/programs   /zh/about   /zh/contact
+/zh/works            /zh/works/[slug]    /zh/programs   /zh/about
 /en                  → home, English
 /en/works            …
 ```
+
+There is no `/contact`. It was a page and is now a card pinned over whichever page you are
+on — `components/motion/PinnedNote`, mounted once in the locale layout and opened by the
+nav item. The reasoning is MOTION.md §5.5b; the consequence for this section is that a nav
+item is no longer necessarily a route, which is why `SiteContent.nav` is a union of "has an
+`href`" and "`opens` a panel" rather than a list of links with one special case in it.
 
 - **Two root layouts, and no `app/layout.tsx`.** A root layout cannot read route params, so
   a single one would have to hardcode `<html lang>` — wrong on every page of the other
@@ -204,7 +210,8 @@ Rules:
   `scripts/emit-404.mjs` (`postbuild`) renames its output to `out/404.html` and deletes the
   directory. The segment cannot be called `404`: the exporter writes its own built-in error
   page over anything at that path.
-- `lib/routes.ts` is the only place a path string exists:
+- `lib/routes.ts` is the only place a path string exists, and — since contact stopped being
+  one — the only place the destinations that are *not* paths exist either:
   ```ts
   export const routes = {
     home:    (l: Locale) => `/${l}`,
@@ -212,8 +219,11 @@ Rules:
     work:    (l: Locale, slug: string) => `/${l}/works/${slug}`,
     programs:(l: Locale) => `/${l}/programs`,
     about:   (l: Locale) => `/${l}/about`,
-    contact: (l: Locale) => `/${l}/contact`,
   } as const;
+
+  /** Popover ids. Two ends of one identity — the trigger's `popovertarget`
+      and the panel's `id` — so they are written once, like a vt-name. */
+  export const panels = { contact: 'contact-note' } as const;
   ```
 - `LocaleSwitch` maps the current pathname to its counterpart by swapping the first
   segment. It never hardcodes destinations.

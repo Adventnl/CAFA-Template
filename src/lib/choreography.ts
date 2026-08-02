@@ -17,6 +17,7 @@ export type SceneKind =
   | 'batch'
   | 'pin'
   | 'pin-scrub'
+  | 'stack'
   | 'snap';
 
 export type SceneEffect =
@@ -25,12 +26,13 @@ export type SceneEffect =
   | 'rise'
   | 'fall'
   | 'slide'
+  | 'split'
   | 'unmask'
+  | 'pan'
   | 'tilt'
   | 'shear'
   | 'dim'
-  | 'recede'
-  | 'sway';
+  | 'recede';
 
 export type Depth = 0 | 1 | 2 | 3;
 
@@ -63,10 +65,42 @@ export const scenes = {
   workMedia: { kind: 'scrub', effect: 'focus', depth: 2 },
   /** Work detail pager: rises in as the document nears its end. */
   workPager: { kind: 'progress', effect: 'rise', depth: 1 },
-  /** Programme entries: each unmasks as it enters. */
-  programmeEntry: { kind: 'enter', effect: 'unmask', depth: 1 },
-  /** About prose: paragraph by paragraph, staggered as the block scrolls in. */
-  prose: { kind: 'batch', effect: 'rise', depth: 0 },
+  /**
+   * Programmes: the four entries take the screen one at a time.
+   *
+   * This used to be `enter` + `unmask` per entry, and the honest description of
+   * that is a wipe — the page was a flat list with one reveal on it, which is
+   * what §5.5 had settled for while the vocabulary was still `enter` and
+   * `batch`. The audit's own row for this surface says `pin-scrub`, and a stack
+   * is that figure applied down a list rather than to one section: each entry
+   * rises, catches, is read, and steps back under the next.
+   *
+   * `slide`, at depth 2, is what the entry's own parts do as it comes up — the
+   * number, the name and its particulars, the summary, each a beat behind the
+   * last. The stagger is the whole effect: everything arriving at once is a
+   * fade however far it travels.
+   */
+  programmes: { kind: 'stack', effect: 'slide', depth: 2 },
+  /**
+   * About, the studio: five photographs on one strip, travelling sideways while
+   * the section holds the screen. MOTION.md §5.2 and the §5.5 audit's "pin +
+   * pan"; the effect that had a name and a keyframe budget in the plan and no
+   * surface to run on until this page carried the images.
+   *
+   * Depth is stated for the shape of the type, not read: `pan` measures its
+   * travel off the window it is inside, because a filmstrip that goes 75% of the
+   * way is not a subtler filmstrip, it is two plates the reader never reaches.
+   */
+  studioStrip: { kind: 'pin-scrub', effect: 'pan', depth: 3 },
+  /**
+   * About prose: paragraph by paragraph, staggered as the block scrolls in.
+   *
+   * `split` rather than `rise` — the mask travels from the leading edge while
+   * the lines settle, so the copy reads as being written rather than as having
+   * faded up. It is per paragraph, not per line: a browser cannot address a line
+   * box, and the paragraph is the unit the writing is authored in anyway.
+   */
+  prose: { kind: 'batch', effect: 'split', depth: 1 },
   /**
    * Mentor grid: the *cards* assemble, staggered by the batch.
    *
@@ -87,15 +121,14 @@ export const scenes = {
   mentors: { kind: 'batch', effect: 'rise', depth: 1 },
   /** And the portrait inside each card, on its own continuous pass. */
   mentorPortrait: { kind: 'scrub', effect: 'focus', depth: 1 },
-  /**
-   * Contact. The card is put on the board by styles/motion/pin.css, which is a
-   * navigation figure, so its *scroll* behaviour is the other half of the same
-   * idea: pinned at the top edge, turning a fraction of a degree about the tack
-   * as the page moves under it. It is the only scene on the site whose reason is
-   * a story rather than a hierarchy, and it is a page of nine lines — there is
-   * nothing else here to be restrained about.
+  /*
+   * Contact had a scene here — `scrub` + `sway`, a card pinned at its top edge
+   * turning a fraction of a degree as the page moved under it. It went with the
+   * page: the card is now an overlay in the top layer (components/motion/
+   * PinnedNote), and an overlay does not move with the document, so a
+   * scroll-driven timeline has nothing to say about it. `sway` had no other user
+   * and went too, rather than staying as vocabulary nothing speaks.
    */
-  contact: { kind: 'scrub', effect: 'sway', depth: 1 },
   /** Footer: rises in at the end of the document. */
   footer: { kind: 'progress', effect: 'rise', depth: 1 },
 } as const satisfies Record<string, Scene>;

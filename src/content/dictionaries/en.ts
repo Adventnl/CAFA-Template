@@ -15,6 +15,7 @@ export const en: Dictionary = {
     worksList: 'Index of works',
     worksRail: 'Work numbers',
     workPager: 'Works navigation',
+    close: 'Close',
   },
 
   home: {
@@ -58,12 +59,12 @@ export const en: Dictionary = {
       'A portfolio is not coursework laid out neatly. It is one idea carried from the start to the point where it stands up on its own. So every project here begins at the choice of subject, and a good number of them get torn up halfway and begun again.',
       'The studio is in Beijing. Its mentors come from architecture, visual communication, interiors and ceramics, and most days they are in the same room as the students, drawing.',
     ],
+    studioTitle: 'The studio',
     mentorsTitle: 'Mentors',
   },
 
   contact: {
     title: 'Contact',
-    description: 'Studio address, email, and how to apply.',
     email: 'Email',
     wechat: 'WeChat',
     address: 'Address',

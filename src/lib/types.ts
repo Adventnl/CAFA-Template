@@ -46,10 +46,17 @@ export interface Mentor {
   portrait: ImageRef;
 }
 
-interface NavItem {
-  label: LocalisedText;
-  href: (locale: Locale) => string;
-}
+/**
+ * A nav item is either somewhere to go or something to open where you stand.
+ * Contact is the second kind — a card pinned over the current page rather than a
+ * route — so `opens` carries the id of the panel it shows (lib/routes `panels`).
+ * A union rather than an optional `href`, because "the item without a link" is
+ * exactly the sort of implicit rule that stops being true the moment a second
+ * panel exists.
+ */
+type NavItem =
+  | { label: LocalisedText; href: (locale: Locale) => string }
+  | { label: LocalisedText; opens: string };
 
 export interface SiteContent {
   name: LocalisedText;

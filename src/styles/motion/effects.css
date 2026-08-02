@@ -55,6 +55,21 @@
 [data-effect='unmask'] {
   --eff-name: eff-unmask;
 }
+[data-effect='split'] {
+  --eff-name: eff-split;
+}
+
+/*
+ * pan is the one effect that takes no depth, and that is not an oversight: every
+ * other magnitude here is a taste decision scaled 0–3, while this one is a
+ * measurement. A filmstrip has to travel exactly far enough that its last frame
+ * lands on the far edge of the window and not a pixel further — a quarter of
+ * that distance is not a subtler pan, it is four photographs the reader never
+ * sees. The keyframe therefore reads the window rather than a token.
+ */
+[data-effect='pan'] {
+  --eff-name: eff-pan;
+}
 [data-effect='dim'] {
   --eff-name: eff-dim;
 }
@@ -63,16 +78,6 @@
 }
 [data-effect='recede'] {
   --eff-name: eff-recede;
-}
-
-/*
- * A thing held at one edge turns about that edge as the page moves under it.
- * The origin is part of the effect, not of whatever uses it: sway means "hangs",
- * and a sway about the centre is a wobble, which is a different and worse idea.
- */
-[data-effect='sway'] {
-  --eff-name: eff-sway;
-  transform-origin: 50% 0;
 }
 
 /* Focus keeps a distinct min-scale and blur per depth; §6 tunes them by hand. */
@@ -169,6 +174,47 @@
   }
 }
 
+/*
+ * split — a block of type revealed the way it was written: a mask travelling
+ * from the leading edge while the lines lift the last few pixels into place.
+ * MOTION.md §5.4 wanted this per *line*; CSS cannot address a line box, so the
+ * unit is the element the copy is authored in — a paragraph, an entry — and the
+ * stagger comes from the trigger (`batch`) rather than from nth-child delays
+ * inside one block.
+ *
+ * --eff-split, not --eff-rise, and the token says why: lines that each travel
+ * 2.5rem are lines you cannot read. The mask starts --eff-unmask open so the
+ * paragraph is never a zero-width sliver, which reads as a glitch rather than a
+ * reveal. Ends where it started, so it is safe on a ranged trigger — §5.5a.
+ */
+@keyframes eff-split {
+  from {
+    opacity: 0;
+    clip-path: inset(0 calc(100% - var(--eff-unmask)) 0 0);
+    transform: translateY(calc(var(--eff-split) * var(--eff-depth)));
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+}
+
+/*
+ * pan — horizontal travel under vertical scroll. MOTION.md §5.2: the strip runs
+ * until its trailing edge meets the trailing edge of the window it is inside.
+ *
+ * 100cqi is that window: the pinned frame declares container-type in
+ * triggers.css, so the distance is measured rather than guessed. A viewport unit
+ * would have been wrong by the width of the scrollbar, which is the difference
+ * between the last plate landing on the edge and being cropped by it.
+ */
+@keyframes eff-pan {
+  to {
+    transform: translate3d(calc(100cqi - 100%), 0, 0);
+  }
+}
+
 /* For a thing losing attention: it dims toward the floor, never to nothing. */
 @keyframes eff-dim {
   to {
@@ -183,16 +229,6 @@
   }
   to {
     transform: rotate3d(1, 0, 0, calc(var(--eff-tilt) * var(--eff-depth) * -1));
-  }
-}
-
-/* Hanging from its top edge, turning a fraction of a degree as it passes. */
-@keyframes eff-sway {
-  from {
-    transform: rotate(calc(var(--eff-sway) * var(--eff-depth)));
-  }
-  to {
-    transform: rotate(calc(var(--eff-sway) * var(--eff-depth) * -1));
   }
 }
 
@@ -224,10 +260,22 @@
  * not time-driven, so a zero duration does not stop it — it has to be cancelled
  * outright and the resting state stated. The same trap Reveal already handles;
  * every effect repeats it. MOTION.md §9.
+ *
+ * The list is written out rather than reaching for `[data-scene] *`, and the two
+ * new lines are why: pin-scrub and stack drive an element two levels down
+ * (inside [data-pinned] / [data-stuck]), so a rule that stopped at `> *` left
+ * exactly the largest scrubbed surfaces on the site running for the readers who
+ * asked for none. A universal descendant selector would have covered them and
+ * also flattened every static transform inside a scene, which is a different
+ * bug. These four selectors are the four places a trigger binds an animation —
+ * add a kind, add its line.
  */
 @media (prefers-reduced-motion: reduce) {
   [data-scene],
-  [data-scene] > * {
+  [data-scene] > *,
+  [data-scene] [data-pinned] > *,
+  [data-scene] [data-stuck],
+  [data-scene] [data-stuck] > * {
     animation: none !important;
     clip-path: none !important;
     filter: none !important;
