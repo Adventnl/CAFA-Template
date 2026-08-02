@@ -20,3 +20,24 @@
 .hero {
   view-transition-class: var(--vt-class-cover);
 }
+
+/*
+ * The column steps back while the rail previews another work, and it does so one
+ * picture at a time rather than by dimming .sequence, for three reasons that all
+ * point the same way.
+ *
+ * The hero is a named part, so an ancestor's opacity would be dropped from its
+ * snapshot and it would flash to full strength the instant the navigation began
+ * (tokens.css, --preview-dim). The plates cannot take the dim on their Focus
+ * wrapper either: the focus curve is already animating that element's opacity,
+ * and an animation outranks a declaration. Nor on the frame inside it — under
+ * prefers-reduced-motion effects.css pins `[data-scene] > *` to opacity 1, which
+ * would leave the column at full strength over the photograph for the one
+ * audience that has no motion to distract from it. The image itself is clear of
+ * all three.
+ */
+.hero,
+.plate {
+  opacity: var(--preview-dim);
+  transition: opacity var(--dur-base) var(--ease-io);
+}

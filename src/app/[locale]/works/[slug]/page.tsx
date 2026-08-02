@@ -11,6 +11,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import {
   getCoverImage,
   getDictionary,
+  getIndexCovers,
   getPublishedWorks,
   getSite,
   getWork,
@@ -63,6 +64,7 @@ export default async function WorkPage({ params }: WorkParams) {
       <WorkRail
         locale={locale}
         works={getWorks()}
+        covers={getIndexCovers()}
         activeSlug={work.slug}
         label={dictionary.a11y.worksRail}
         className={styles.rail}

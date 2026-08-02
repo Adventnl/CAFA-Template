@@ -22,6 +22,16 @@
      colour is what that opacity resolves to over paper. */
   --dim: 0.28;
   --c-ink-dim: rgb(20 20 15 / var(--dim)); /* list colour while hover backdrop is active */
+  /*
+   * How far a work's page steps back while the rail is previewing another work,
+   * as an opacity each part applies to *itself*. 1 unless a preview is up.
+   *
+   * It is an inherited property rather than one opacity on a container because a
+   * view-transition snapshot keeps an element's own opacity and ignores its
+   * ancestors': a part dimmed from above is captured at full strength, so it
+   * would flash back to full ink the instant the navigation began. MOTION.md §7.
+   */
+  --preview-dim: 1;
   --c-inverse: #f7f6f2; /* text over media */
   --c-focus: #14140f; /* focus ring */
   --c-scrim: rgb(20 20 15 / 0.35); /* over-media legibility */
