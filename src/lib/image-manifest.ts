@@ -25,7 +25,7 @@ export function getImage(src: string): ImageEntry {
   const entry = images[src];
   if (entry === undefined) {
     throw new Error(
-      `No derivatives for "${src}". Add the file to public/media/source and run \`npm run prebuild\`.`,
+      `No derivatives for "${src}". Add the file to media-source and run \`npm run prebuild\`.`,
     );
   }
   return entry;

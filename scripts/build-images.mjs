@@ -1,9 +1,13 @@
 /**
  * ARCHITECTURE.md §6 — the whole image pipeline.
  *
- * Walks public/media/source, writes AVIF + WebP derivatives into
- * public/media/derived (gitignored), and records intrinsic dimensions and the
- * variant list in src/lib/image-manifest.generated.json, which Media.tsx reads.
+ * Walks media-source, writes AVIF + WebP derivatives into public/media/derived
+ * (gitignored), and records intrinsic dimensions and the variant list in
+ * src/lib/image-manifest.generated.json, which Media.tsx reads.
+ *
+ * The originals sit outside public/ on purpose: everything under public/ is
+ * copied verbatim into the export, and 31 MB of unreferenced source JPEGs has
+ * no business on the CDN. Only the derivatives ship.
  *
  * Incremental: a source file whose mtime and size are unchanged and whose
  * outputs are all still on disk is skipped. Run via `npm run prebuild`.
@@ -14,7 +18,7 @@ import path from 'node:path';
 import sharp from 'sharp';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
-const SOURCE_DIR = path.join(ROOT, 'public', 'media', 'source');
+const SOURCE_DIR = path.join(ROOT, 'media-source');
 const DERIVED_DIR = path.join(ROOT, 'public', 'media', 'derived');
 const MANIFEST = path.join(ROOT, 'src', 'lib', 'image-manifest.generated.json');
 const CACHE = path.join(ROOT, '.cache', 'images.json');

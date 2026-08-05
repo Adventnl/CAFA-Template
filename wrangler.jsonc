@@ -1,0 +1,22 @@
+{
+  // A static-only Worker: no `main`, so there is no server runtime and no
+  // JavaScript of ours between the request and the file. Cloudflare Workers
+  // Builds reads this config; nothing here needs wrangler installed locally.
+  "name": "cafa-atelier",
+  "compatibility_date": "2026-08-05",
+  "assets": {
+    // What `npm run build` writes. prebuild derives the images, next build
+    // exports the HTML, postbuild moves the 404 into place.
+    "directory": "./out",
+
+    // next.config.ts sets `trailingSlash: true`, so every internal href is
+    // "/zh/works/". Cloudflare's default would 308 those to the bare path and
+    // charge a redirect on every cold entry; this makes the host agree with
+    // the export instead.
+    "html_handling": "force-trailing-slash",
+
+    // Serves out/404.html — written by scripts/emit-404.mjs — for anything
+    // unmatched, with a 404 status rather than a 200.
+    "not_found_handling": "404-page"
+  }
+}

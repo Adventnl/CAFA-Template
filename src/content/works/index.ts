@@ -16,7 +16,7 @@ import { weatherForARoom } from './weather-for-a-room';
  * year or index, because the sequence is an editorial decision.
  *
  * Adding a work: one new file next to this one, one line here, and its images in
- * public/media/source/works/<slug>/. Nothing else in the codebase changes.
+ * media-source/works/<slug>/. Nothing else in the codebase changes.
  */
 export const works: readonly Work[] = [
   commissionNo14,

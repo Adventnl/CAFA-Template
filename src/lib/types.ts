@@ -4,12 +4,12 @@ export type Locale = 'zh' | 'en';
 type LocalisedText = Record<Locale, string>;
 
 /**
- * A reference to a file under public/media/source. Intrinsic dimensions are not
+ * A reference to a file under media-source. Intrinsic dimensions are not
  * repeated here: scripts/build-images.mjs measures them and lib/image-manifest.ts
  * hands them to Media, so a content record can never disagree with the file.
  */
 export interface ImageRef {
-  /** path relative to public/media/source, e.g. "works/edible-house/01.jpg" */
+  /** path relative to media-source, e.g. "works/edible-house/01.jpg" */
   src: string;
   /** REQUIRED. Empty string only for decorative images, and that must be deliberate. */
   alt: LocalisedText | '';

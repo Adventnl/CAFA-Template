@@ -4,9 +4,9 @@ import type { SiteContent } from '@/lib/types';
 export const site: SiteContent = {
   name: { zh: 'c.a.f.a atelier 央艺', en: 'c.a.f.a atelier 央艺' },
 
-  // The one placeholder in this file. Canonical URLs, hreflang alternates and
-  // og:image are all built from it, so it is the first thing to change on deploy.
-  url: 'https://cafa-atelier.example',
+  // Canonical URLs, hreflang alternates and og:image are all built from this.
+  // No trailing slash: routes.ts supplies the leading one.
+  url: 'https://cafa.hanoryx.com',
 
   locales: ['zh', 'en'],
   localeNames: { zh: '中文', en: 'EN' },

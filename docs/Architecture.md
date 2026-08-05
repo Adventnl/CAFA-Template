@@ -131,7 +131,7 @@ export type Locale = 'zh' | 'en';
 export type LocalisedText = Record<Locale, string>;
 
 export interface ImageRef {
-  /** path relative to public/media/source, e.g. "works/edible-house/01.jpg" */
+  /** path relative to media-source, e.g. "works/edible-house/01.jpg" */
   src: string;
   /** REQUIRED. Empty string only for decorative images, and that must be deliberate. */
   alt: LocalisedText | '';
@@ -163,7 +163,7 @@ Rules:
 
 - `content/works/index.ts` is the **only** registry. It imports each work file and exports
   an ordered array. Adding a work = new file + one line here + images in
-  `public/media/source/works/<slug>/`. No other file changes. Ever.
+  `media-source/works/<slug>/`. No other file changes. Ever.
 - A `private` work renders in the index as an unlinked row (dimmed, no hover image), exactly
   as ium does. This is data-driven — `WorkIndexRow` branches on `status`, and nothing else
   in the codebase knows the concept exists.
@@ -373,7 +373,7 @@ of the three modules sets `animation: none !important` and states the resting va
 
 `scripts/build-images.mjs`, run via `prebuild`:
 
-1. Walk `public/media/source/**`.
+1. Walk `media-source/**`.
 2. For each image emit AVIF + WebP at widths `[480, 768, 1200, 1800, 2400]`, skipping widths
    above the source's intrinsic width. Quality: AVIF 55, WebP 78.
 3. Write `src/lib/image-manifest.generated.json`, variants grouped by format so the JSON
