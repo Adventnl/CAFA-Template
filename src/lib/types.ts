@@ -1,7 +1,15 @@
-export type Locale = 'zh' | 'en';
+import type { panels, routes } from './routes';
+
+/**
+ * The locales, as data. `Locale` derives from it so the runtime list and the
+ * compile-time union cannot drift: adding one is a single edit here.
+ */
+export const LOCALES = ['zh', 'en'] as const;
+
+export type Locale = (typeof LOCALES)[number];
 
 /** Every user-visible string in content/ is this shape. Never a bare string. */
-type LocalisedText = Record<Locale, string>;
+export type LocalisedText = Record<Locale, string>;
 
 /**
  * A reference to a file under media-source. Intrinsic dimensions are not
@@ -47,16 +55,27 @@ export interface Mentor {
 }
 
 /**
+ * The nav targets, derived from the two files that own them rather than spelled
+ * out again here. `work` is excluded because a detail page needs a slug, so it
+ * can never be a bar item.
+ */
+export type NavRoute = Exclude<keyof typeof routes, 'work'>;
+export type NavPanel = keyof typeof panels;
+
+/**
  * A nav item is either somewhere to go or something to open where you stand.
  * Contact is the second kind — a card pinned over the current page rather than a
- * route — so `opens` carries the id of the panel it shows (lib/routes `panels`).
- * A union rather than an optional `href`, because "the item without a link" is
+ * route — so `opens` names the panel it shows (lib/routes `panels`).
+ * A union rather than an optional `route`, because "the item without a link" is
  * exactly the sort of implicit rule that stops being true the moment a second
  * panel exists.
+ *
+ * Both sides carry a *key*, not a URL: content says where an item points, and
+ * lib/routes stays the only place that knows what that address actually is.
  */
-type NavItem =
-  | { label: LocalisedText; href: (locale: Locale) => string }
-  | { label: LocalisedText; opens: string };
+export type NavEntry =
+  | { label: LocalisedText; route: NavRoute }
+  | { label: LocalisedText; opens: NavPanel };
 
 export interface SiteContent {
   name: LocalisedText;
@@ -65,7 +84,7 @@ export interface SiteContent {
   /** Non-empty, and order matters: the first entry is the default served at `/`. */
   locales: readonly [Locale, ...Locale[]];
   localeNames: Record<Locale, string>;
-  nav: readonly NavItem[];
+  nav: readonly NavEntry[];
   /**
    * The photographs the home page carries below the fold, in order. Non-empty:
    * the first is the one the page is measured on once the statement scrolls off.
@@ -77,4 +96,57 @@ export interface SiteContent {
     address: LocalisedText;
     hours: LocalisedText;
   };
+}
+
+/**
+ * UI copy — the strings that belong to the interface rather than to a work or a
+ * programme. One object per locale, both typed as this, so a key that exists in
+ * zh and not in en is a build error rather than a blank on the page.
+ *
+ * Written out rather than inferred from the zh file: this is the contract an
+ * editor outside the repo writes against, and a contract nobody can read is
+ * not one.
+ */
+export interface Dictionary {
+  meta: { title: string; titleTemplate: string; description: string };
+  a11y: {
+    skipToContent: string;
+    primaryNav: string;
+    localeSwitch: string;
+    worksList: string;
+    worksRail: string;
+    workPager: string;
+    /** The close mark on the contact card is drawn, so this is its only name. */
+    close: string;
+  };
+  home: { statement: string; worksLink: string };
+  works: { title: string; description: string; status: Record<WorkStatus, string> };
+  work: {
+    index: string;
+    status: string;
+    year: string;
+    discipline: string;
+    credits: string;
+    previous: string;
+    next: string;
+  };
+  programs: { title: string; description: string; intro: string };
+  about: {
+    title: string;
+    description: string;
+    body: string[];
+    studioTitle: string;
+    mentorsTitle: string;
+  };
+  /** No `description`: contact is a card, not a page, so it fills no <meta>. */
+  contact: {
+    title: string;
+    email: string;
+    wechat: string;
+    address: string;
+    hours: string;
+    note: string;
+  };
+  notFound: { title: string; body: string; home: string };
+  footer: { note: string };
 }

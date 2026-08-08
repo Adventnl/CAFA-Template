@@ -82,18 +82,16 @@ touches image markup.
     │       ├── ProgramList.tsx
     │       ├── MentorGrid.tsx
     │       └── ContactBlock.tsx
-    ├── content/
-    │   ├── site.ts                  # nav, socials, contact, locales
-    │   ├── works/
-    │   │   ├── index.ts             # ordered array, the only registry
-    │   │   ├── portfolio-interface.ts
-    │   │   └── …
-    │   ├── programs.ts
-    │   ├── mentors.ts
+    ├── content/                     # JSON, so an editor outside the repo can write it
+    │   ├── site.json                # nav, contact, studio, locales
+    │   ├── works.json               # the ordered registry, one array
+    │   ├── programs.json
+    │   ├── mentors.json
     │   └── dictionaries/
-    │       ├── zh.ts
-    │       └── en.ts                # same keys, enforced by a shared type
+    │       ├── zh.json
+    │       └── en.json              # same keys, enforced by a shared type
     ├── lib/
+    │   ├── content-schema.ts        # JSON → typed records, or a build failure
     │   ├── content.ts               # getWorks, getWork, getDictionary … — typed, pure
     │   ├── routes.ts                # every path in the site, as functions
     │   ├── metadata.ts              # canonical + hreflang, built from a route function
@@ -161,9 +159,14 @@ instead of asserted at the call site.
 
 Rules:
 
-- `content/works/index.ts` is the **only** registry. It imports each work file and exports
-  an ordered array. Adding a work = new file + one line here + images in
-  `media-source/works/<slug>/`. No other file changes. Ever.
+- `content/works.json` is the **only** registry, and its array order is the editorial
+  order. Adding a work = one entry here + images in `media-source/works/<slug>/`. No other
+  file changes. Ever.
+- Content is **JSON rather than TypeScript** because the studio edits this site through
+  CAFA-Admin, which commits to this repo. A `.ts` record can only be written by something
+  that can also write valid TypeScript; a `.json` one cannot break the build by being
+  badly formatted, only by being wrong — and `lib/content-schema.ts` catches wrong.
+  `lib/types.ts` is still the contract; JSON is just the storage.
 - A `private` work renders in the index as an unlinked row (dimmed, no hover image), exactly
   as ium does. This is data-driven — `WorkIndexRow` branches on `status`, and nothing else
   in the codebase knows the concept exists.
@@ -227,7 +230,8 @@ item is no longer necessarily a route, which is why `SiteContent.nav` is a union
   ```
 - `LocaleSwitch` maps the current pathname to its counterpart by swapping the first
   segment. It never hardcodes destinations.
-- `dictionaries/en.ts` is typed as `typeof zhDictionary`, so a missing key is a build error.
+- `dictionaries/en.json` and `zh.json` are both read as `Dictionary` (lib/types), so a key
+  present in one and missing from the other fails the build rather than the page.
 
 ---
 

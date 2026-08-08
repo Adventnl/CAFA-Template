@@ -63,7 +63,7 @@ function navContext(): NavContext {
     // *pages* along the bar, and the contact item opens a panel over the page
     // you are on rather than being one of them.
     sectionOrder: site.nav
-      .flatMap((item) => ('href' in item ? [item.href(probe)] : []))
+      .flatMap((item) => ('route' in item ? [routes[item.route](probe)] : []))
       .map(sectionSegment)
       .filter((segment): segment is string => segment !== undefined),
   };

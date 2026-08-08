@@ -1,0 +1,935 @@
+[
+  {
+    "slug": "commission-no-14",
+    "index": 14,
+    "title": {
+      "zh": "第十四号委托",
+      "en": "Commission No. 14"
+    },
+    "status": "private",
+    "discipline": [
+      {
+        "zh": "空间设计",
+        "en": "Spatial Design"
+      }
+    ],
+    "year": 2025,
+    "summary": {
+      "zh": "受委托的私人项目，按约定不公开。",
+      "en": "A private commission, withheld by agreement."
+    },
+    "credits": [],
+    "cover": {
+      "src": "works/commission-no-14/cover.jpg",
+      "alt": ""
+    },
+    "media": []
+  },
+  {
+    "slug": "salt-and-scaffold",
+    "index": 13,
+    "title": {
+      "zh": "盐与脚手架",
+      "en": "Salt and Scaffold"
+    },
+    "status": "in-progress",
+    "discipline": [
+      {
+        "zh": "建筑",
+        "en": "Architecture"
+      },
+      {
+        "zh": "材料",
+        "en": "Materials"
+      }
+    ],
+    "year": 2025,
+    "summary": {
+      "zh": "一座只打算存在一个雨季的亭子。墙是压制的盐砖，脚手架是租来的，雨停时墙会矮四十公分。合同里写明了拆除日期，但没写墙那时还剩多少。",
+      "en": "A pavilion meant to last one rainy season. The walls are pressed salt block, the scaffold is hired, and by the end of the rain the walls stand forty centimetres lower. The contract names a date for dismantling it; it does not say how much wall will be left by then."
+    },
+    "credits": [
+      {
+        "role": {
+          "zh": "设计",
+          "en": "Design"
+        },
+        "name": {
+          "zh": "祁南",
+          "en": "Qi Nan"
+        }
+      },
+      {
+        "role": {
+          "zh": "结构",
+          "en": "Structure"
+        },
+        "name": {
+          "zh": "陈立",
+          "en": "Chen Li"
+        }
+      },
+      {
+        "role": {
+          "zh": "指导",
+          "en": "Mentor"
+        },
+        "name": {
+          "zh": "沈知白",
+          "en": "Shen Zhibai"
+        }
+      }
+    ],
+    "cover": {
+      "src": "works/salt-and-scaffold/cover.jpg",
+      "alt": {
+        "zh": "盐砖墙与租来的脚手架，第一场雨之前。",
+        "en": "The salt-block wall and its hired scaffold, before the first rain."
+      }
+    },
+    "media": [
+      {
+        "src": "works/salt-and-scaffold/01.jpg",
+        "alt": {
+          "zh": "压制盐砖的模具与半成品。",
+          "en": "The press mould and a half-finished salt block."
+        }
+      },
+      {
+        "src": "works/salt-and-scaffold/02.jpg",
+        "alt": {
+          "zh": "第一周的墙面，棱角还是直的。",
+          "en": "The wall in its first week, the arrises still straight."
+        }
+      },
+      {
+        "src": "works/salt-and-scaffold/03.jpg",
+        "alt": {
+          "zh": "第六周，雨水在墙脚冲出一道沟。",
+          "en": "Week six, with rainwater cutting a channel at the foot of the wall."
+        }
+      },
+      {
+        "src": "works/salt-and-scaffold/04.jpg",
+        "alt": {
+          "zh": "脚手架的接头，唯一不会溶掉的部分。",
+          "en": "A scaffold coupler — the only part of the building that will not dissolve."
+        }
+      },
+      {
+        "src": "works/salt-and-scaffold/05.jpg",
+        "alt": {
+          "zh": "每周同一角度拍摄的墙高对照。",
+          "en": "The weekly height comparison, photographed from the same spot each time."
+        }
+      },
+      {
+        "src": "works/salt-and-scaffold/06.jpg",
+        "alt": {
+          "zh": "雨季结束时的地面结晶。",
+          "en": "Crystal left on the ground at the end of the season."
+        }
+      }
+    ]
+  },
+  {
+    "slug": "edible-house",
+    "index": 12,
+    "title": {
+      "zh": "可食之屋",
+      "en": "Edible House"
+    },
+    "status": "completed",
+    "discipline": [
+      {
+        "zh": "建筑",
+        "en": "Architecture"
+      },
+      {
+        "zh": "景观",
+        "en": "Landscape"
+      }
+    ],
+    "year": 2024,
+    "summary": {
+      "zh": "一座把菜地折进剖面的小屋。屋顶收集雨水，走廊同时是苗床，冬天关掉一半房间。造价与一间普通农舍相当，但每年产出约四百公斤蔬菜。",
+      "en": "A small house that folds a vegetable plot into its section. The roof collects rain, the corridor doubles as a seed bed, and half the rooms close down for winter. It cost about what an ordinary farmhouse costs and yields roughly four hundred kilograms of vegetables a year."
+    },
+    "credits": [
+      {
+        "role": {
+          "zh": "设计",
+          "en": "Design"
+        },
+        "name": {
+          "zh": "林未",
+          "en": "Lin Wei"
+        }
+      },
+      {
+        "role": {
+          "zh": "指导",
+          "en": "Mentor"
+        },
+        "name": {
+          "zh": "沈知白",
+          "en": "Shen Zhibai"
+        }
+      },
+      {
+        "role": {
+          "zh": "摄影",
+          "en": "Photography"
+        },
+        "name": {
+          "zh": "工作室",
+          "en": "The studio"
+        }
+      }
+    ],
+    "cover": {
+      "src": "works/edible-house/cover.jpg",
+      "alt": {
+        "zh": "可食之屋的南立面，屋顶的集水槽向院子倾斜。",
+        "en": "The south elevation of Edible House, its roof gutter tilting towards the yard."
+      }
+    },
+    "media": [
+      {
+        "src": "works/edible-house/01.jpg",
+        "alt": {
+          "zh": "剖面模型，苗床沿走廊排开。",
+          "en": "A section model with seed beds running the length of the corridor."
+        }
+      },
+      {
+        "src": "works/edible-house/02.jpg",
+        "alt": {
+          "zh": "夏季的走廊，两侧种满攀爬作物。",
+          "en": "The corridor in summer, climbing crops on both sides."
+        }
+      },
+      {
+        "src": "works/edible-house/03.jpg",
+        "alt": {
+          "zh": "关掉一半房间之后的冬季平面。",
+          "en": "The winter plan, with half the rooms shut down."
+        }
+      },
+      {
+        "src": "works/edible-house/04.jpg",
+        "alt": {
+          "zh": "屋顶集水槽通向院子的落水口。",
+          "en": "The roof gutter where it discharges into the yard."
+        }
+      },
+      {
+        "src": "works/edible-house/05.jpg",
+        "alt": {
+          "zh": "第一年的收成，按月称重记录。",
+          "en": "The first year’s yield, weighed and recorded by month."
+        }
+      },
+      {
+        "src": "works/edible-house/06.jpg",
+        "alt": {
+          "zh": "走廊在十一月，苗床已经空了。",
+          "en": "The corridor in November, the seed beds emptied."
+        }
+      }
+    ]
+  },
+  {
+    "slug": "paper-topography",
+    "index": 11,
+    "title": {
+      "zh": "纸上地形",
+      "en": "Paper Topography"
+    },
+    "status": "completed",
+    "discipline": [
+      {
+        "zh": "空间插画",
+        "en": "Spatial Illustration"
+      }
+    ],
+    "year": 2024,
+    "summary": {
+      "zh": "把一段两公里的河岸按等高线拆成十七张纸，再逐层叠回去。观众可以抽出任何一层，河就在那一刻少掉一米。",
+      "en": "Two kilometres of riverbank cut into seventeen sheets along its contour lines, then stacked back up. A visitor can pull out any one layer, and at that moment the river loses a metre."
+    },
+    "credits": [
+      {
+        "role": {
+          "zh": "设计",
+          "en": "Design"
+        },
+        "name": {
+          "zh": "周砚",
+          "en": "Zhou Yan"
+        }
+      },
+      {
+        "role": {
+          "zh": "指导",
+          "en": "Mentor"
+        },
+        "name": {
+          "zh": "许清和",
+          "en": "Xu Qinghe"
+        }
+      }
+    ],
+    "cover": {
+      "src": "works/paper-topography/cover.jpg",
+      "alt": {
+        "zh": "十七层纸质等高线叠成的河岸模型。",
+        "en": "A riverbank modelled as seventeen stacked paper contours."
+      }
+    },
+    "media": [
+      {
+        "src": "works/paper-topography/01.jpg",
+        "alt": {
+          "zh": "抽出第九层时露出的空腔。",
+          "en": "The cavity left when the ninth layer is pulled out."
+        }
+      },
+      {
+        "src": "works/paper-topography/02.jpg",
+        "alt": {
+          "zh": "单层等高线的切割图纸。",
+          "en": "The cutting drawing for a single contour."
+        }
+      },
+      {
+        "src": "works/paper-topography/03.jpg",
+        "alt": {
+          "zh": "展厅里的侧光下的叠层边缘。",
+          "en": "Stacked edges under raking gallery light."
+        }
+      },
+      {
+        "src": "works/paper-topography/04.jpg",
+        "alt": {
+          "zh": "十七层全部抽出后平铺在地上。",
+          "en": "All seventeen layers drawn out and laid flat on the floor."
+        }
+      },
+      {
+        "src": "works/paper-topography/05.jpg",
+        "alt": {
+          "zh": "等高线之间的落差，从侧面看。",
+          "en": "The drop between contours, seen from the side."
+        }
+      },
+      {
+        "src": "works/paper-topography/06.jpg",
+        "alt": {
+          "zh": "观众抽层时留下的手印，第三周。",
+          "en": "Fingerprints left by visitors pulling layers, in the third week."
+        }
+      }
+    ]
+  },
+  {
+    "slug": "kiln-and-corridor",
+    "index": 10,
+    "title": {
+      "zh": "窑与廊",
+      "en": "Kiln and Corridor"
+    },
+    "status": "completed",
+    "discipline": [
+      {
+        "zh": "建筑",
+        "en": "Architecture"
+      },
+      {
+        "zh": "陶瓷",
+        "en": "Ceramics"
+      }
+    ],
+    "year": 2023,
+    "summary": {
+      "zh": "一座柴窑和通向它的六十米长廊。廊子的坡度只由排烟决定，因此走进去的人是顺着烟的路线走的。",
+      "en": "A wood-fired kiln and the sixty metres of corridor that lead to it. The slope of the corridor is set by the flue and nothing else, so anyone walking in is walking the path of the smoke."
+    },
+    "credits": [
+      {
+        "role": {
+          "zh": "设计",
+          "en": "Design"
+        },
+        "name": {
+          "zh": "何一鸣",
+          "en": "He Yiming"
+        }
+      },
+      {
+        "role": {
+          "zh": "烧制",
+          "en": "Firing"
+        },
+        "name": {
+          "zh": "景德镇工坊",
+          "en": "A workshop in Jingdezhen"
+        }
+      },
+      {
+        "role": {
+          "zh": "指导",
+          "en": "Mentor"
+        },
+        "name": {
+          "zh": "沈知白",
+          "en": "Shen Zhibai"
+        }
+      }
+    ],
+    "cover": {
+      "src": "works/kiln-and-corridor/cover.jpg",
+      "alt": {
+        "zh": "长廊尽头的柴窑口。",
+        "en": "The mouth of the wood-fired kiln at the end of the corridor."
+      }
+    },
+    "media": [
+      {
+        "src": "works/kiln-and-corridor/01.jpg",
+        "alt": {
+          "zh": "长廊的纵剖面，坡度随排烟升高。",
+          "en": "The corridor in long section, rising with the flue."
+        }
+      },
+      {
+        "src": "works/kiln-and-corridor/02.jpg",
+        "alt": {
+          "zh": "烧制中的窑体外壁。",
+          "en": "The outer wall of the kiln during a firing."
+        }
+      },
+      {
+        "src": "works/kiln-and-corridor/03.jpg",
+        "alt": {
+          "zh": "出窑后的试片，按窑位排列。",
+          "en": "Test tiles after unloading, arranged by their position in the kiln."
+        }
+      },
+      {
+        "src": "works/kiln-and-corridor/04.jpg",
+        "alt": {
+          "zh": "长廊入口，坡度从这里开始。",
+          "en": "The corridor entrance, where the slope begins."
+        }
+      },
+      {
+        "src": "works/kiln-and-corridor/05.jpg",
+        "alt": {
+          "zh": "排烟道的剖面，决定了整条廊子的高度。",
+          "en": "The flue in section — the thing that set the height of the whole corridor."
+        }
+      },
+      {
+        "src": "works/kiln-and-corridor/06.jpg",
+        "alt": {
+          "zh": "烧到第三天夜里的窑口。",
+          "en": "The kiln mouth on the third night of firing."
+        }
+      }
+    ]
+  },
+  {
+    "slug": "nine-grey-rooms",
+    "index": 9,
+    "title": {
+      "zh": "九个灰房间",
+      "en": "Nine Grey Rooms"
+    },
+    "status": "in-progress",
+    "discipline": [
+      {
+        "zh": "室内",
+        "en": "Interior"
+      },
+      {
+        "zh": "装置",
+        "en": "Installation"
+      }
+    ],
+    "year": 2023,
+    "summary": {
+      "zh": "同一个房间刷九遍。每一遍的灰只比上一遍深一点，肉眼分不出，但九遍之后人不愿意再进去。",
+      "en": "One room painted nine times. Each grey is barely darker than the last, too close to tell apart by eye, and after the ninth nobody wants to go back in."
+    },
+    "credits": [
+      {
+        "role": {
+          "zh": "设计",
+          "en": "Design"
+        },
+        "name": {
+          "zh": "崔言",
+          "en": "Cui Yan"
+        }
+      },
+      {
+        "role": {
+          "zh": "指导",
+          "en": "Mentor"
+        },
+        "name": {
+          "zh": "罗蔓",
+          "en": "Luo Man"
+        }
+      }
+    ],
+    "cover": {
+      "src": "works/nine-grey-rooms/cover.jpg",
+      "alt": {
+        "zh": "第七遍灰之后的房间角落。",
+        "en": "A corner of the room after the seventh coat of grey."
+      }
+    },
+    "media": [
+      {
+        "src": "works/nine-grey-rooms/01.jpg",
+        "alt": {
+          "zh": "九个色样并排，差别几乎看不出。",
+          "en": "Nine samples side by side, the difference almost invisible."
+        }
+      },
+      {
+        "src": "works/nine-grey-rooms/02.jpg",
+        "alt": {
+          "zh": "刷到第四遍时的墙面。",
+          "en": "The wall at the fourth coat."
+        }
+      },
+      {
+        "src": "works/nine-grey-rooms/03.jpg",
+        "alt": {
+          "zh": "第一遍与第九遍在同一面墙上的接缝。",
+          "en": "The join between the first coat and the ninth, on the same wall."
+        }
+      },
+      {
+        "src": "works/nine-grey-rooms/04.jpg",
+        "alt": {
+          "zh": "配色记录，每一遍的配比。",
+          "en": "The mixing record, one ratio per coat."
+        }
+      },
+      {
+        "src": "works/nine-grey-rooms/05.jpg",
+        "alt": {
+          "zh": "窗洞在第九遍之后。",
+          "en": "The window opening after the ninth coat."
+        }
+      }
+    ]
+  },
+  {
+    "slug": "letters-to-a-riverbed",
+    "index": 8,
+    "title": {
+      "zh": "致河床的信",
+      "en": "Letters to a Riverbed"
+    },
+    "status": "completed",
+    "discipline": [
+      {
+        "zh": "视觉传达",
+        "en": "Visual Communication"
+      }
+    ],
+    "year": 2022,
+    "summary": {
+      "zh": "连续四百天，每天给一条已经干掉的河写一封信，用当天的水位数据决定字号。最后一封只有一个字，因为水位是零。",
+      "en": "A letter a day to a river that had already dried, for four hundred days, the type size set by that day’s water-level reading. The last letter is a single character, because the reading was zero."
+    },
+    "credits": [
+      {
+        "role": {
+          "zh": "设计",
+          "en": "Design"
+        },
+        "name": {
+          "zh": "苏眠",
+          "en": "Su Mian"
+        }
+      },
+      {
+        "role": {
+          "zh": "数据",
+          "en": "Data"
+        },
+        "name": {
+          "zh": "流域水文站",
+          "en": "The basin hydrology station"
+        }
+      },
+      {
+        "role": {
+          "zh": "指导",
+          "en": "Mentor"
+        },
+        "name": {
+          "zh": "许清和",
+          "en": "Xu Qinghe"
+        }
+      }
+    ],
+    "cover": {
+      "src": "works/letters-to-a-riverbed/cover.jpg",
+      "alt": {
+        "zh": "四百封信摊开在长桌上。",
+        "en": "Four hundred letters laid out on a long table."
+      }
+    },
+    "media": [
+      {
+        "src": "works/letters-to-a-riverbed/01.jpg",
+        "alt": {
+          "zh": "第三十七封，水位较高，字号很大。",
+          "en": "Letter thirty-seven, a high reading and very large type."
+        }
+      },
+      {
+        "src": "works/letters-to-a-riverbed/02.jpg",
+        "alt": {
+          "zh": "最后一封信，只有一个字。",
+          "en": "The last letter, a single character."
+        }
+      },
+      {
+        "src": "works/letters-to-a-riverbed/03.jpg",
+        "alt": {
+          "zh": "装订成册后的书口。",
+          "en": "The fore-edge of the bound volume."
+        }
+      },
+      {
+        "src": "works/letters-to-a-riverbed/04.jpg",
+        "alt": {
+          "zh": "四百天的水位曲线，字号跟着它走。",
+          "en": "Four hundred days of readings, the curve the type size followed."
+        }
+      },
+      {
+        "src": "works/letters-to-a-riverbed/05.jpg",
+        "alt": {
+          "zh": "干掉的河床，写信的地方。",
+          "en": "The dry bed itself, where the letters were written."
+        }
+      }
+    ]
+  },
+  {
+    "slug": "the-long-table",
+    "index": 7,
+    "title": {
+      "zh": "长桌",
+      "en": "The Long Table"
+    },
+    "status": "completed",
+    "discipline": [
+      {
+        "zh": "家具",
+        "en": "Furniture"
+      },
+      {
+        "zh": "室内",
+        "en": "Interior"
+      }
+    ],
+    "year": 2022,
+    "summary": {
+      "zh": "一张十四米的桌子，木料全部来自它所在的那间屋子的地板。地板没有补，缺口按桌子的排布留着，所以站在门口就能看出桌子是从哪里长出来的。",
+      "en": "A table fourteen metres long, made entirely from the floorboards of the room it stands in. The floor was never patched: the gaps are left in the pattern the table was cut from, so from the doorway you can read where it grew out of."
+    },
+    "credits": [
+      {
+        "role": {
+          "zh": "设计",
+          "en": "Design"
+        },
+        "name": {
+          "zh": "梁允",
+          "en": "Liang Yun"
+        }
+      },
+      {
+        "role": {
+          "zh": "木工",
+          "en": "Joinery"
+        },
+        "name": {
+          "zh": "通州的一家作坊",
+          "en": "A workshop in Tongzhou"
+        }
+      },
+      {
+        "role": {
+          "zh": "指导",
+          "en": "Mentor"
+        },
+        "name": {
+          "zh": "罗蔓",
+          "en": "Luo Man"
+        }
+      }
+    ],
+    "cover": {
+      "src": "works/the-long-table/cover.jpg",
+      "alt": {
+        "zh": "长桌沿着房间的长边摆放，地板上留着缺口。",
+        "en": "The table set along the length of the room, gaps left in the floor."
+      }
+    },
+    "media": [
+      {
+        "src": "works/the-long-table/01.jpg",
+        "alt": {
+          "zh": "起板前在地板上放的样，编号写在每一条上。",
+          "en": "The setting-out on the floor before lifting, each board numbered."
+        }
+      },
+      {
+        "src": "works/the-long-table/02.jpg",
+        "alt": {
+          "zh": "桌面拼缝处的木纹对齐。",
+          "en": "Grain matched across a joint in the table top."
+        }
+      },
+      {
+        "src": "works/the-long-table/03.jpg",
+        "alt": {
+          "zh": "地板上的缺口，正对桌腿的位置。",
+          "en": "A gap in the floor, directly opposite the leg it became."
+        }
+      },
+      {
+        "src": "works/the-long-table/04.jpg",
+        "alt": {
+          "zh": "桌腿与地板缺口的对照图。",
+          "en": "The legs drawn against the gaps they came from."
+        }
+      },
+      {
+        "src": "works/the-long-table/05.jpg",
+        "alt": {
+          "zh": "开学第一天，二十个人坐满长桌。",
+          "en": "The first day of term, twenty people filling the table."
+        }
+      }
+    ]
+  },
+  {
+    "slug": "weather-for-a-room",
+    "index": 6,
+    "title": {
+      "zh": "一个房间的天气",
+      "en": "Weather for a Room"
+    },
+    "status": "completed",
+    "discipline": [
+      {
+        "zh": "装置",
+        "en": "Installation"
+      },
+      {
+        "zh": "室内",
+        "en": "Interior"
+      }
+    ],
+    "year": 2021,
+    "summary": {
+      "zh": "房间里的光按去年同一天的气象记录走，晚一年播放。阴天就一直阴着，谁也没法调。开放的三个月里有十一天完全没有直射光。",
+      "en": "The light in the room follows the weather record for the same date a year earlier, played back twelve months late. An overcast day stays overcast and nobody can override it. Over three months of opening, eleven days had no direct light at all."
+    },
+    "credits": [
+      {
+        "role": {
+          "zh": "设计",
+          "en": "Design"
+        },
+        "name": {
+          "zh": "尹之",
+          "en": "Yin Zhi"
+        }
+      },
+      {
+        "role": {
+          "zh": "控制",
+          "en": "Controls"
+        },
+        "name": {
+          "zh": "徐鹤",
+          "en": "Xu He"
+        }
+      },
+      {
+        "role": {
+          "zh": "指导",
+          "en": "Mentor"
+        },
+        "name": {
+          "zh": "罗蔓",
+          "en": "Luo Man"
+        }
+      }
+    ],
+    "cover": {
+      "src": "works/weather-for-a-room/cover.jpg",
+      "alt": {
+        "zh": "房间在一个复播的晴天下午。",
+        "en": "The room during a replayed clear afternoon."
+      }
+    },
+    "media": [
+      {
+        "src": "works/weather-for-a-room/01.jpg",
+        "alt": {
+          "zh": "灯具与遮片的排布图。",
+          "en": "The layout of the fittings and their shutters."
+        }
+      },
+      {
+        "src": "works/weather-for-a-room/02.jpg",
+        "alt": {
+          "zh": "同一个角落，复播的阴天。",
+          "en": "The same corner on a replayed overcast day."
+        }
+      },
+      {
+        "src": "works/weather-for-a-room/03.jpg",
+        "alt": {
+          "zh": "三个月的日照记录，打印成一张长表。",
+          "en": "Three months of readings, printed as one long table."
+        }
+      },
+      {
+        "src": "works/weather-for-a-room/04.jpg",
+        "alt": {
+          "zh": "控制柜，没有手动挡。",
+          "en": "The control cabinet, with no manual override."
+        }
+      },
+      {
+        "src": "works/weather-for-a-room/05.jpg",
+        "alt": {
+          "zh": "连续十一个无直射光的日子里的第七天。",
+          "en": "The seventh of eleven consecutive days without direct light."
+        }
+      }
+    ]
+  },
+  {
+    "slug": "a-hundred-bricks",
+    "index": 5,
+    "title": {
+      "zh": "一百块砖",
+      "en": "A Hundred Bricks"
+    },
+    "status": "completed",
+    "discipline": [
+      {
+        "zh": "陶瓷",
+        "en": "Ceramics"
+      },
+      {
+        "zh": "建筑",
+        "en": "Architecture"
+      }
+    ],
+    "year": 2021,
+    "summary": {
+      "zh": "泥全部取自窑口一百米以内，每块砖标着自己被挖出来的位置。砌成的墙因此是一张地图：颜色最深的一段来自水沟边，最浅的一段来自路面下三十公分。",
+      "en": "All the clay was dug within a hundred metres of the kiln, and every brick is marked with the spot it came out of. The wall built from them is therefore a map: its darkest stretch came from beside the ditch, its palest from thirty centimetres under the road."
+    },
+    "credits": [
+      {
+        "role": {
+          "zh": "设计",
+          "en": "Design"
+        },
+        "name": {
+          "zh": "沈迟",
+          "en": "Shen Chi"
+        }
+      },
+      {
+        "role": {
+          "zh": "烧制",
+          "en": "Firing"
+        },
+        "name": {
+          "zh": "高原",
+          "en": "Gao Yuan"
+        }
+      },
+      {
+        "role": {
+          "zh": "指导",
+          "en": "Mentor"
+        },
+        "name": {
+          "zh": "高原",
+          "en": "Gao Yuan"
+        }
+      }
+    ],
+    "cover": {
+      "src": "works/a-hundred-bricks/cover.jpg",
+      "alt": {
+        "zh": "砌好的墙，颜色由深到浅横过整面。",
+        "en": "The finished wall, running dark to pale across its face."
+      }
+    },
+    "media": [
+      {
+        "src": "works/a-hundred-bricks/01.jpg",
+        "alt": {
+          "zh": "取土点的平面图，一百个编号。",
+          "en": "The plan of digging points, numbered to a hundred."
+        }
+      },
+      {
+        "src": "works/a-hundred-bricks/02.jpg",
+        "alt": {
+          "zh": "未烧的砖坯按取土点排开。",
+          "en": "Green bricks laid out by the point they came from."
+        }
+      },
+      {
+        "src": "works/a-hundred-bricks/03.jpg",
+        "alt": {
+          "zh": "同一次烧成里最深与最浅的两块。",
+          "en": "The darkest and the palest brick from a single firing."
+        }
+      },
+      {
+        "src": "works/a-hundred-bricks/04.jpg",
+        "alt": {
+          "zh": "砖背面的取土点编号。",
+          "en": "The digging-point number on the back of a brick."
+        }
+      },
+      {
+        "src": "works/a-hundred-bricks/05.jpg",
+        "alt": {
+          "zh": "水沟边取土处，回填之后。",
+          "en": "The digging point beside the ditch, after backfilling."
+        }
+      },
+      {
+        "src": "works/a-hundred-bricks/06.jpg",
+        "alt": {
+          "zh": "墙在侧光下的表面。",
+          "en": "The wall’s surface under raking light."
+        }
+      }
+    ]
+  }
+]

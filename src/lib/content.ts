@@ -1,20 +1,40 @@
-import { en } from '@/content/dictionaries/en';
-import { zh, type Dictionary } from '@/content/dictionaries/zh';
-import { mentors } from '@/content/mentors';
-import { programs } from '@/content/programs';
-import { site } from '@/content/site';
-import { works } from '@/content/works';
+import enJson from '@/content/dictionaries/en.json';
+import zhJson from '@/content/dictionaries/zh.json';
+import mentorsJson from '@/content/mentors.json';
+import programsJson from '@/content/programs.json';
+import siteJson from '@/content/site.json';
+import worksJson from '@/content/works.json';
 
+import {
+  parseDictionary,
+  parseMentors,
+  parsePrograms,
+  parseSite,
+  parseWorks,
+} from './content-schema';
 import { getImage, type ImageEntry } from './image-manifest';
-import type { Locale, Mentor, Program, SiteContent, Work } from './types';
+import { LOCALES, type Dictionary, type Locale, type Mentor, type Program, type SiteContent, type Work } from './types';
 
 /** Re-exported so components can type a dictionary prop without reaching into content/. */
 export type { Dictionary };
 
-const dictionaries: Record<Locale, Dictionary> = { zh, en };
+/**
+ * Parsed once, at module scope, so a malformed record fails `next build` rather
+ * than a page render. Every route imports this file, so there is no path
+ * through the build that skips the check.
+ */
+const site: SiteContent = parseSite(siteJson);
+const works: readonly Work[] = parseWorks(worksJson);
+const programs: readonly Program[] = parsePrograms(programsJson);
+const mentors: readonly Mentor[] = parseMentors(mentorsJson);
+
+const dictionaries: Record<Locale, Dictionary> = {
+  zh: parseDictionary(zhJson, 'zh'),
+  en: parseDictionary(enJson, 'en'),
+};
 
 function isLocale(value: string): value is Locale {
-  return (site.locales as readonly string[]).includes(value);
+  return LOCALES.some((known) => known === value);
 }
 
 /**

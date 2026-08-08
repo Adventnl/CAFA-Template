@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Grid } from '@/components/primitives/Grid';
 import { Text } from '@/components/primitives/Text';
 import type { Dictionary } from '@/lib/content';
-import { routes } from '@/lib/routes';
+import { panels, routes } from '@/lib/routes';
 import type { Locale, SiteContent } from '@/lib/types';
 
 import { LocaleSwitch } from './LocaleSwitch';
@@ -35,8 +35,8 @@ export function SiteHeader({ locale, site, dictionary }: SiteHeaderProps) {
               the button's aria-expanded. components/motion/PinnedNote. */}
           <nav aria-label={dictionary.a11y.primaryNav} className={styles.links}>
             {site.nav.map((item) =>
-              'href' in item ? (
-                <Link key={item.href(locale)} href={item.href(locale)} className={styles.link}>
+              'route' in item ? (
+                <Link key={item.route} href={routes[item.route](locale)} className={styles.link}>
                   <Text role="label" as="span">
                     {item.label[locale]}
                   </Text>
@@ -45,7 +45,7 @@ export function SiteHeader({ locale, site, dictionary }: SiteHeaderProps) {
                 <button
                   key={item.opens}
                   type="button"
-                  popoverTarget={item.opens}
+                  popoverTarget={panels[item.opens]}
                   className={styles.link}
                 >
                   <Text role="label" as="span">
