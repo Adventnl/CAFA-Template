@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import type { ImageEntry } from '@/lib/image-manifest';
+import { variants, type ImageEntry } from '@/lib/media';
 
 import styles from './HoverMediaLayer.module.css';
 
@@ -52,8 +52,9 @@ export function HoverMediaLayer({ entry, name }: HoverMediaLayerProps) {
       style={{ viewTransitionName: name }}
     >
       {slots.entries.map((slot, index) => {
-        const fallback = slot?.formats.webp.at(-1);
-        if (slot === null || fallback === undefined) return null;
+        const ladder = slot === null ? [] : variants(slot);
+        const largest = ladder.at(-1);
+        if (slot === null || largest === undefined) return null;
 
         return (
           <picture
@@ -61,17 +62,6 @@ export function HoverMediaLayer({ entry, name }: HoverMediaLayerProps) {
             className={styles.slot}
             data-front={index === slots.front ? '' : undefined}
           >
-            {/* The layer is the viewport, so `sizes` can only ever be 100vw. */}
-            <source
-              type="image/avif"
-              srcSet={slot.formats.avif.map((v) => `${v.src} ${v.width}w`).join(', ')}
-              sizes="100vw"
-            />
-            <source
-              type="image/webp"
-              srcSet={slot.formats.webp.map((v) => `${v.src} ${v.width}w`).join(', ')}
-              sizes="100vw"
-            />
             {/* Decorative here: the row's text carries the meaning, and the same
                 image appears with its alt on the work's own page.
 
@@ -79,7 +69,15 @@ export function HoverMediaLayer({ entry, name }: HoverMediaLayerProps) {
                 none the element never intersects anything, so a touch device
                 never fetches a cover it cannot show. On a pointer device the
                 layer is in the viewport and the fetch starts immediately. */}
-            <img src={fallback.src} alt="" decoding="async" loading="lazy" />
+            {/* The layer is the viewport, so `sizes` can only ever be 100vw. */}
+            <img
+              src={largest.src}
+              srcSet={ladder.map((variant) => `${variant.src} ${variant.width}w`).join(', ')}
+              sizes="100vw"
+              alt=""
+              decoding="async"
+              loading="lazy"
+            />
           </picture>
         );
       })}

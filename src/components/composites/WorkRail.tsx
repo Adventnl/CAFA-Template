@@ -5,7 +5,7 @@ import { useRef, useState } from 'react';
 
 import { HoverMediaLayer } from '@/components/motion/HoverMediaLayer';
 import { Text } from '@/components/primitives/Text';
-import type { ImageEntry } from '@/lib/image-manifest';
+import { variants, type ImageEntry } from '@/lib/media';
 import { routes } from '@/lib/routes';
 import type { Locale, Work } from '@/lib/types';
 import { vtName } from '@/lib/vt-names';
@@ -67,8 +67,11 @@ export function WorkRail({ locale, works, covers, activeSlug, label, className }
       const link = document.createElement('link');
       link.rel = 'preload';
       link.as = 'image';
-      link.type = 'image/avif';
-      link.imageSrcset = entry.formats.avif.map((v) => `${v.src} ${v.width}w`).join(', ');
+      // No `type`: the format is negotiated at the edge by `format=auto`, so
+      // claiming AVIF here would be a promise this URL does not always keep.
+      link.imageSrcset = variants(entry)
+        .map((variant) => `${variant.src} ${variant.width}w`)
+        .join(', ');
       link.imageSizes = '100vw';
       document.head.append(link);
     }

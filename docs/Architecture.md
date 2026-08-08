@@ -11,15 +11,15 @@ Companion to `CLAUDE.md`. That file is the law; this is the map.
 | Framework | Next.js App Router, `output: 'export'` | Every route becomes real HTML at build time. A crawler and a cold visitor both get the works index without waiting on a bundle. File-based routing + `generateStaticParams` means new works generate pages with no code change. |
 | Styling | CSS Modules + custom properties | Zero runtime, scoped by default, and tokens are the single source of truth. Tailwind would put design decisions back into JSX as literals — the exact thing §4 of the constitution forbids. |
 | Animation | Browser-native: view transitions + scroll-driven animations | The budget for `motion` was ~5 KB and it has not been spent. React's `<ViewTransition>` hands route changes to the browser's View Transitions API, and `animation-timeline: view()` binds scroll motion to the compositor. Both are CSS from that point on, so the most animated surface on the site ships no animation runtime at all. §5.4–5.5. |
-| Content | Typed TS modules in `content/` | No CMS, no fetch, no build plugin. Type errors catch a malformed work at compile time. MDX only if long-form prose appears later. |
+| Content | Fetched from CAFA-Admin (D1) at build time | `scripts/fetch-content.mjs` writes `content/bundle.generated.json` before `next build`; `lib/content-schema.ts` re-parses every field, so a malformed record fails the build instead of rendering. No runtime fetch, no CMS client, no server. The studio edits in the admin and presses Publish; a deploy hook rebuilds this. |
 | i18n | Route segment + dictionary | Two locales don't justify a library. `[locale]` segment, a `dictionaries/` map, `generateStaticParams` emits both trees. |
-| Images | `sharp` build script → static derivatives | `next/image` optimisation is unavailable under `output: 'export'`. We generate AVIF/WebP at fixed widths at build time and hand-roll `srcset`, which is both faster and fully static. |
-| Deploy | GitHub Pages or Cloudflare Pages | `out/` is the whole artefact. |
+| Images | R2 originals, transformed on delivery | `next/image` optimisation is unavailable under `output: 'export'`, and a build-time `sharp` pass cannot survive CI — its incremental cache dies with the container, so every build would re-encode ~700 AVIF derivatives. Cloudflare transforms the original per request and caches it; `format=auto` negotiates AVIF or WebP. Nothing is derived at build time and no media ships in `out/`. |
+| Deploy | Cloudflare Workers, static assets | `out/` is the whole artefact — HTML, CSS and JS, no media. Builds are triggered by a deploy hook the admin pokes on publish. |
 
 **The `next/image` caveat, handled.** `next.config.ts` sets `images: { unoptimized: true }`.
-We never use `next/image`. `components/primitives/Media.tsx` renders a `<picture>` from a
-manifest that `scripts/build-images.mjs` writes. This is the one place in the codebase that
-touches image markup.
+We never use `next/image`. `components/primitives/MediaFrame.tsx` renders a `<picture>` from
+the dimensions in the content bundle and the transform URLs `lib/media.ts` builds. This is
+the one place in the codebase that touches image markup.
 
 ---
 
@@ -33,13 +33,12 @@ touches image markup.
 ├── next.config.ts
 ├── tsconfig.json                    # strict, paths: "@/*" → "src/*"
 ├── scripts/
-│   ├── build-images.mjs             # sharp → derivatives + image-manifest.json
+│   ├── fetch-content.mjs            # CAFA-Admin → content/bundle.generated.json
+│   ├── emit-build-info.mjs          # out/build-info.json — the revision this build used
+│   ├── emit-404.mjs
 │   └── make-placeholders.mjs        # the template's own artwork; not part of the build
 ├── public/
-│   ├── fonts/                       # subset woff2
-│   └── media/
-│       ├── source/                  # committed originals (gitignored if large → use LFS)
-│       └── derived/                 # generated, gitignored
+│   └── fonts/                       # subset woff2
 └── src/
     ├── app/                         # NOTE: no app/layout.tsx — see §4
     │   ├── (root)/
@@ -82,23 +81,15 @@ touches image markup.
     │       ├── ProgramList.tsx
     │       ├── MentorGrid.tsx
     │       └── ContactBlock.tsx
-    ├── content/                     # JSON, so an editor outside the repo can write it
-    │   ├── site.json                # nav, contact, studio, locales
-    │   ├── works.json               # the ordered registry, one array
-    │   ├── programs.json
-    │   ├── mentors.json
-    │   └── dictionaries/
-    │       ├── zh.json
-    │       └── en.json              # same keys, enforced by a shared type
+    ├── content/
+    │   └── bundle.generated.json    # fetched by prebuild; gitignored, never committed
     ├── lib/
     │   ├── content-schema.ts        # JSON → typed records, or a build failure
     │   ├── content.ts               # getWorks, getWork, getDictionary … — typed, pure
     │   ├── routes.ts                # every path in the site, as functions
     │   ├── metadata.ts              # canonical + hreflang, built from a route function
     │   ├── json-ld.ts               # schema.org payloads, so no page knows a vocabulary
-    │   ├── image-manifest.ts        # typed read of the generated manifest
-    │   ├── image-manifest.generated.json   # written by prebuild; committed so a
-    │   │                            # fresh clone type-checks without a build
+    │   ├── media.ts                 # R2 key + width → a transform URL
     │   └── types.ts                 # Work, Program, Mentor, LocalisedText, ImageRef
     ├── types/
     │   └── react-canary.d.ts        # pulls in the <ViewTransition> declaration
@@ -129,7 +120,7 @@ export type Locale = 'zh' | 'en';
 export type LocalisedText = Record<Locale, string>;
 
 export interface ImageRef {
-  /** path relative to media-source, e.g. "works/edible-house/01.jpg" */
+  /** the R2 object key, e.g. "works/edible-house/01.jpg" */
   src: string;
   /** REQUIRED. Empty string only for decorative images, and that must be deliberate. */
   alt: LocalisedText | '';
@@ -159,20 +150,23 @@ instead of asserted at the call site.
 
 Rules:
 
-- `content/works.json` is the **only** registry, and its array order is the editorial
-  order. Adding a work = one entry here + images in `media-source/works/<slug>/`. No other
-  file changes. Ever.
-- Content is **JSON rather than TypeScript** because the studio edits this site through
-  CAFA-Admin, which commits to this repo. A `.ts` record can only be written by something
-  that can also write valid TypeScript; a `.json` one cannot break the build by being
-  badly formatted, only by being wrong — and `lib/content-schema.ts` catches wrong.
-  `lib/types.ts` is still the contract; JSON is just the storage.
+- The `works` array in the bundle is the **only** registry, and its order is the editorial
+  order — `position` in the database, moved with the arrows in the admin's works list.
+  Adding a work touches nothing in this repository at all.
+- Content is **fetched, not committed**, because the studio edits it in CAFA-Admin and the
+  database is the source of truth. `bundle.generated.json` is gitignored: a checked-in copy
+  is a second source of truth that goes stale, and CI must always take the published one.
+  `lib/types.ts` is still the contract, and `lib/content-schema.ts` still enforces it —
+  what changed is where the bytes come from, not what has to be true of them.
 - A `private` work renders in the index as an unlinked row (dimmed, no hover image), exactly
   as ium does. This is data-driven — `WorkIndexRow` branches on `status`, and nothing else
   in the codebase knows the concept exists.
-- `ImageRef` carries no dimensions. `scripts/build-images.mjs` measures the file and
-  `lib/image-manifest.ts` hands the numbers to `Media`, so a content record cannot
-  disagree with the image on disk and nobody has to type a pixel count.
+- `ImageRef` carries no dimensions. The admin measures them from the uploaded bytes and
+  the bundle carries them; `lib/media.ts` hands the numbers to `Media`, so a content record
+  cannot disagree with the file in the bucket and nobody has to type a pixel count.
+- A **private** work publishes no photographs. The admin drops its cover and media when it
+  builds a revision, and `parseWorks` drops them again on the way in — which is why an
+  empty `src` is legal for exactly that case and nowhere else.
 - `lib/content.ts` exports pure functions only: `getSite()`, `getWorks()`, `getWork(slug)`,
   `getPrograms()`, `getMentors()`, `getDictionary(locale)` and `requireLocale(param)`.
   Components never import from `content/` directly; pages do, through `lib/content`.
@@ -230,8 +224,13 @@ item is no longer necessarily a route, which is why `SiteContent.nav` is a union
   ```
 - `LocaleSwitch` maps the current pathname to its counterpart by swapping the first
   segment. It never hardcodes destinations.
-- `dictionaries/en.json` and `zh.json` are both read as `Dictionary` (lib/types), so a key
-  present in one and missing from the other fails the build rather than the page.
+- The two dictionaries in the bundle are both read as `Dictionary` (lib/types), so a key
+  present in one and missing from the other fails the build rather than the page. They are
+  stored as one flat `copy` table keyed by dotted path, with a `zh` and an `en` column, so
+  a missing translation is a blank column rather than an absent key.
+- The **nav labels** live in that same copy table and are lifted into `site.nav` by the
+  admin. The nav's *shape* — the order, and which route or panel each item points at — is
+  code, because it is wired to `lib/routes.ts`. The words are not.
 
 ---
 
@@ -375,36 +374,47 @@ of the three modules sets `animation: none !important` and states the resting va
 
 ## 6. Image pipeline
 
-`scripts/build-images.mjs`, run via `prebuild`:
+There isn't one, and that is the design.
 
-1. Walk `media-source/**`.
-2. For each image emit AVIF + WebP at widths `[480, 768, 1200, 1800, 2400]`, skipping widths
-   above the source's intrinsic width. Quality: AVIF 55, WebP 78.
-3. Write `src/lib/image-manifest.generated.json`, variants grouped by format so the JSON
-   types itself against `ImageEntry` without a cast:
-   ```json
-   { "works/edible-house/01.jpg": {
-       "width": 3000, "height": 2000,
-       "formats": { "avif": [{ "src": "/media/derived/…-480.avif", "width": 480 }],
-                    "webp": [ … ] } } }
-   ```
-4. Cache by source mtime + size so rebuilds are incremental.
+Originals live in an R2 bucket under the key the content record names —
+`works/edible-house/01.jpg`. Their intrinsic dimensions were measured by the admin when
+they were uploaded and travel in the content bundle. `lib/media.ts` turns a key and a width
+into a URL:
 
-`Media.tsx` reads the manifest, emits:
+```
+/cdn-cgi/image/width=768,quality=78,format=auto,fit=scale-down/<mediaBase>/<key>
+```
+
+Cloudflare fetches the original, resizes it, encodes it, and caches the result. `format=auto`
+picks AVIF or WebP from the request's `Accept` header, so one `srcset` replaces the two
+`<source>` elements this used to need. `fit=scale-down` never enlarges, which is what makes
+the width ladder `[480, 768, 1200, 1800, 2400]` safe to apply to an original of any size —
+a 900px photograph yields 480 and 900, exactly as the old `targetWidths()` did.
+
+`MediaFrame.tsx` emits:
 
 ```html
 <picture>
-  <source type="image/avif" srcset="…480.avif 480w, …1200.avif 1200w" sizes={sizes}>
-  <source type="image/webp" srcset="…">
-  <img src="…1200.webp" width={w} height={h} alt={alt} loading="lazy" decoding="async">
+  <img src="…width=1800…" srcset="…width=480… 480w, …width=1200… 1200w" sizes={sizes}
+       width={w} height={h} alt={alt} loading="lazy" decoding="async">
 </picture>
 ```
 
 No wrapper div: the intrinsic `width`/`height` attributes give the browser the ratio and
-`height: auto` holds the box open, which is one element fewer for the same zero CLS.
-`sizes` is a required prop — forgetting it is the single most common cause of
-over-downloading, so the type forbids it. A missing manifest entry throws rather than
-rendering a broken `<img>`.
+`height: auto` holds the box open, which is one element fewer for the same zero CLS. Those
+dimensions come from the bundle, not from the file, which is why the admin measures them
+from the uploaded bytes rather than trusting a form field. `sizes` is a required prop —
+forgetting it is the single most common cause of over-downloading, so the type forbids it.
+A key the bundle does not describe throws rather than rendering a broken `<img>`.
+
+**Cost.** Roughly 355 unique transformations a month against a free allowance of 5,000. A
+"unique transformation" is one combination of options on one original per month; every
+subsequent request for it is a cache hit.
+
+**The `<picture>` stays** even with nothing inside it but the `<img>`. globals.css gives it
+`display: block` at element specificity and `WorkIndexRow` depends on beating that from its
+own module — see the comment in `MediaFrame.module.css`. Collapsing it to a bare `<img>`
+would move that fight to a different element and re-open a view-transition bug.
 
 ---
 

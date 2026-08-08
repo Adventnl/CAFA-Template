@@ -12,14 +12,19 @@ export type Locale = (typeof LOCALES)[number];
 export type LocalisedText = Record<Locale, string>;
 
 /**
- * A reference to a file under media-source. Intrinsic dimensions are not
- * repeated here: scripts/build-images.mjs measures them and lib/image-manifest.ts
- * hands them to Media, so a content record can never disagree with the file.
+ * A reference to a photograph in the bucket. Intrinsic dimensions are not
+ * repeated here: the admin measures them when the file is uploaded and the
+ * content bundle carries them, so a content record can never disagree with the
+ * file. lib/media.ts is what hands them to Media.
  */
 export interface ImageRef {
-  /** path relative to media-source, e.g. "works/edible-house/01.jpg" */
+  /** The R2 object key, e.g. "works/edible-house/01.jpg" */
   src: string;
-  /** REQUIRED. Empty string only for decorative images, and that must be deliberate. */
+  /**
+   * REQUIRED. Empty string only for decorative images, and that must be
+   * deliberate. `src` is empty only for a private work, whose cover the admin
+   * withholds — see parseWorks.
+   */
   alt: LocalisedText | '';
 }
 

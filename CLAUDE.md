@@ -7,8 +7,21 @@ breaking the rule.
 ## 1. What this is
 
 A static, frontend-only marketing and portfolio site for an art / design / architecture
-portfolio-education atelier. **There is no backend, no database, no auth, no API routes,
-no server runtime.** The build output is HTML, CSS, JS and images on a CDN.
+portfolio-education atelier. **This repository ships no server runtime, no API routes and
+no client-side data fetching.** The build output is HTML, CSS and JS on a CDN.
+
+The content lives in a database — Cloudflare D1, behind CAFA-Admin — and the photographs
+live in an R2 bucket. Neither is reached at runtime. `scripts/fetch-content.mjs` pulls the
+published content once, before `next build`, and writes it to
+`src/content/bundle.generated.json`; everything downstream of that file is exactly as
+static as it was when the content was six checked-in JSON files.
+
+**This distinction is the whole architecture, so be exact about it.** Fetching at build
+time costs nothing. Fetching in the browser would put three serial round trips ahead of
+the LCP image and leave intrinsic dimensions unavailable until after first paint, which
+breaks §7's LCP and CLS budgets structurally rather than marginally. If a change would
+move a content read from build time to runtime, that is not a refactor — it is a different
+site, and §7 stops being achievable. Say so instead of doing it.
 
 Stack, fixed:
 
@@ -16,7 +29,8 @@ Stack, fixed:
 - TypeScript, `strict: true`
 - Plain CSS Modules + CSS custom properties. No Tailwind, no CSS-in-JS runtime.
 - `motion` (the `m` + `LazyMotion` subset only) for the handful of animations CSS cannot do
-- `sharp` in a build script for responsive image derivatives
+- Content fetched at build time from CAFA-Admin; images transformed on delivery by
+  Cloudflare from R2. There is no image build step and no `sharp`.
 - Locales: `zh` (default, served at `/`), `en` (served at `/en`)
 
 Do not add a dependency without an explicit instruction. If you believe one is needed,
@@ -61,17 +75,20 @@ Dependencies point **down only**. A lower layer never imports from a higher one.
 
 Every one of these is a bug, not a style preference:
 
-- A display string in a `.tsx` file. All copy lives in `content/`, keyed by locale.
+- A display string in a `.tsx` file. All copy lives in the content bundle, keyed by locale,
+  and is edited in CAFA-Admin. A string you would have to redeploy to change is a defect.
 - A colour, size, duration or easing as a literal. All values come from `styles/tokens.css`
   via `var(--…)`. The only permitted raw numbers in CSS are `0`, `1`, `100%`, and values
   inside a `clamp()` that is itself defining a token.
 - A route path written as a string in a component. Routes come from `lib/routes.ts`.
-- An image dimension, aspect ratio or alt text typed into a component. It comes from the
-  content record.
-- A work, programme, mentor or nav item spelled out in JSX. It comes from `content/`.
+- An image dimension, aspect ratio or alt text typed into a component. Dimensions are
+  measured when the photograph is uploaded and travel in the bundle; alt text is a
+  required field on the content record.
+- A work, programme, mentor or nav item spelled out in JSX. It comes from the bundle.
 
-Test: **adding a new work must require editing exactly one content file and adding image
-files. Zero code changes.** If that isn't true, the architecture is wrong — fix it.
+Test: **adding a new work must require nothing but the admin UI — no commit, no deploy,
+nothing touched in this repository at all.** If that isn't true, the architecture is
+wrong — fix it.
 
 ## 5. YAGNI
 
@@ -120,8 +137,11 @@ Rules that keep this true:
   `width`, `height`, `top`, `left`, `margin` or `background-color` is a defect.
 - Every image and video element declares intrinsic `width`/`height` (or an
   `aspect-ratio` box). CLS from media is unacceptable.
-- Images: AVIF with WebP fallback, `srcset` + `sizes` on every one, `loading="lazy"` and
-  `decoding="async"` except the LCP image, which is eager with `fetchPriority="high"`.
+- Images: one `srcset` + `sizes` on every one, served through Cloudflare image
+  transformations with `format=auto`, which negotiates AVIF or WebP per request from the
+  `Accept` header. `loading="lazy"` and `decoding="async"` except the LCP image, which is
+  eager with `fetchPriority="high"`. Every `<img>` carries intrinsic `width`/`height` from
+  the bundle — that is what the CLS budget rests on, so it is not optional.
 - Fonts: self-hosted `woff2`, subset, `font-display: swap`, preloaded, with a metric-matched
   fallback in the `font-family` stack so the swap doesn't shift layout.
 - No scroll or resize handler without `passive: true`; prefer `IntersectionObserver`,

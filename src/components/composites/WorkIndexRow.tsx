@@ -5,7 +5,7 @@ import { Focus } from '@/components/motion/Focus';
 import { MediaFrame } from '@/components/primitives/MediaFrame';
 import { Text } from '@/components/primitives/Text';
 import { scenes } from '@/lib/choreography';
-import type { ImageEntry } from '@/lib/image-manifest';
+import type { ImageEntry } from '@/lib/media';
 import { routes } from '@/lib/routes';
 import type { Locale, Work } from '@/lib/types';
 import { vtName } from '@/lib/vt-names';

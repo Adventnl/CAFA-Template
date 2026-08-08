@@ -1,4 +1,4 @@
-import { getImage } from '@/lib/image-manifest';
+import { getImage } from '@/lib/media';
 import type { ImageRef, Locale } from '@/lib/types';
 
 import { MediaFrame } from './MediaFrame';
@@ -11,7 +11,7 @@ interface MediaProps {
   className?: string;
 }
 
-/** An ImageRef from content/, resolved against the build's image manifest. */
+/** An ImageRef from the content bundle, resolved to its intrinsic dimensions. */
 export function Media({ image, locale, sizes, priority, className }: MediaProps) {
   return (
     <MediaFrame
