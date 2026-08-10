@@ -1,7 +1,11 @@
 node_modules
 .next
 out
-public/media/derived
 *.tsbuildinfo
 .cache
 .claude
+
+# Fetched from CAFA-Admin by scripts/fetch-content.mjs at the start of every
+# build. Deliberately not committed: a checked-in copy is a second source of
+# truth that silently goes stale, and CI must always take the published one.
+src/content/bundle.generated.json

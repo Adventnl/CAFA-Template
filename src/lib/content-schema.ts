@@ -1,22 +1,27 @@
 /**
- * The gate between `content/*.json` and the rest of the app.
+ * The gate between the content bundle and the rest of the app.
  *
- * Content is JSON so that something other than a text editor can write it —
- * see CAFA-Admin. That trade buys editability and costs the compiler's
- * knowledge of the shape: an imported `.json` is `string` where the app needs
- * `WorkStatus`, and `string[]` where it needs a non-empty tuple.
+ * The content is fetched from CAFA-Admin at build time and written to
+ * `content/bundle.generated.json` by scripts/fetch-content.mjs. That it now
+ * comes over the wire rather than out of six checked-in files changes nothing
+ * about what has to be true of it, and it makes this gate matter more rather
+ * than less: it is the only thing standing between a database somebody edited
+ * this morning and a page that renders `undefined`.
  *
- * These functions pay that cost back. They run once, at module scope in
- * lib/content, which means `next build` is where a malformed record is caught
- * — with a path to the offending field instead of a blank on a page. Nothing
- * here is a cast: every narrowing is a check that can fail, and failing stops
- * the build.
+ * JSON costs the compiler its knowledge of the shape — a parsed field is
+ * `string` where the app needs `WorkStatus`, and `string[]` where it needs a
+ * non-empty tuple. These functions pay that cost back. They run once, at module
+ * scope in lib/content, which means `next build` is where a malformed record is
+ * caught, with a path to the offending field instead of a blank on a page.
+ * Nothing here is a cast: every narrowing is a check that can fail, and failing
+ * stops the build — which leaves the previous deploy serving.
  */
 import { panels, routes } from './routes';
 import {
   LOCALES,
   type Dictionary,
   type ImageRef,
+  type Locale,
   type LocalisedText,
   type Mentor,
   type NavEntry,
@@ -117,11 +122,26 @@ function status(value: unknown, at: string): WorkStatus {
 
 function work(value: unknown, at: string): Work {
   const record = object(value, at);
+  const state = status(record.status, `${at}.status`);
+
+  /*
+   * A private work is listed in the index and has no page, so it publishes no
+   * photographs at all. The admin already drops them when it builds a revision
+   * — that is where the rule belongs, at the point the data leaves the database
+   * — and dropping them again here means the site cannot hand out a cover URL
+   * even if a payload arrives carrying one.
+   *
+   * This is the only place an empty image src is legal, and it is legal because
+   * nothing ever renders it: getPublishedWorks excludes these from the routes,
+   * and getIndexCovers excludes them from the hover backdrop.
+   */
+  const withheld = state === 'private';
+
   return {
     slug: slug(record.slug, `${at}.slug`),
     index: whole(record.index, `${at}.index`),
     title: localised(record.title, `${at}.title`),
-    status: status(record.status, `${at}.status`),
+    status: state,
     discipline: each(record.discipline, `${at}.discipline`, localised),
     year: whole(record.year, `${at}.year`),
     summary: localised(record.summary, `${at}.summary`),
@@ -132,8 +152,8 @@ function work(value: unknown, at: string): Work {
         name: localised(entry.name, `${credit}.name`),
       };
     }),
-    cover: image(record.cover, `${at}.cover`),
-    media: each(record.media, `${at}.media`, image),
+    cover: withheld ? { src: '', alt: '' } : image(record.cover, `${at}.cover`),
+    media: withheld ? [] : each(record.media, `${at}.media`, image),
   };
 }
 
@@ -311,5 +331,65 @@ export function parseDictionary(value: unknown, locale: string): Dictionary {
     },
     notFound: { title: notFound('title'), body: notFound('body'), home: notFound('home') },
     footer: { note: footer('note') },
+  };
+}
+
+/**
+ * Intrinsic dimensions, keyed by R2 object key.
+ *
+ * These are what hold a slot open before a photograph arrives, so a bad number
+ * here is layout shift on the live site. Checking them at the same gate as
+ * everything else means a malformed one fails `next build` rather than showing
+ * up in a field measurement weeks later.
+ */
+export function parseMedia(value: unknown): Record<string, { width: number; height: number }> {
+  const record = object(value, 'media');
+  const parsed: Record<string, { width: number; height: number }> = {};
+
+  for (const [key, entry] of Object.entries(record)) {
+    const at = `media["${key}"]`;
+    const size = object(entry, at);
+    const width = whole(size.width, `${at}.width`);
+    const height = whole(size.height, `${at}.height`);
+    if (width <= 0 || height <= 0) fail(at, 'positive dimensions');
+    parsed[key] = { width, height };
+  }
+
+  return parsed;
+}
+
+export interface ContentBundle {
+  /** The published revision this build came from. 0 for a draft preview. */
+  revision: number;
+  site: SiteContent;
+  works: Work[];
+  programs: Program[];
+  mentors: Mentor[];
+  dictionaries: Record<Locale, Dictionary>;
+}
+
+/**
+ * The whole payload, in one gate.
+ *
+ * Content used to arrive as six imported JSON files and now arrives as one
+ * fetched bundle, which changes where it comes from and nothing about what has
+ * to be true of it. Every function this calls is the same one that checked the
+ * files, so a field the admin gets wrong still fails the build with a path to
+ * itself, and the previous deploy stays up.
+ */
+export function parseBundle(value: unknown): ContentBundle {
+  const record = object(value, 'bundle');
+  const dictionaries = object(record.dictionaries, 'bundle.dictionaries');
+
+  return {
+    revision: whole(record.revision, 'bundle.revision'),
+    site: parseSite(record.site),
+    works: parseWorks(record.works),
+    programs: parsePrograms(record.programs),
+    mentors: parseMentors(record.mentors),
+    dictionaries: {
+      zh: parseDictionary(dictionaries.zh, 'zh'),
+      en: parseDictionary(dictionaries.en, 'en'),
+    },
   };
 }

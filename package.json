@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "dev:images": "node scripts/build-images.mjs && next dev",
-    "prebuild": "node scripts/build-images.mjs",
+    "dev": "node scripts/fetch-content.mjs && next dev",
+    "content": "node scripts/fetch-content.mjs",
+    "prebuild": "node scripts/fetch-content.mjs",
     "build": "next build",
     "postbuild": "node scripts/emit-404.mjs && node scripts/emit-build-info.mjs",
     "start": "next start",
@@ -23,7 +23,6 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
-    "sharp": "^0.35.3",
     "typescript": "^5"
   }
 }

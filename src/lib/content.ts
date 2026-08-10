@@ -1,19 +1,9 @@
-import enJson from '@/content/dictionaries/en.json';
-import zhJson from '@/content/dictionaries/zh.json';
-import mentorsJson from '@/content/mentors.json';
-import programsJson from '@/content/programs.json';
-import siteJson from '@/content/site.json';
-import worksJson from '@/content/works.json';
+import bundle from '@/content/bundle.generated.json';
 
-import {
-  parseDictionary,
-  parseMentors,
-  parsePrograms,
-  parseSite,
-  parseWorks,
-} from './content-schema';
-import { getImage, type ImageEntry } from './image-manifest';
-import { LOCALES, type Dictionary, type Locale, type Mentor, type Program, type SiteContent, type Work } from './types';
+import { parseBundle } from './content-schema';
+import { getImage, variants, type ImageEntry } from './media';
+import type { Dictionary, Locale, Mentor, Program, SiteContent, Work } from './types';
+import { LOCALES } from './types';
 
 /** Re-exported so components can type a dictionary prop without reaching into content/. */
 export type { Dictionary };
@@ -22,16 +12,21 @@ export type { Dictionary };
  * Parsed once, at module scope, so a malformed record fails `next build` rather
  * than a page render. Every route imports this file, so there is no path
  * through the build that skips the check.
+ *
+ * The bundle is written by scripts/fetch-content.mjs, which fetches it from the
+ * admin before Next starts. Doing it in a prebuild script rather than with a
+ * top-level `await` here is deliberate: every function below stays synchronous,
+ * so nothing above this file had to change when the content moved into a
+ * database, and a failed fetch fails with a plain message instead of an
+ * unhandled rejection somewhere inside a server component.
  */
-const site: SiteContent = parseSite(siteJson);
-const works: readonly Work[] = parseWorks(worksJson);
-const programs: readonly Program[] = parsePrograms(programsJson);
-const mentors: readonly Mentor[] = parseMentors(mentorsJson);
+const content = parseBundle(bundle);
 
-const dictionaries: Record<Locale, Dictionary> = {
-  zh: parseDictionary(zhJson, 'zh'),
-  en: parseDictionary(enJson, 'en'),
-};
+const site: SiteContent = content.site;
+const works: readonly Work[] = content.works;
+const programs: readonly Program[] = content.programs;
+const mentors: readonly Mentor[] = content.mentors;
+const dictionaries: Record<Locale, Dictionary> = content.dictionaries;
 
 function isLocale(value: string): value is Locale {
   return LOCALES.some((known) => known === value);
@@ -45,6 +40,11 @@ function isLocale(value: string): value is Locale {
 export function requireLocale(value: string): Locale {
   if (!isLocale(value)) throw new Error(`Unknown locale "${value}"`);
   return value;
+}
+
+/** The published revision this build came from. build-info.json reports it. */
+export function getRevision(): number {
+  return content.revision;
 }
 
 export function getSite(): SiteContent {
@@ -80,13 +80,18 @@ export function getWorkNeighbours(slug: string): { previous: Work | null; next: 
   return { previous: published[at - 1] ?? null, next: published[at + 1] ?? null };
 }
 
-/** The largest WebP derivative of a work's cover — what og:image points at. */
+/**
+ * The largest derivative of a work's cover — what og:image points at. A private
+ * work publishes no cover, so it has none, which is why this can return
+ * undefined and the metadata helper treats that as "no image".
+ */
 export function getCoverImage(work: Work): string | undefined {
-  return getImage(work.cover.src).formats.webp.at(-1)?.src;
+  if (work.cover.src === '') return undefined;
+  return variants(getImage(work.cover.src)).at(-1)?.src;
 }
 
 /**
- * Cover derivatives for the works the index may show, keyed by slug. A private
+ * Cover dimensions for the works the index may show, keyed by slug. A private
  * work is absent: it publishes no cover, so no URL for one is ever handed to
  * the browser.
  */
