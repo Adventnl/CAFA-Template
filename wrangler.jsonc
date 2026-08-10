@@ -4,6 +4,22 @@
   // Builds reads this config; nothing here needs wrangler installed locally.
   "name": "cafa-atelier",
   "compatibility_date": "2026-08-05",
+
+  // The public site. A custom domain rather than a route: Cloudflare owns the
+  // record and the certificate, and there is no origin to fall through to.
+  //
+  // The apex only. Pointing www at this Worker as well would make the same
+  // pages answer on two hostnames, which is a duplicate-content problem that
+  // canonical tags then have to clean up after — a redirect rule from
+  // www.cafa-studio.com to the apex is the cheaper answer, and it lives in the
+  // dashboard because it never needs to change with a deploy.
+  //
+  // Preview builds are unaffected: Workers Builds gives a non-production branch
+  // a versioned alias, and only the production deployment answers on a custom
+  // domain. So the preview keeps its own URL and this stays pointed at what was
+  // last published.
+  "routes": [{ "pattern": "cafa-studio.com", "custom_domain": true }],
+
   "assets": {
     // What `npm run build` writes. prebuild derives the images, next build
     // exports the HTML, postbuild moves the 404 into place.

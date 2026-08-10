@@ -29,7 +29,7 @@ A build needs to know where to read the content from:
 
 ```sh
 npm install
-CONTENT_API=https://<admin-host>/api/content/published npm run build
+CONTENT_API=https://admin.cafa-studio.com/api/content/published npm run build
 ```
 
 With `CONTENT_API` unset, the build reuses whatever bundle is already on disk —
