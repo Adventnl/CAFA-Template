@@ -47,7 +47,7 @@ if (!API) {
       'content: CONTENT_API is not set and there is no bundle to fall back on.',
       '',
       'Point it at the admin, for example:',
-      '  CONTENT_API=https://cafa-admin.workers.dev/api/content/published npm run build',
+      '  CONTENT_API=https://admin.cafa-studio.com/api/content/published npm run build',
     ].join('\n'),
   );
   process.exit(1);
