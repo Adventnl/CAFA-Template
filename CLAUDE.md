@@ -53,6 +53,8 @@ aren't content, no hero copy that explains what the visitor can already see.
 
 ```
 app/  →  components/composites/  →  components/{primitives,motion}/  →  lib/, styles/tokens
+
+services/  →  (nothing)          build time only; nothing above imports it
 ```
 
 Dependencies point **down only**. A lower layer never imports from a higher one.
@@ -70,6 +72,13 @@ Dependencies point **down only**. A lower layer never imports from a higher one.
 - **`components/motion/`** — behaviour wrappers only (`Reveal`, `StickyColumn`,
   `HoverMediaLayer`). They render `children`; they never style content.
 - **`lib/`** — pure functions and typed content loaders. No JSX, no DOM.
+- **`services/`** — the contract with CAFA-Admin, and the only place that knows the
+  admin exists: what the build reads from it (`content-api.mts`) and what the build
+  publishes back for it to poll (`build-info.mts`). **It runs at build time, under
+  Node, called from `scripts/`.** It is not a layer of the app — nothing in `app/`,
+  `components/` or `lib/` may import it, and a page that did would be the runtime fetch
+  §1 exists to forbid. It sits in `src/` rather than in `scripts/` so that `next build`
+  type-checks the shape the admin promises; as plain `.mjs` it was checked by nobody.
 
 ## 4. Hardcoding is a defect
 

@@ -11,7 +11,7 @@ Companion to `CLAUDE.md`. That file is the law; this is the map.
 | Framework | Next.js App Router, `output: 'export'` | Every route becomes real HTML at build time. A crawler and a cold visitor both get the works index without waiting on a bundle. File-based routing + `generateStaticParams` means new works generate pages with no code change. |
 | Styling | CSS Modules + custom properties | Zero runtime, scoped by default, and tokens are the single source of truth. Tailwind would put design decisions back into JSX as literals — the exact thing §4 of the constitution forbids. |
 | Animation | Browser-native: view transitions + scroll-driven animations | The budget for `motion` was ~5 KB and it has not been spent. React's `<ViewTransition>` hands route changes to the browser's View Transitions API, and `animation-timeline: view()` binds scroll motion to the compositor. Both are CSS from that point on, so the most animated surface on the site ships no animation runtime at all. §5.4–5.5. |
-| Content | Fetched from CAFA-Admin (D1) at build time | `scripts/fetch-content.mjs` writes `content/bundle.generated.json` before `next build`; `lib/content-schema.ts` re-parses every field, so a malformed record fails the build instead of rendering. No runtime fetch, no CMS client, no server. The studio edits in the admin and presses Publish; a deploy hook rebuilds this. |
+| Content | Fetched from CAFA-Admin (D1) at build time | `scripts/fetch-content.mjs` calls `src/services/content-api.mts` and writes `content/bundle.generated.json` before `next build`; `lib/content-schema.ts` re-parses every field, so a malformed record fails the build instead of rendering. No runtime fetch, no CMS client, no server. The studio edits in the admin and presses Publish; a deploy hook rebuilds this. |
 | i18n | Route segment + dictionary | Two locales don't justify a library. `[locale]` segment, a `dictionaries/` map, `generateStaticParams` emits both trees. |
 | Images | R2 originals, transformed on delivery | `next/image` optimisation is unavailable under `output: 'export'`, and a build-time `sharp` pass cannot survive CI — its incremental cache dies with the container, so every build would re-encode ~700 AVIF derivatives. Cloudflare transforms the original per request and caches it; `format=auto` negotiates AVIF or WebP. Nothing is derived at build time and no media ships in `out/`. |
 | Deploy | Cloudflare Workers, static assets | `out/` is the whole artefact — HTML, CSS and JS, no media. Builds are triggered by a deploy hook the admin pokes on publish. |
@@ -32,7 +32,7 @@ the one place in the codebase that touches image markup.
 ├── DESIGN-SYSTEM.md
 ├── next.config.ts
 ├── tsconfig.json                    # strict, paths: "@/*" → "src/*"
-├── scripts/
+├── scripts/                         # thin CLI entries over src/services — env, disk, exit code
 │   ├── fetch-content.mjs            # CAFA-Admin → content/bundle.generated.json
 │   ├── emit-build-info.mjs          # out/build-info.json — the revision this build used
 │   ├── emit-404.mjs
@@ -40,6 +40,9 @@ the one place in the codebase that touches image markup.
 ├── public/
 │   └── fonts/                       # subset woff2
 └── src/
+    ├── services/                    # the CAFA-Admin contract. Build time only, under Node.
+    │   ├── content-api.mts          # what the build reads: { revision, bundle }
+    │   └── build-info.mts           # what the build answers back: which revision is live
     ├── app/                         # NOTE: no app/layout.tsx — see §4
     │   ├── (root)/
     │   │   ├── layout.tsx           # <html lang> for the two pages below
