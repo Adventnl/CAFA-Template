@@ -1,37 +1,35 @@
 /**
  * Writes out/build-info.json — the content revision this build came from.
  *
- * CAFA-Admin reads it from the deployed origin to answer the one question the
- * studio actually asks after pressing publish: "is it live yet?". Comparing the
- * newest published revision to what the site itself is serving is ground truth,
- * and needs no host API credentials to obtain.
- *
- * It used to report a commit SHA, because the repository was the database. The
- * revision number replaces it exactly: the production build reads the newest
- * revision, the preview build reads a fingerprint of the draft, and the admin
- * compares whichever applies.
+ * CAFA-Admin reads it back from the deployed origin to answer "is it live
+ * yet?". What it means, and why it is a revision number rather than a commit
+ * SHA, lives with the rest of the admin contract in src/services/build-info.mts.
  *
  * Runs as `postbuild`.
  */
 import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
+import { buildInfo } from '../src/services/build-info.mts';
+
 const ROOT = path.resolve(import.meta.dirname, '..');
-const OUT = path.join(ROOT, 'out');
 const BUNDLE = path.join(ROOT, 'src', 'content', 'bundle.generated.json');
 
 /** The bundle prebuild fetched. Absent means the build should not have got here. */
-async function revision() {
+async function fetched() {
   try {
-    const bundle = JSON.parse(await readFile(BUNDLE, 'utf8'));
-    return typeof bundle.revision === 'number' ? bundle.revision : null;
+    return JSON.parse(await readFile(BUNDLE, 'utf8'));
   } catch {
-    return null;
+    return undefined;
   }
 }
 
-const info = { revision: await revision(), builtAt: new Date().toISOString() };
+const info = buildInfo(await fetched());
 
-await writeFile(path.join(OUT, 'build-info.json'), `${JSON.stringify(info, null, 2)}\n`, 'utf8');
+await writeFile(
+  path.join(ROOT, 'out', 'build-info.json'),
+  `${JSON.stringify(info, null, 2)}\n`,
+  'utf8',
+);
 
 console.info(`build-info: revision ${info.revision ?? 'unknown'}`);

@@ -10,6 +10,12 @@ runtime: `scripts/fetch-content.mjs` pulls the published content once, before
 `next build`, and writes it to `src/content/bundle.generated.json`. Everything
 downstream of that file is as static as it ever was.
 
+Both halves of that conversation live in `src/services/`, which is the only
+place in this repository that knows the admin exists — `content-api.mts` reads
+the published bundle, and `build-info.mts` writes back the revision the build
+used, which is what the admin polls to answer "is it live yet?". They run under
+Node at build time; nothing in `app/`, `components/` or `lib/` imports them.
+
 ```
 CAFA-Admin ──published revision──> prebuild ──> bundle.generated.json
                                                        │

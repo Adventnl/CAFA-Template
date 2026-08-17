@@ -8,6 +8,10 @@
  * unaffected, because by the time a browser is involved the HTML is already
  * built.
  *
+ * The conversation with the admin lives in src/services/content-api.mts, where
+ * the compiler can see it. What is left here is the part that is a command
+ * rather than a contract: the environment, the disk, and the exit code.
+ *
  * Runs as `prebuild`, and as part of `npm run dev`.
  *
  *   CONTENT_API    the endpoint to read. Production builds point it at
@@ -23,6 +27,8 @@
  */
 import { access, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+
+import { ContentApiError, describeBundle, readBundle } from '../src/services/content-api.mts';
 
 const OUT = path.resolve(import.meta.dirname, '..', 'src', 'content', 'bundle.generated.json');
 const API = process.env.CONTENT_API;
@@ -53,31 +59,16 @@ if (!API) {
   process.exit(1);
 }
 
-const response = await fetch(API, {
-  headers: TOKEN ? { 'X-Preview-Token': TOKEN } : {},
-}).catch((error) => {
-  console.error(`content: could not reach ${API}\n  ${error.message}`);
-  process.exit(1);
-});
-
-if (!response.ok) {
-  console.error(`content: ${API} answered ${response.status} ${response.statusText}`);
+let bundle;
+try {
+  bundle = await readBundle({ endpoint: API, previewToken: TOKEN });
+} catch (error) {
+  if (!(error instanceof ContentApiError)) throw error;
+  console.error(`content: ${error.message}`);
   process.exit(1);
 }
-
-const payload = await response.json();
-if (typeof payload?.revision !== 'number' || typeof payload?.bundle !== 'object') {
-  console.error('content: the response was not a { revision, bundle } envelope');
-  process.exit(1);
-}
-
-// Flattened on the way in so lib/content and lib/media each import one object
-// rather than reaching through an envelope neither of them cares about.
-const bundle = { revision: payload.revision, ...payload.bundle };
 
 await mkdir(path.dirname(OUT), { recursive: true });
 await writeFile(OUT, `${JSON.stringify(bundle, null, 2)}\n`, 'utf8');
 
-const works = Array.isArray(bundle.works) ? bundle.works.length : 0;
-const images = Object.keys(bundle.media ?? {}).length;
-console.info(`content: revision ${bundle.revision}, ${works} works, ${images} images`);
+console.info(`content: ${describeBundle(bundle)}`);
