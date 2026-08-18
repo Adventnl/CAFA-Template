@@ -1,8 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { Text } from '@/components/primitives/Text';
-import type { Dictionary } from '@/lib/content';
-import type { Locale, Work } from '@/lib/types';
+import type { Dictionary, Locale, Work } from '@/lib/types';
 
 import styles from './WorkMetaPanel.module.css';
 

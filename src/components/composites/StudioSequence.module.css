@@ -17,6 +17,6 @@
  * comes from the Parallax frame around them.
  */
 .plate img {
-  max-block-size: 82svh;
+  max-block-size: var(--plate-block-max);
   object-fit: cover;
 }

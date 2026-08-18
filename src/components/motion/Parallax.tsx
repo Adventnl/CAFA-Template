@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 
+import { cx } from '@/lib/class-names';
+
 import styles from './Parallax.module.css';
 
 /**
@@ -24,7 +26,7 @@ export function Parallax({
   style?: CSSProperties;
 }) {
   return (
-    <div className={[styles.frame, className].filter(Boolean).join(' ')} style={style}>
+    <div className={cx(styles.frame, className)} style={style}>
       <div className={styles.drift}>{children}</div>
     </div>
   );

@@ -3,8 +3,8 @@
  * host serves for unmatched paths, and removes the directory so the page is not
  * reachable — or crawlable — at a URL of its own.
  *
- * Runs as `postbuild`. See src/app/(root)/404/page.tsx for why the page is a
- * route instead of app/not-found.tsx.
+ * Runs as `postbuild`. See src/app/(root)/not-found/page.tsx for why the page
+ * is a route instead of app/not-found.tsx.
  */
 import { rename, rm } from 'node:fs/promises';
 import path from 'node:path';

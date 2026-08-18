@@ -4,6 +4,7 @@ import { itemClass, partClass } from '@/components/motion/Part';
 import { Media } from '@/components/primitives/Media';
 import { Text } from '@/components/primitives/Text';
 import { scenes, sceneAttrs } from '@/lib/choreography';
+import { cx } from '@/lib/class-names';
 import type { Locale, Mentor } from '@/lib/types';
 import { vtName } from '@/lib/vt-names';
 
@@ -20,7 +21,7 @@ export function MentorGrid({ mentors, locale, heading, className }: MentorGridPr
   return (
     // The `listing` part, taken at the section rather than the grid so its own
     // h2 travels with the cards it labels instead of being left on the surface.
-    <section className={[styles.section, partClass('listing'), className].filter(Boolean).join(' ')}>
+    <section className={cx(styles.section, partClass('listing'), className)}>
       <Text role="label" as="h2" className={styles.heading}>
         {heading}
       </Text>

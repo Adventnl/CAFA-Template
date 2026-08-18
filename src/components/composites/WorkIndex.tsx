@@ -6,7 +6,7 @@ import { HoverMediaLayer } from '@/components/motion/HoverMediaLayer';
 import { scenes, sceneAttrs } from '@/lib/choreography';
 import { durationMs } from '@/lib/css-duration';
 import { variants, type ImageEntry } from '@/lib/media';
-import type { Locale, Work, WorkStatus } from '@/lib/types';
+import type { Locale, WorkListing, WorkStatus } from '@/lib/types';
 import { vtName } from '@/lib/vt-names';
 
 import { WorkIndexRow } from './WorkIndexRow';
@@ -14,7 +14,7 @@ import styles from './WorkIndex.module.css';
 
 interface WorkIndexProps {
   locale: Locale;
-  works: readonly Work[];
+  works: readonly WorkListing[];
   /** Manifest entries keyed by slug. Resolved on the server so the client never
       receives the whole image manifest. Private works are absent. */
   covers: Record<string, ImageEntry>;
@@ -61,8 +61,7 @@ export function WorkIndex({ locale, works, covers, statusLabels, listLabel }: Wo
 
   /**
    * Covers are warmed when the pointer first reaches the list, not on load: a
-   * visitor who never hovers never pays for them. Only AVIF is preloaded — the
-   * `type` makes a browser without it skip the hint rather than fetch twice.
+   * visitor who never hovers never pays for them.
    */
   function preloadCovers() {
     if (preloaded.current) return;

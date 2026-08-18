@@ -21,7 +21,7 @@
   "routes": [{ "pattern": "cafa-studio.com", "custom_domain": true }],
 
   "assets": {
-    // What `npm run build` writes. prebuild derives the images, next build
+    // What `npm run build` writes. prebuild fetches the content, next build
     // exports the HTML, postbuild moves the 404 into place.
     "directory": "./out",
 

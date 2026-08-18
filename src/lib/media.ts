@@ -74,7 +74,7 @@ export function getImage(src: string): ImageEntry {
  * never enlarges, so the ladder below matches `targetWidths()` in the pipeline
  * this replaced — every step under the original's own width, then the original.
  */
-export function transformUrl(src: string, width: number): string {
+function transformUrl(src: string, width: number): string {
   const options = `width=${width},quality=${QUALITY},format=auto,fit=scale-down`;
   return `/cdn-cgi/image/${options}/${base}/${src}`;
 }

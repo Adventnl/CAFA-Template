@@ -2,6 +2,7 @@ import { Focus } from '@/components/motion/Focus';
 import { Parallax } from '@/components/motion/Parallax';
 import { Media } from '@/components/primitives/Media';
 import { scenes } from '@/lib/choreography';
+import { cx } from '@/lib/class-names';
 import type { ImageRef, Locale } from '@/lib/types';
 import { vtName } from '@/lib/vt-names';
 
@@ -30,7 +31,7 @@ const SIZES = '(min-width: 1024px) 58vw, 92vw';
 
 export function MediaSequence({ slug, cover, media, locale, className }: MediaSequenceProps) {
   return (
-    <div className={[styles.sequence, className].filter(Boolean).join(' ')}>
+    <div className={cx(styles.sequence, className)}>
       {/* Deliberately not wrapped in a Focus. This is the LCP candidate, and the
           focus curve would have it dimmed and scaled down wherever it sits at
           load — anything but the centre of its pass. It carries the per-slug

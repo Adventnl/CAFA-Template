@@ -43,6 +43,23 @@ export interface Work {
   media: ImageRef[]; // the scrolling right column, in order
 }
 
+/**
+ * What a listing row needs, and nothing else: the works index and the rail both
+ * render exactly these fields.
+ *
+ * It exists because both of those are client components, so every field handed
+ * to them is serialised into the page's flight payload whether it is read or
+ * not. The whole registry is ~17 KB of JSON, most of it summaries, credits and
+ * media arrays that a row never shows — and a work's detail page would carry
+ * every *other* work's prose for the sake of a column of numbers. A `Pick`
+ * rather than a second hand-written interface, so a field renamed on `Work`
+ * cannot quietly stop being sent.
+ */
+export type WorkListing = Pick<
+  Work,
+  'slug' | 'index' | 'title' | 'status' | 'discipline' | 'year' | 'cover'
+>;
+
 export interface Program {
   slug: string; // stable key; programmes have no page of their own
   name: LocalisedText;

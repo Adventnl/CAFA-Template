@@ -9,8 +9,7 @@
     "build": "next build",
     "postbuild": "node scripts/emit-404.mjs && node scripts/emit-build-info.mjs",
     "start": "next start",
-    "lint": "eslint",
-    "placeholders": "node scripts/make-placeholders.mjs"
+    "lint": "eslint"
   },
   "dependencies": {
     "next": "16.2.12",

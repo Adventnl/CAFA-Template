@@ -1,5 +1,7 @@
 import type { ElementType, ReactNode } from 'react';
 
+import { cx } from '@/lib/class-names';
+
 import styles from './Grid.module.css';
 
 interface GridProps {
@@ -15,5 +17,5 @@ interface GridProps {
  * a literal in JSX.
  */
 export function Grid({ as: Tag = 'div', children, className }: GridProps) {
-  return <Tag className={[styles.grid, className].filter(Boolean).join(' ')}>{children}</Tag>;
+  return <Tag className={cx(styles.grid, className)}>{children}</Tag>;
 }

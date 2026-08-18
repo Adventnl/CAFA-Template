@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { cx } from '@/lib/class-names';
+
 import styles from './StickyColumn.module.css';
 
 /**
@@ -8,5 +10,5 @@ import styles from './StickyColumn.module.css';
  * listener, no measurement. ARCHITECTURE.md §5.2.
  */
 export function StickyColumn({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={[styles.sticky, className].filter(Boolean).join(' ')}>{children}</div>;
+  return <div className={cx(styles.sticky, className)}>{children}</div>;
 }

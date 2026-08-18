@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { PageHeading } from '@/components/composites/PageHeading';
 import { WorkIndex } from '@/components/composites/WorkIndex';
 import { Grid } from '@/components/primitives/Grid';
-import { getDictionary, getIndexCovers, getWorks, requireLocale } from '@/lib/content';
+import { getDictionary, getIndexCovers, getWorkListings, requireLocale } from '@/lib/content';
 import { pageMetadata } from '@/lib/metadata';
 import { routes, type LocaleParams } from '@/lib/routes';
 
@@ -27,7 +27,7 @@ export default async function WorksPage({ params }: LocaleParams) {
       <PageHeading title={dictionary.works.title} />
       <WorkIndex
         locale={locale}
-        works={getWorks()}
+        works={getWorkListings()}
         covers={getIndexCovers()}
         statusLabels={dictionary.works.status}
         listLabel={dictionary.a11y.worksList}

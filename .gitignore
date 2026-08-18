@@ -3,7 +3,8 @@ node_modules
 out
 *.tsbuildinfo
 .cache
-.claude
+.claude/*
+!.claude/skills/
 
 # Fetched from CAFA-Admin by scripts/fetch-content.mjs at the start of every
 # build. Deliberately not committed: a checked-in copy is a second source of

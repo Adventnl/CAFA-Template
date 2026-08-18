@@ -15,8 +15,8 @@ import {
   getPublishedWorks,
   getSite,
   getWork,
+  getWorkListings,
   getWorkNeighbours,
-  getWorks,
   requireLocale,
 } from '@/lib/content';
 import { creativeWorkJsonLd } from '@/lib/json-ld';
@@ -63,7 +63,7 @@ export default async function WorkPage({ params }: WorkParams) {
       <JsonLd data={creativeWorkJsonLd(work, locale, getCoverImage(work))} />
       <WorkRail
         locale={locale}
-        works={getWorks()}
+        works={getWorkListings()}
         covers={getIndexCovers()}
         activeSlug={work.slug}
         label={dictionary.a11y.worksRail}

@@ -1,5 +1,7 @@
 import type { CSSProperties, ElementType, ReactNode } from 'react';
 
+import { cx } from '@/lib/class-names';
+
 import styles from './Text.module.css';
 
 /** The six roles from docs/DESIGN-SYSTEM.md §3. There is no seventh. */
@@ -16,7 +18,7 @@ interface TextProps {
 
 export function Text({ role, as: Tag = 'p', children, className, style }: TextProps) {
   return (
-    <Tag className={[styles[role], className].filter(Boolean).join(' ')} style={style}>
+    <Tag className={cx(styles[role], className)} style={style}>
       {children}
     </Tag>
   );

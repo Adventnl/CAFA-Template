@@ -5,15 +5,16 @@ import { Focus } from '@/components/motion/Focus';
 import { MediaFrame } from '@/components/primitives/MediaFrame';
 import { Text } from '@/components/primitives/Text';
 import { scenes } from '@/lib/choreography';
+import { cx } from '@/lib/class-names';
 import type { ImageEntry } from '@/lib/media';
 import { routes } from '@/lib/routes';
-import type { Locale, Work } from '@/lib/types';
+import type { Locale, WorkListing } from '@/lib/types';
 import { vtName } from '@/lib/vt-names';
 
 import styles from './WorkIndexRow.module.css';
 
 interface WorkIndexRowProps {
-  work: Work;
+  work: WorkListing;
   locale: Locale;
   statusLabel: string;
   /** null for a private work, which publishes no cover. */
@@ -130,9 +131,7 @@ function RowContents({
         <Text
           role="meta"
           as="span"
-          className={[styles.number, morphing === true && styles.railEntry]
-            .filter(Boolean)
-            .join(' ')}
+          className={cx(styles.number, morphing === true && styles.railEntry)}
           style={
             morphing === true ? { viewTransitionName: vtName.railEntry(work.slug) } : undefined
           }

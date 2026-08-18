@@ -2,11 +2,16 @@ import bundle from '@/content/bundle.generated.json';
 
 import { parseBundle } from './content-schema';
 import { getImage, variants, type ImageEntry } from './media';
-import type { Dictionary, Locale, Mentor, Program, SiteContent, Work } from './types';
+import type {
+  Dictionary,
+  Locale,
+  Mentor,
+  Program,
+  SiteContent,
+  Work,
+  WorkListing,
+} from './types';
 import { LOCALES } from './types';
-
-/** Re-exported so components can type a dictionary prop without reaching into content/. */
-export type { Dictionary };
 
 /**
  * Parsed once, at module scope, so a malformed record fails `next build` rather
@@ -42,11 +47,6 @@ export function requireLocale(value: string): Locale {
   return value;
 }
 
-/** The published revision this build came from. build-info.json reports it. */
-export function getRevision(): number {
-  return content.revision;
-}
-
 export function getSite(): SiteContent {
   return site;
 }
@@ -61,6 +61,31 @@ export function getWorks(): readonly Work[] {
 
 export function getWork(slug: string): Work | undefined {
   return works.find((work) => work.slug === slug);
+}
+
+/**
+ * The registry as a listing: every work, narrowed to what a row renders.
+ *
+ * The index and the rail are client components, so what they are handed is
+ * serialised into the page. Handing them whole records would put every work's
+ * summary, credits and media list into the payload of every page that shows a
+ * list of works — see WorkListing. Projected once here, at module scope,
+ * because the same array serves both.
+ */
+const listings: readonly WorkListing[] = works.map(
+  ({ slug, index, title, status, discipline, year, cover }) => ({
+    slug,
+    index,
+    title,
+    status,
+    discipline,
+    year,
+    cover,
+  }),
+);
+
+export function getWorkListings(): readonly WorkListing[] {
+  return listings;
 }
 
 /** The works that have a page of their own. A private work is listed, not opened. */

@@ -1,8 +1,7 @@
 import { Grid } from '@/components/primitives/Grid';
 import { Text } from '@/components/primitives/Text';
 import { scenes, sceneAttrs } from '@/lib/choreography';
-import type { Dictionary } from '@/lib/content';
-import type { Locale, SiteContent } from '@/lib/types';
+import type { Dictionary, Locale, SiteContent } from '@/lib/types';
 
 import styles from './SiteFooter.module.css';
 

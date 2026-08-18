@@ -2,9 +2,8 @@ import Link from 'next/link';
 
 import { Grid } from '@/components/primitives/Grid';
 import { Text } from '@/components/primitives/Text';
-import type { Dictionary } from '@/lib/content';
 import { panels, routes } from '@/lib/routes';
-import type { Locale, SiteContent } from '@/lib/types';
+import type { Dictionary, Locale, SiteContent } from '@/lib/types';
 
 import { LocaleSwitch } from './LocaleSwitch';
 import styles from './SiteHeader.module.css';

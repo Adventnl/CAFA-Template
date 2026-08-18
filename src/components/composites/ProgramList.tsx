@@ -1,6 +1,7 @@
 import { itemClass, partClass } from '@/components/motion/Part';
 import { Text } from '@/components/primitives/Text';
 import { scenes, sceneAttrs } from '@/lib/choreography';
+import { cx } from '@/lib/class-names';
 import type { Locale, Program } from '@/lib/types';
 import { vtName } from '@/lib/vt-names';
 
@@ -38,7 +39,7 @@ export function ProgramList({ programs, locale, className }: ProgramListProps) {
     // travel one after another, which is what makes the list unzip rather than
     // slide as a block. MOTION.md §3.
     <ul
-      className={[styles.list, partClass('listing'), className].filter(Boolean).join(' ')}
+      className={cx(styles.list, partClass('listing'), className)}
       {...sceneAttrs(scenes.programmes)}
     >
       {programs.map((program, index) => (

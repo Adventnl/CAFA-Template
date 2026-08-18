@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { cx } from '@/lib/class-names';
+
 import styles from './Recede.module.css';
 
 /**
@@ -14,5 +16,5 @@ import styles from './Recede.module.css';
  * Pure CSS, so this is a Server Component and costs no bytes.
  */
 export function Recede({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={[styles.recede, className].filter(Boolean).join(' ')}>{children}</div>;
+  return <div className={cx(styles.recede, className)}>{children}</div>;
 }

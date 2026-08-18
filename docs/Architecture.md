@@ -28,16 +28,20 @@ the one place in the codebase that touches image markup.
 ```
 .
 ├── CLAUDE.md
-├── ARCHITECTURE.md
-├── DESIGN-SYSTEM.md
+├── README.md
+├── docs/
+│   ├── Architecture.md              # this file
+│   ├── DESIGN-SYSTEM.md
+│   └── MOTION.md
 ├── next.config.ts
+├── wrangler.jsonc                   # static-only Worker: no `main`, no runtime
 ├── tsconfig.json                    # strict, paths: "@/*" → "src/*"
 ├── scripts/                         # thin CLI entries over src/services — env, disk, exit code
-│   ├── fetch-content.mjs            # CAFA-Admin → content/bundle.generated.json
-│   ├── emit-build-info.mjs          # out/build-info.json — the revision this build used
-│   ├── emit-404.mjs
-│   └── make-placeholders.mjs        # the template's own artwork; not part of the build
+│   ├── fetch-content.mjs            # CAFA-Admin → src/content/bundle.generated.json
+│   ├── emit-404.mjs                 # out/not-found/ → out/404.html
+│   └── emit-build-info.mjs          # out/build-info.json — the revision this build used
 ├── public/
+│   ├── _headers                     # a year of immutable caching for chunks and fonts
 │   └── fonts/                       # subset woff2
 └── src/
     ├── services/                    # the CAFA-Admin contract. Build time only, under Node.
@@ -48,67 +52,89 @@ the one place in the codebase that touches image markup.
     │   │   ├── layout.tsx           # <html lang> for the two pages below
     │   │   ├── page.tsx             # `/` — static meta-refresh into the default locale
     │   │   └── not-found/page.tsx   # becomes out/404.html via scripts/emit-404.mjs
-    │   └── [locale]/
-    │       ├── layout.tsx           # <html lang>, SiteHeader + <main> + SiteFooter
-    │       ├── page.tsx             # home — SANAA-minimal
-    │       ├── works/
-    │       │   ├── page.tsx         # ium-style index
-    │       │   └── [slug]/page.tsx  # ium-style detail
-    │       ├── programs/page.tsx
-    │       └── about/page.tsx   # …and no contact/ — see §4
+    │   ├── [locale]/
+    │   │   ├── layout.tsx           # <html lang>, header + <main> + footer + the contact card
+    │   │   ├── page.tsx             # home — SANAA-minimal
+    │   │   ├── works/
+    │   │   │   ├── page.tsx         # ium-style index
+    │   │   │   └── [slug]/page.tsx  # ium-style detail
+    │   │   ├── programs/page.tsx
+    │   │   └── about/page.tsx       # …and no contact/ — see §4
+    │   ├── robots.ts
+    │   └── sitemap.ts
     ├── components/
     │   ├── primitives/
-    │   │   ├── Media.tsx            # <picture>, srcset, intrinsic size, required alt
+    │   │   ├── Media.tsx            # an ImageRef, resolved to its intrinsic dimensions
+    │   │   ├── MediaFrame.tsx       # the only <picture>: srcset, intrinsic size, required alt
     │   │   ├── Text.tsx             # renders a token type-role as any element
     │   │   └── Grid.tsx             # the 12-col page grid
     │   ├── motion/
     │   │   ├── PageTransition.tsx   # React <ViewTransition> around every page
-    │   │   ├── Reveal.tsx           # view() timeline, IO fallback
+    │   │   ├── NavStage.tsx         # classifies a navigation, writes data-figure on <html>
+    │   │   ├── ScrollField.tsx      # publishes scroll velocity and pointer position — §5.5
+    │   │   ├── Focus.tsx            # the focus curve on media; what replaced Reveal
     │   │   ├── Parallax.tsx         # media drifts inside a clipped frame
     │   │   ├── Recede.tsx           # a block shrinks as it leaves the top
     │   │   ├── StickyColumn.tsx     # position:sticky wrapper with bounds
     │   │   ├── HoverMediaLayer.tsx  # ium full-bleed hover backdrop
-    │   │   └── PinnedNote.tsx       # the contact card, pinned over any page and draggable
+    │   │   ├── PinnedNote.tsx       # the contact card, pinned over any page and draggable
+    │   │   └── Part.ts              # a class, not a component: names a block for a figure
     │   ├── seo/
     │   │   └── JsonLd.tsx           # the only dangerouslySetInnerHTML in the codebase
     │   └── composites/
-    │       ├── SiteHeader.tsx
-    │       ├── SiteFooter.tsx
-    │       ├── LocaleSwitch.tsx
-    │       ├── PageHeading.tsx      # the one h1, in the same place on every page
-    │       ├── WorkIndex.tsx        # the list + its hover backdrop
+    │       ├── SiteHeader.tsx       # …and SiteFooter, LocaleSwitch, PageHeading
+    │       ├── WorkIndex.tsx        # the list + its hover backdrop (a Client Component)
     │       ├── WorkIndexRow.tsx
+    │       ├── WorkRail.tsx         # the index compressed to a column of numbers — §5.2
     │       ├── WorkMetaPanel.tsx    # sticky left column on detail
+    │       ├── WorkPager.tsx        # previous / next, in editorial order
     │       ├── MediaSequence.tsx    # scrolling right column on detail
     │       ├── StudioSequence.tsx   # the home page below the fold, full bleed
+    │       ├── StudioStrip.tsx      # the same photographs, sideways, on About
     │       ├── ProgramList.tsx
     │       ├── MentorGrid.tsx
-    │       └── ContactBlock.tsx
+    │       └── ContactBlock.tsx     # the card PinnedNote carries
     ├── content/
     │   └── bundle.generated.json    # fetched by prebuild; gitignored, never committed
     ├── lib/
     │   ├── content-schema.ts        # JSON → typed records, or a build failure
-    │   ├── content.ts               # getWorks, getWork, getDictionary … — typed, pure
+    │   ├── content.ts               # getSite, getWorks, getWorkListings … — typed, pure
     │   ├── routes.ts                # every path in the site, as functions
     │   ├── metadata.ts              # canonical + hreflang, built from a route function
     │   ├── json-ld.ts               # schema.org payloads, so no page knows a vocabulary
     │   ├── media.ts                 # R2 key + width → a transform URL
-    │   └── types.ts                 # Work, Program, Mentor, LocalisedText, ImageRef
+    │   ├── choreography.ts          # which trigger and effect each surface gets — §5.5
+    │   ├── nav-intent.ts            # (from, to) → the figure a navigation performs
+    │   ├── vt-names.ts              # the per-slug view-transition names
+    │   ├── vt-uniqueness.ts         # dev-only assertion: one name, one element
+    │   ├── css-duration.ts          # reads a duration token so no timer is a literal
+    │   ├── class-names.ts           # cx() — a component's class joined with its caller's
+    │   └── types.ts                 # Work, WorkListing, Program, Mentor, Dictionary …
     ├── types/
     │   └── react-canary.d.ts        # pulls in the <ViewTransition> declaration
     └── styles/
         ├── tokens.css
+        ├── fonts.css                # @font-face + the metric-matched fallbacks
         ├── globals.css              # reset + base element styles only
-        ├── motion.css               # every ::view-transition-* rule on the site
+        ├── motion/                  # every ::view-transition-* rule, one file per figure
+        │   ├── index.css            # the only import; base first, then the figures
+        │   ├── base.css   enter-work.css   exit-work.css   step-work.css
+        │   ├── lateral.css   descend-ascend.css   locale.css   restore.css
+        │   └── effects.css   triggers.css        # the §5.5 scene system
         └── *.module.css             # colocated next to their component instead
 ```
 
-Roughly 50 files at completion. That is the target: not 12, not 200.
+Around a hundred files, roughly half of them the stylesheet colocated with a component.
+That is the target: not 12, not 200 — and `src/lib` in particular is thirteen files named
+for what they do rather than one `utils.ts`.
 
-`motion.css` is the one stylesheet that is not a module, and it has to be: the
+`styles/motion/` is the one stylesheet tree that is not modules, and it has to be: the
 view-transition pseudo-element tree hangs off `:root` rather than off any component, so a
-scoped stylesheet cannot reach it and two files touching it would fight. Components opt in
-by carrying a `view-transition-name`; what that name then *does* is decided in one place.
+scoped stylesheet cannot reach it and two files touching it would fight. It is split by
+*figure* rather than kept as one file because forty-odd keyframe sets in one place are
+unnavigable; `index.css` is the only thing imported, and it fixes the order. Components opt
+in by carrying a `view-transition-name`; what that name then *does* is decided in one
+place.
 
 ---
 
@@ -260,7 +286,7 @@ item is no longer necessarily a route, which is why `SiteContent.nav` is a union
 
 ### 5.2 Work detail — sticky meta, scrolling media
 
-Server component. No client JS except `Reveal`.
+Server components throughout, except the rail — see the last paragraph of this section.
 
 - CSS Grid: `grid-template-columns: minmax(0, 5fr) minmax(0, 7fr)` above 1024 px.
 - Left cell contains `WorkMetaPanel` inside `StickyColumn` (`position: sticky;
@@ -272,7 +298,7 @@ Server component. No client JS except `Reveal`.
   leads the column, eager and `fetchPriority="high"`, and is also the half of the
   shared-element morph that lands here (§5.4). Starting the column at `media[0]` instead
   would have the browser moving one rectangle while crossfading two different photographs
-  inside it. The rest follow lazily, each in a `Reveal` and each in a `Parallax`.
+  inside it. The rest follow lazily, each in a `Focus` and each in a `Parallax`.
 - Under 1024 px the grid becomes one column, the meta panel un-sticks and sits above the
   media. `StickyColumn` handles this by only applying `position: sticky` inside the
   `min-width: 1024px` query.
@@ -285,29 +311,34 @@ Server component. No client JS except `Reveal`.
   `--preview-dim`, which §7.1 of the motion plan explains is not the same thing as dimming the
   container.
 
-### 5.3 Scroll reveal — the big.dk cadence
+### 5.3 Scroll motion — the big.dk cadence
 
-`Reveal` is ~30 lines and is the only reveal mechanism in the codebase.
+There is no `Reveal`, and its absence is the design. An entrance is a state a back
+navigation can catch an element in: return to a page, and everything below the fold is
+briefly at its start keyframe. Media therefore has no entrance at all — it has a *focus
+curve*, biggest at the centre of its pass and smaller at both edges, symmetric so it reads
+the same scrolling either way and has no start state to be caught in. MOTION.md §6.
 
-```
-<Reveal>            → <div data-reveal="pending">
-IntersectionObserver (rootMargin: "0px 0px -12% 0px", threshold: 0.1)
-  → data-reveal="visible"
-CSS: [data-reveal="pending"]  { opacity:0; transform: translate3d(0, var(--reveal-rise), 0) }
-     [data-reveal]            { transition: opacity var(--dur-slow) var(--ease-out),
-                                            transform var(--dur-slow) var(--ease-out) }
-     [data-reveal="visible"]  { opacity:1; transform: none }
-@media (prefers-reduced-motion: reduce) { [data-reveal] { opacity:1 !important; transform:none !important; transition:none } }
-```
+The mechanism is one pair of stylesheets and one object:
 
-- One shared observer instance for the whole page, not one per element.
-- `unobserve` after first reveal. Elements never animate twice.
-- A `stagger` prop sets `transition-delay` via a CSS variable, capped at 3 steps — beyond
-  that it reads as slow, not choreographed.
+- `lib/choreography.ts` — the `scenes` table: which trigger and which effect each surface
+  gets, and at what depth. A surface reads its preset and spreads `sceneAttrs(...)` onto the
+  element that is already there, so no wrapper div lands between a grid and a placed child.
+- `styles/motion/triggers.css` — *when*: `scrub`, `batch`, `progress`, `stack`, `pin-scrub`,
+  each an `animation-timeline: view()` or `scroll()` range.
+- `styles/motion/effects.css` — *what*: `focus`, `slide`, `rise`, `split`, `pan`, and the
+  rest of the §5.4 vocabulary, scaled by `--eff-depth`.
 
-Since §5.5 this is the *fallback* branch. Where `animation-timeline: view()` exists the
-same 18 px settle is a scroll-driven animation and the observer above is never constructed —
-`Reveal` checks `CSS.supports` once per document and returns early from its effect.
+`Focus`, `Parallax` and `Recede` in `components/motion/` are the three wrappers that need an
+element of their own, because they animate one thing inside another; everything else is an
+attribute on existing markup. All of it is CSS on the compositor, so the whole system is
+Server Components and ships no JavaScript — the fallback observer that `Reveal` needed went
+with it.
+
+**Reduced motion** is `globals.css` collapsing every duration, plus the two places a `*`
+selector cannot reach: `styles/motion/` cancels the `::view-transition-*` animations
+explicitly, and each scroll-driven module sets `animation: none !important` with a stated
+resting value, because a timeline driven by position is not stopped by a zero duration.
 
 ### 5.4 Navigation — the page never cuts
 
@@ -317,7 +348,7 @@ point of the site rather than a decoration on it.
 - `next.config.ts` sets `experimental.viewTransition`. `components/motion/PageTransition.tsx`
   wraps `{children}` in the layout in React's `<ViewTransition default="page">`. That is the
   entire integration: React starts a browser view transition for any navigation inside it,
-  and every rule that shapes one lives in `styles/motion.css`.
+  and every rule that shapes one lives in `styles/motion/`.
 - **The page.** `::view-transition-old(.page)` recedes to `--page-recede` and fades over
   `--dur-base`; `::view-transition-new(.page)` arrives from `--page-arrive` over `--dur-slow`
   after `--dur-fast` of overlap. 140 + 560 = 700 ms, which is `--dur-scene` — the longest
@@ -347,15 +378,16 @@ point of the site rather than a decoration on it.
 
 ### 5.5 Scroll-driven motion — big.dk's cadence, on the compositor
 
-Three wrappers in `components/motion/`, each pure CSS, and only one of them a Client
-Component:
+Three wrappers in `components/motion/`, each pure CSS and each a Server Component:
 
-| | What it does | Range | Client? |
-|---|---|---|---|
-| `Reveal` | the 18 px settle, on the way in | `entry 0%` → `entry 80%` | yes, for the fallback only |
-| `Parallax` | media drifts `±--drift` inside a clipped frame | the full `view()` pass | no |
-| `Recede` | a block shrinks and dims as it leaves the top | `exit 0%` → `exit 100%` | no |
+| | What it does | Range |
+|---|---|---|
+| `Focus` | media comes up to size at the centre of its pass | the full `view()` pass |
+| `Parallax` | media drifts `±--drift` inside a clipped frame | the full `view()` pass |
+| `Recede` | a block shrinks and dims as it leaves the top | `exit 0%` → `exit 100%` |
 
+- `Focus` and `Parallax` compose by nesting, never by stacking two animations on one
+  element: the outer one scales the frame, the inner one pans the picture inside it.
 - `Parallax` is two elements on purpose. The drift has to be clipped or it pushes into
   whatever is below, and the inner element is scaled 1.08 so the translate never exposes a
   sliver of paper at an edge.
@@ -369,7 +401,7 @@ Component:
 
 **Reduced motion.** `globals.css` collapses every duration under the query, but it cannot do
 this job alone and both exceptions are written down where they apply. A `*` selector does not
-match `::view-transition-*`, so `motion.css` cancels those explicitly; and a scroll-driven
+match `::view-transition-*`, so `styles/motion/` cancels those explicitly; and a scroll-driven
 animation is driven by position rather than time, so a zero duration does not stop it — each
 of the three modules sets `animation: none !important` and states the resting value.
 

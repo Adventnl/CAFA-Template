@@ -121,7 +121,6 @@
   --dur-slow: 560ms; /* scroll reveals */
   --dur-scene: 700ms; /* hover backdrop crossfade — the longest permitted value */
 
-  --reveal-rise: 18px; /* a settle, not a slide */
   --stagger-step: 70ms; /* max 3 steps */
 
   /*
@@ -364,6 +363,11 @@
    */
   --strip-plate-block: 52svh;
   --strip-plate-inline: max(15rem, 40vw);
+
+  /* And the vertical form of the same idea: the home page's full-bleed plates.
+     Capped well under the viewport so two are never on screen at once and the
+     scroll keeps its beat — the column's counterpart to --strip-plate-block. */
+  --plate-block-max: 82svh;
 
   /* The effects MOTION.md §5.4 specified and §5.5 uses, added here as they land.
      --eff-split is per *line*, so it is smaller than --eff-rise on purpose: a

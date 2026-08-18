@@ -2,16 +2,16 @@
 # Without it every asset below is revalidated on each visit, which the LCP
 # budget in CLAUDE.md §7 cannot afford — the fonts alone are ~1 MB and preloaded.
 #
-# Everything here is cached for a year and never revalidated, so all three
-# groups carry the same contract: a changed file gets a new name. Next hashes
-# its own chunks; fonts and image derivatives are renamed by hand, which for
-# derivatives happens naturally because the source filename is part of the key.
+# Both groups are cached for a year and never revalidated, so both carry the
+# same contract: a changed file gets a new name. Next hashes its own chunks;
+# fonts are renamed by hand.
+#
+# There is no rule for the photographs. They are not in out/ — Cloudflare
+# transforms them out of R2 on delivery (/cdn-cgi/image/...) and caches each
+# variant at the edge itself, so a rule here would have nothing to match.
 
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
 
 /fonts/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/media/derived/*
   Cache-Control: public, max-age=31536000, immutable

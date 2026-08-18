@@ -2,6 +2,7 @@ import { Focus } from '@/components/motion/Focus';
 import { Parallax } from '@/components/motion/Parallax';
 import { Media } from '@/components/primitives/Media';
 import { scenes } from '@/lib/choreography';
+import { cx } from '@/lib/class-names';
 import type { ImageRef, Locale } from '@/lib/types';
 
 import styles from './StudioSequence.module.css';
@@ -23,7 +24,7 @@ interface StudioSequenceProps {
  */
 export function StudioSequence({ images, locale, className }: StudioSequenceProps) {
   return (
-    <div className={[styles.sequence, className].filter(Boolean).join(' ')}>
+    <div className={cx(styles.sequence, className)}>
       {images.map((image) => (
         // Full-bleed plates take the deepest focus (§6, depth 3). No entrance —
         // they focus as they pass. None is ever the LCP element: the statement

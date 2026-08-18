@@ -277,21 +277,27 @@ is document-scoped and cannot live in a CSS Module.
 
 ## 4. Phase 3 — scroll as continuous state
 
-`src/components/motion/ScrollField.tsx` — `'use client'`, mounted once, ~70 lines, ~0.9 KB gz.
+`src/components/motion/ScrollField.tsx` — `'use client'`, mounted once, ~60 lines, ~0.8 KB gz.
 
 One `passive` scroll listener that does nothing but set a dirty flag. One rAF loop that reads
 `scrollY` only (never `getBoundingClientRect`), and writes, in a single batched write phase:
 
 - `--scroll-v` — smoothed signed velocity, clamped to ±1
-- `--scroll-dir` — `1` / `-1`, latched through a deadzone so it does not flicker
-- `--scroll-p` — 0…1 through the document
 - `--px` / `--py` — pointer position, same loop, desktop only
+
+It publishes what something reads, and only that. `--scroll-dir` and `--scroll-p` were on this
+list and are struck out: a custom property on `:root` is inherited by every element in the
+document, so writing one no rule consumes buys a document-wide style invalidation per frame and
+nothing else. Document progress is `animation-timeline: scroll(root)` in CSS (§5.4's `progress`
+trigger), which needs no JavaScript at all, and an entrance picks `rise` or `fall` in its scene
+rather than reading the reader's direction. Either can come back the moment a rule wants it —
+but it comes back with the rule, not ahead of it.
 
 The loop parks itself after 200 ms of stillness, so it costs nothing at rest.
 
 What it buys, all in CSS, no further JS: media shears imperceptibly with velocity
 (`scaleY(calc(1 + var(--scroll-v) * 0.02))`); hairlines strengthen while moving and settle
-when still; entrances know whether you are scrolling up or down and use the matching figure.
+when still.
 
 This list once included "the sticky meta column lags the scroll direction by a few pixels".
 It is struck out and must not be built. A pinned column is the fixed thing a work is read
@@ -387,7 +393,7 @@ its magnitude, so one file yields four behaviours.
 |---|---|---|
 | `focus` | scale 0.88 → 1 → 0.88 | peak at `cover 50%`; §6 |
 | `drift` | internal pan ±2.5% | inside a clipped frame |
-| `rise` / `fall` | translate ±Y | direction from `--scroll-dir` |
+| `rise` / `fall` | translate ±Y | two effects, chosen by the scene — see §4 |
 | `slide` | translate ±X | four directions, direction from `data-dir` |
 | `unmask` | `clip-path` wipe | four directions; compositable |
 | `split` | staggered type, masked from the leading edge | per *paragraph*, not per line — see below |
@@ -705,7 +711,11 @@ worse than a plain one. Build, measure, decide.
 - **§9/§10 — kept.** Keyboard parity for the hover figures, `prefers-reduced-motion` as one
   switch, contrast floors unchanged. Reduced motion must also cancel scroll-driven
   animations outright — a zero duration does not stop a position-driven timeline, which is a
-  trap `Reveal.module.css:50` already handles correctly and every new effect must repeat.
+  trap every scroll-driven module has to handle for itself: `effects.css` and the wrappers'
+  own modules cancel with `animation: none !important` and a stated resting value, and
+  `triggers.css` goes further for the pinned kinds — the track collapses and the sticky
+  child lets go, because a scene whose figure is switched off must not keep the scroll it
+  was going to spend.
 
 Scope: ~34 new files, ~22 modified. Not 200 — the range comes from the trigger × effect ×
 depth table, and 200 fragments would run slower and be impossible to keep coherent.

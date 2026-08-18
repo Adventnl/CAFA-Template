@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 
+import { cx } from '@/lib/class-names';
 import { variants, type ImageEntry } from '@/lib/media';
 
 import styles from './MediaFrame.module.css';
@@ -50,7 +51,7 @@ export function MediaFrame({
   if (largest === undefined) throw new Error(`No variants for "${entry.src}"`);
 
   return (
-    <picture className={[styles.frame, className].filter(Boolean).join(' ')} style={style}>
+    <picture className={cx(styles.frame, className)} style={style}>
       {/* width/height give the browser the ratio, so there is no wrapper box
           and no CLS. The CSS does the rest. */}
       <img

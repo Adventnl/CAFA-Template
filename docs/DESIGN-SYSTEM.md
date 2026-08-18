@@ -204,7 +204,6 @@ Two easings. Four durations. Nothing else exists.
 --dur-slow:   560ms;   /* scroll reveals */
 --dur-scene:  700ms;   /* hover backdrop crossfade — the longest permitted value */
 
---reveal-rise: 18px;   /* how far a Reveal element travels. Small. It should read as a settle, not a slide. */
 --stagger-step: 70ms;  /* max 3 steps */
 ```
 

@@ -99,13 +99,14 @@ export function classifyNavigation(
   if (toHome) return { figure: 'ascend', dir: -1 };
 
   if (f.section === ctx.worksSection && t.section === ctx.worksSection) {
-    const fromWork = f.slug !== undefined;
-    const toWork = t.slug !== undefined;
-    if (!fromWork && toWork) return { figure: 'enter-work', dir: 1 };
-    if (fromWork && !toWork) return { figure: 'exit-work', dir: -1 };
-    if (fromWork && toWork) {
-      const a = ctx.workIndex[f.slug as string];
-      const b = ctx.workIndex[t.slug as string];
+    if (f.slug === undefined && t.slug !== undefined) return { figure: 'enter-work', dir: 1 };
+    if (f.slug !== undefined && t.slug === undefined) return { figure: 'exit-work', dir: -1 };
+    if (f.slug !== undefined && t.slug !== undefined) {
+      // Read the slugs where the compiler can see they are strings: an alias
+      // like `const fromWork = f.slug !== undefined` does not narrow the
+      // property, and the cast it forces is a check the compiler stops making.
+      const a = ctx.workIndex[f.slug];
+      const b = ctx.workIndex[t.slug];
       const dir: 1 | -1 = a !== undefined && b !== undefined && b < a ? -1 : 1;
       return { figure: 'step-work', dir };
     }

@@ -5,16 +5,17 @@ import { useRef, useState } from 'react';
 
 import { HoverMediaLayer } from '@/components/motion/HoverMediaLayer';
 import { Text } from '@/components/primitives/Text';
+import { cx } from '@/lib/class-names';
 import { variants, type ImageEntry } from '@/lib/media';
 import { routes } from '@/lib/routes';
-import type { Locale, Work } from '@/lib/types';
+import type { Locale, WorkListing } from '@/lib/types';
 import { vtName } from '@/lib/vt-names';
 
 import styles from './WorkRail.module.css';
 
 interface WorkRailProps {
   locale: Locale;
-  works: readonly Work[];
+  works: readonly WorkListing[];
   /** Manifest entries keyed by slug — the same set the index hovers, resolved on
       the server so the client never receives the whole manifest. Private absent. */
   covers: Record<string, ImageEntry>;
@@ -52,9 +53,8 @@ export function WorkRail({ locale, works, covers, activeSlug, label, className }
   /**
    * Covers are warmed when the pointer first reaches the rail, not on load: a
    * visitor who never hovers never pays for them, and one who arrived from the
-   * index has them in cache already. Only AVIF is preloaded — the `type` makes a
-   * browser without it skip the hint rather than fetch twice. (WorkIndex warms
-   * the same set on its own list; two uses, so they stay separate — CLAUDE.md §5.)
+   * index has them in cache already. (WorkIndex warms the same set on its own
+   * list; two uses, so they stay separate — CLAUDE.md §5.)
    */
   function preloadCovers() {
     if (preloaded.current) return;
@@ -87,7 +87,7 @@ export function WorkRail({ locale, works, covers, activeSlug, label, className }
           page can dim its own parts behind the backdrop with one :has() rule. */}
       <nav
         aria-label={label}
-        className={[styles.rail, className].filter(Boolean).join(' ')}
+        className={cx(styles.rail, className)}
         data-previewing={previewed === null ? undefined : ''}
         onPointerEnter={(event) => {
           // A tap raises pointerenter too, and there is no backdrop on a touch
@@ -117,7 +117,7 @@ function RailEntry({
   active,
   onPreview,
 }: {
-  work: Work;
+  work: WorkListing;
   locale: Locale;
   active: boolean;
   /** Reports which cover the backdrop should show; null on leaving the entry. */
@@ -127,7 +127,7 @@ function RailEntry({
     <Text
       role="meta"
       as="span"
-      className={[styles.number, active && styles.railEntry].filter(Boolean).join(' ')}
+      className={cx(styles.number, active && styles.railEntry)}
       // The active number carries the per-slug name so it receives the number
       // that travelled in from the full list (or holds still while paging).
       style={active ? { viewTransitionName: vtName.railEntry(work.slug) } : undefined}

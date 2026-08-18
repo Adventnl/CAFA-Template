@@ -157,7 +157,7 @@ function work(value: unknown, at: string): Work {
   };
 }
 
-export function parseWorks(value: unknown): Work[] {
+function parseWorks(value: unknown): Work[] {
   const found = each(value, 'works', work);
   const seen = new Set<string>();
   for (const entry of found) {
@@ -167,7 +167,7 @@ export function parseWorks(value: unknown): Work[] {
   return found;
 }
 
-export function parsePrograms(value: unknown): Program[] {
+function parsePrograms(value: unknown): Program[] {
   return each(value, 'programs', (item, at) => {
     const record = object(item, at);
     return {
@@ -180,7 +180,7 @@ export function parsePrograms(value: unknown): Program[] {
   });
 }
 
-export function parseMentors(value: unknown): Mentor[] {
+function parseMentors(value: unknown): Mentor[] {
   return each(value, 'mentors', (item, at) => {
     const record = object(item, at);
     return {
@@ -223,7 +223,7 @@ function isLocale(value: string): value is (typeof LOCALES)[number] {
   return LOCALES.some((known) => known === value);
 }
 
-export function parseSite(value: unknown): SiteContent {
+function parseSite(value: unknown): SiteContent {
   const record = object(value, 'site');
   const contact = object(record.contact, 'site.contact');
   const localeNames = object(record.localeNames, 'site.localeNames');
@@ -253,7 +253,7 @@ export function parseSite(value: unknown): SiteContent {
   };
 }
 
-export function parseDictionary(value: unknown, locale: string): Dictionary {
+function parseDictionary(value: unknown, locale: string): Dictionary {
   const at = `dictionaries/${locale}`;
   const record = object(value, at);
 
