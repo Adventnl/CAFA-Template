@@ -8,6 +8,7 @@ import { NavStage } from '@/components/motion/NavStage';
 import { PageTransition } from '@/components/motion/PageTransition';
 import { PinnedNote } from '@/components/motion/PinnedNote';
 import { ScrollField } from '@/components/motion/ScrollField';
+import { ScrollTicks } from '@/components/motion/ScrollTicks';
 import { Text } from '@/components/primitives/Text';
 import { getDictionary, getSite, getWorks, requireLocale } from '@/lib/content';
 import { sectionSegment, type NavContext } from '@/lib/nav-intent';
@@ -88,12 +89,18 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         />
       </head>
       <body>
-        {/* Both render nothing. NavStage writes each navigation's figure onto
-            <html> before the transition and owns scroll restoration (§2);
-            ScrollField publishes scroll velocity, direction and progress as
-            custom properties for the effects to read (§4). */}
+        {/* The first two render nothing. NavStage writes each navigation's
+            figure onto <html> before the transition and owns scroll restoration
+            (§2); ScrollField publishes scroll velocity and the pointer position
+            as custom properties for the effects to read (§4). ScrollTicks draws
+            the column in the margin that says where in the page the reader is,
+            on the pages that mark their key points and nowhere else (§5.5) — it
+            is here rather than on a page because it is fixed to the viewport,
+            and a fixed element inside the page surface would be positioned
+            against whichever part of it carries a view-transition-name. */}
         <NavStage context={navContext()} />
         <ScrollField />
+        <ScrollTicks />
         <a href="#main" className={styles.skip}>
           <Text role="label" as="span">
             {dictionary.a11y.skipToContent}

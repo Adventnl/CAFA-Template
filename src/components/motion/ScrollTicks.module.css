@@ -1,0 +1,110 @@
+/*
+ * The scroll rule — see ScrollTicks.tsx for what it is and why it is not drawn
+ * on every page.
+ *
+ * One keyframe set for every line on the column, and the whole of the figure is
+ * in it: a line stands to its full length and full ink as the reader reaches it
+ * and settles back as they pass. What differs between a plain line and a key
+ * point is where it *rests*, which is one custom property, and when it runs,
+ * which is the range the component computes per line.
+ *
+ * linear, because it is bound to the scrollbar — DESIGN-SYSTEM.md §6. The curve
+ * the eye reads is not in the timing anyway; it is the two dozen neighbours
+ * each a little further along the same ramp.
+ */
+@keyframes swell {
+  from {
+    opacity: var(--tick-ink);
+    transform: scaleX(var(--tick-rest));
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  to {
+    opacity: var(--tick-ink);
+    transform: scaleX(var(--tick-rest));
+  }
+}
+
+/*
+ * Not drawn unless the browser can drive it off the scroll, and not below
+ * --bp-lg. Both are the same decision: a column that cannot say where you are
+ * is a row of dashes in the margin, and the gutter under 1024px is too narrow
+ * to hold one anyway.
+ */
+.ticks {
+  display: none;
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (width >= 1024px) {
+    .ticks {
+      /* The lines are spread over the band rather than given a gap, so the
+         column keeps its proportion at every viewport height. */
+      align-content: space-between;
+      block-size: var(--tick-track);
+      display: grid;
+      inline-size: var(--tick-len);
+      /* inset-block: 0 with a definite height and auto margins is what centres
+         the band on the viewport without a percentage translate — the transform
+         belongs to the lines, and only to the lines. */
+      inset-block: 0;
+      inset-inline-start: max(var(--tick-inset), env(safe-area-inset-left));
+      margin-block: auto;
+      /* It sits over the gutter, which is empty by construction, but nothing
+         about it is reachable and it must never take a click meant for the page. */
+      pointer-events: none;
+      position: fixed;
+      /*
+       * Above the page, under the header (2) and the skip link (3). It has to be
+       * stated: a full-bleed pinned scene — About's filmstrip — is `position:
+       * sticky`, so it is a positioned element later in the tree than this one
+       * and would otherwise paint straight over it. A rule that disappears for
+       * the three screens the strip holds is not an indicator.
+       */
+      z-index: 1;
+    }
+  }
+}
+
+.tick {
+  animation: swell linear both;
+  /* After the shorthand, which resets both of these to their initial values.
+     The range itself is inline, per line, and inline wins over this rule. */
+  animation-timeline: scroll();
+  background-color: var(--c-ink);
+  block-size: 1px;
+  /* The resting state, stated as well as keyframed: it is what the line holds
+     before its range begins and after it ends. */
+  opacity: var(--tick-ink);
+  transform: scaleX(var(--tick-rest));
+  /* From the margin outward — a line grows into the empty side of the page. */
+  transform-origin: 0 50%;
+}
+
+/*
+ * A key point — one of the ruler's own lines, not a mark laid over it. All this
+ * changes is where that line *rests*: long enough to still read as a mark when
+ * the reader is at the other end of the page. It swells and settles on the same
+ * ramp as its neighbours, at the same spacing, because it is one of them; a
+ * second element placed at the block's measured fraction would sit a hair off
+ * the line beside it and turn one ruler into two that disagree.
+ */
+.stop {
+  --tick-rest: var(--tick-stop-rest);
+}
+
+/*
+ * MOTION.md §9. The column is removed rather than stilled, and that is the whole
+ * of the reduced-motion handling here: a rule whose only content is the travel
+ * of the swell says nothing at all standing still, and a line that is not
+ * rendered runs no animation, so there is nothing left to cancel by name.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .ticks {
+    display: none;
+  }
+}

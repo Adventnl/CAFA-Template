@@ -383,6 +383,30 @@
      moving fast and settles back to 1px the moment it stops. */
   --rule-gain: 2;
 
+  /*
+   * The scroll rule — the column of lines in the margin that says where in the
+   * page the reader is (components/motion/ScrollTicks). Its lines never move, so
+   * every value here is either where the column stands or how far a line
+   * *extends*, and there is nothing about position among them.
+   *
+   * The two horizontals are measured off --space-gutter rather than given sizes
+   * of their own, because the one thing the column must never do is reach the
+   * first grid column, where the running numbers are: a fifth of the gutter in
+   * and three fifths of it long leaves the last fifth clear at every width the
+   * rule is drawn at, from 1024px to 2560. It is the gutter that decides how
+   * long a line can be, which is why neither value is a size.
+   *
+   * --tick-track is bounded rather than a plain fraction of the viewport: the
+   * lines are spread over it, so on a tall display an unbounded band would
+   * space them out until the column stopped reading as one object.
+   */
+  --tick-inset: calc(var(--space-gutter) / 5);
+  --tick-len: calc(var(--space-gutter) * 3 / 5);
+  --tick-track: clamp(18rem, 42svh, 26rem);
+  --tick-rest: 0.3; /* what a line keeps of its length away from the reader */
+  --tick-stop-rest: 0.62; /* and what a key point keeps, so it stays a mark */
+  --tick-ink: 0.2; /* the ink it holds there, against full ink at the reader */
+
   --focus-dim: 0.55; /* how far media dims at the edges of its pass; §6 */
   --focus-min-0: 0.94;
   --focus-min-1: 0.9;

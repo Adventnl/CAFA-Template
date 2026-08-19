@@ -431,6 +431,7 @@ The rule is that every surface names a trigger. This table is the acceptance tes
 | surface | trigger | effect |
 |---|---|---|
 | header hairline / nav | `progress` | `dim` on velocity; strengthens while moving |
+| scroll rule (the margin) | `progress` | each line swells to full length and full ink as the reader reaches it; §5.5d |
 | home — opening statement | `pin-scrub` | `unmask` per line while pinned, then `recede` |
 | home — featured plate | `scrub` | `focus` d3 + `drift` d3 |
 | works index — rows | `batch` | `slide` d1 assembling: number → title → disciplines |
@@ -507,6 +508,50 @@ for the content.
 The same trap has a second mouth: `effects.css` cancelled `[data-scene]` and `[data-scene] >
 *`, and both `pin-scrub` and `stack` drive an element *two* levels down. The selector list is
 written out per kind for that reason. Add a kind, add its line.
+
+### 5.5d The scroll rule — a `progress` scene with no element of its own
+
+Every other row in the audit is a surface the page already had. This one is chrome: a column
+of hairlines in the left gutter, fixed to the viewport, that says where in the page the
+reader is. `components/motion/ScrollTicks`.
+
+The figure is one sentence: **the lines never move, only their length does.** A line stands
+to its full length and full ink as the reader arrives at the part of the document it stands
+for, and settles back to a fifth of that as they pass — so what travels down the margin is a
+swell, not a bar filling up. The longer lines it passes over are the page's key points, one
+per programme, marked with `data-stop` on the block itself. That attribute is the whole
+contract: a page that marks nothing gets no column, which is why this can sit in the layout
+and still be drawn on the programmes index alone. The works index and a work's own page have
+the rail, which already answers the question. About is a read rather than a list, and a
+column counting off three section boundaries there is chrome measuring nothing — the thing
+it would be indicating is a page you scroll through once.
+
+Mechanically it is `progress` — `animation-timeline: scroll(root)` — taken to its limit:
+*twenty-eight* animations on one timeline, each ranged over the slice of the document its
+line answers to, `animation-range` computed per line and set inline. There is no scroll
+handler and no per-frame JavaScript at all; the ranges of the first and last few lines fall
+outside 0–100% on purpose, so the top of the column is already lit when the page is at the
+top. The one thing CSS cannot answer is *where a key point is*, because that is a
+measurement — taken once after layout and again on any change of the document's height, by a
+`ResizeObserver`, and never while the page is moving. It is measured on the block rather
+than on its heading because the heading of a stacked entry is inside the sticky child: its
+box reports the scroll position, not the layout.
+
+And a key point is one *of* those twenty-eight lines, never a twenty-ninth element laid over
+them. The measured fraction is rounded to the nearest line and then thrown away — two blocks
+that round to the same line walk apart to the nearest free one, since a key point that isn't
+drawn is a worse error than one drawn a line off — so the ruler keeps one even rhythm and a
+key point differs from its neighbours in exactly one property: how far it rests. Placing a
+mark at its raw fraction instead is the version that looks broken, and it is worth naming
+because it is the obvious implementation: the mark lands a hair off the line beside it, at a
+spacing shared with nothing, and the eye reads two rulers that disagree rather than one rule
+with some long lines in it.
+
+Two decisions rather than two omissions. It is not drawn below `--bp-lg`, where the gutter
+that bounds its length is too narrow to hold it — the same width `WorkRail` stops at, for
+the same reason. And it is not drawn under `prefers-reduced-motion`: cancelling the swell
+leaves a column of identical dashes, and a thing whose entire content is its travel has
+nothing to say standing still.
 
 ### 5.5b `pin` — the one figure that is not attached to a route at all
 

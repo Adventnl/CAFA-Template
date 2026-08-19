@@ -46,9 +46,15 @@ export function ProgramList({ programs, locale, className }: ProgramListProps) {
         // The <li> is the track: it carries the timeline the entry inside it is
         // driven by, and it is never the sticky one — a stuck element's view
         // progress freezes over exactly the frames the figure needs to measure.
+        //
+        // It is also the entry's key point on the scroll rule (data-stop, read
+        // by components/motion/ScrollTicks) — and for the same reason it is the
+        // track that carries the timeline: the block inside it is pinned, so its
+        // box says where the scroll is rather than where the entry lives.
         <li
           key={program.slug}
           className={itemClass(index)}
+          data-stop=""
           style={{ viewTransitionName: vtName.item(program.slug) }}
         >
           <article className={styles.entry} data-stuck="">
