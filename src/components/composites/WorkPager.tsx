@@ -14,6 +14,8 @@ interface WorkPagerProps {
   next: Work | null;
   labels: { previous: string; next: string };
   navLabel: string;
+  /** The site's footer note, which this block sets between the two links. */
+  note: string;
   className?: string;
 }
 
@@ -23,17 +25,30 @@ export function WorkPager({
   next,
   labels,
   navLabel,
+  note,
   className,
 }: WorkPagerProps) {
   return (
-    <nav
-      aria-label={navLabel}
-      className={cx(styles.pager, className)}
+    // data-page-close is a contract with SiteFooter, not decoration: this block
+    // draws the rule that closes a work page and carries the footer's own line
+    // between its two links, so the footer stands down entirely rather than
+    // repeating that line a screen further down.
+    //
+    // The note sits outside the <nav>, because a copyright line is not
+    // navigation — the grid is what puts it between the links, not the markup.
+    <div
+      className={cx(styles.close, className)}
+      data-page-close=""
       {...sceneAttrs(scenes.workPager)}
     >
-      <Step locale={locale} work={previous} label={labels.previous} />
-      <Step locale={locale} work={next} label={labels.next} align="end" />
-    </nav>
+      <nav aria-label={navLabel} className={styles.steps}>
+        <Step locale={locale} work={previous} label={labels.previous} />
+        <Step locale={locale} work={next} label={labels.next} align="end" />
+      </nav>
+      <Text role="meta" className={styles.note}>
+        {note}
+      </Text>
+    </div>
   );
 }
 

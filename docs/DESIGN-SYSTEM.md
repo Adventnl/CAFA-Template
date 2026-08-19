@@ -28,6 +28,19 @@ scroll cadence and gutter labelling, SANAA's emptiness on the homepage only.
 
 Monochrome plus one warm paper tint. No accent colour — the work supplies all colour.
 
+One exception, and it is written down here so it stays one: `--c-mark`, the highlighter
+yellow drawn through a label on hover. It is not an accent colour in the sense this rule
+forbids, because it never colours anything — it is never text, never a border, never at
+rest. It is a mark left *on* the paper, which is why its value is the colour a marker
+leaves on `--c-paper` rather than a brand hue.
+
+What bounds it is not a surface but a job: **it marks a label that goes somewhere.** The
+header nav, the locale switch beside it, and the prev/next pair that closes a work page —
+those three, and one primitive draws all of them (`components/primitives/Mark`). It never
+marks a heading, a caption, a run of prose or a link inside one, and it is never on
+anything at rest. The moment it appears on something that is not a navigation label, that
+is the moment to delete it.
+
 ```css
 :root {
   --c-paper:        #F7F6F2;  /* page ground, warm off-white */
@@ -42,6 +55,7 @@ Monochrome plus one warm paper tint. No accent colour — the work supplies all 
   --c-focus:        #14140F;               /* focus ring */
   --c-scrim:        rgb(20 20 15 / 0.35);  /* over-media legibility */
   --c-veil:         rgb(247 246 242 / 0.55); /* paper over the hover backdrop */
+  --c-mark:         #F3E24E;               /* the hover stroke on a nav label, §7 */
 }
 ```
 
@@ -55,6 +69,7 @@ all wrong, and the tertiary one was wrong in a way that failed WCAG AA:
 | `--c-ink-62` | 5.0:1 | **was 45% at 2.9:1, not the ~6:1 claimed — it failed §10 of the constitution wherever it set text, which was everywhere: row numbers, years, statuses, gutter labels, the private row, the footer address** |
 | `--c-ink-16` | 1.3:1 | hairlines, never text |
 | `--c-ink-dim` | 1.9:1 | see below |
+| `--c-ink` over `--c-mark` | 13.3:1 | the label sits at full ink while the stroke is under it |
 
 0.62 is the lightest alpha that clears 4.5:1 on this paper. There is no room for a fourth
 step: below 0.60 nothing passes, so the ink scale is three text values and a hairline, and
@@ -99,12 +114,12 @@ seventh role and no ad-hoc `font-size` anywhere.
 
 | Role | Size | Line height | Tracking | Weight | Used for |
 |---|---|---|---|---|---|
-| `display` | `clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem)` | 1.02 | −0.02em | 400 | Home statement, work title on detail |
+| `display` | `clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem)` | 1.02 | −0.02em | 400 | Work title on detail |
 | `title` | `clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem)` | 1.15 | −0.012em | 400 | Section heads, programme names |
 | `body` | `clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem)` | 1.62 | 0 | 400 | Prose |
 | `index` | `0.8125rem` (13px) | 1.7 | 0 | 400 | The works list rows — fixed, not fluid |
 | `meta` | `0.6875rem` (11px) | 1.55 | 0.01em | 400 | Credits, status, captions |
-| `label` | `0.6875rem` (11px) | 1 | 0.09em, uppercase | 500 | Nav, gutter labels, buttons |
+| `label` | `0.6875rem` (11px) | 1 | 0.09em, uppercase | 500 | Nav, gutter labels, buttons, the home statement |
 
 `index` and `meta` stay fixed rather than fluid: at these sizes fluid scaling either breaks
 the 44 px touch floor on mobile or bloats absurdly at 2560 px. They step once at the `sm`
@@ -169,7 +184,7 @@ Standard placements:
 
 | Surface | Placement |
 |---|---|
-| Home statement | cols 1–7 |
+| Home statement | cols 1–12, centred on both axes, max 68 characters |
 | Works index rows | number 1, title 2–5, discipline 6–8, year/status 11–12 (right-aligned) |
 | Work detail | meta cols 1–4 (sticky), media cols 6–12 |
 | Programmes | label cols 1–2, body cols 4–9 (big.dk gutter-label pattern) |
@@ -273,7 +288,21 @@ Rules that make it feel like the references rather than a template:
 - **Index rows:** the row itself does nothing on hover; the *backdrop* changes and the other
   rows dim to `--c-ink-dim` over `--dur-base`. The hovered row stays at `--c-ink`. This
   inversion — dimming the siblings rather than highlighting the target — is the ium move.
-- **Nav:** `label` role, `--c-ink-70` at rest, `--c-ink` on hover, `--dur-fast`.
+- **Nav:** `label` role, `--c-ink-70` at rest, `--c-ink` on hover, `--dur-fast` — and,
+  behind the word, a chisel-nib stroke in `--c-mark` swept across it over `--dur-base`.
+  It is a mark, not a shape around the label, and four things are what make that true:
+  it overshoots the word by `--mark-bleed` above and below and `--mark-reach` at each
+  end; it leans `--mark-tilt` off level; its ends are raked `--mark-rake` across its own
+  height rather than cut straight down; and the ink thins to `--mark-dry` toward the
+  bottom edge. The rake is the one that carries it — a parallelogram reads as drawn, a
+  rectangle as applied — and at 11px it and the fade are the only two of the four that
+  still register. One `clip-path` polygon does both the shape and the sweep, so the wipe
+  edge *is* the nib and arrives at the angle it will rest at. Hover and `:focus-visible`
+  both, so the keyboard sees what the pointer sees; nothing on touch. Every measurement is
+  in `em`, so the same gesture serves the `label` role in the bar and the `index` role in
+  the pager. It is `components/primitives/Mark`, drawn by whichever control it sits in;
+  the three that draw it are the nav, the locale switch — but never its current locale —
+  and the work pager's prev/next.
 - **Focus:** `--focus-ring` on `:focus-visible` only, never suppressed.
 - **Disabled / private:** `--c-ink-45`, `cursor: default`, not a link at all.
 

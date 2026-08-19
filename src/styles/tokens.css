@@ -394,6 +394,26 @@
   --focus-blur-3: 3px;
 
   /* §7 Component states */
+
+  /*
+   * The hover mark — DESIGN-SYSTEM.md §2, §7. The one non-monochrome value in
+   * the system, and it is bounded on purpose: it is never text, never a border,
+   * never at rest, and it lives on one surface. It is ink laid on paper rather
+   * than a brand colour, which is why the value is what a marker leaves on
+   * --c-paper; --c-ink over it measures 13.3:1.
+   *
+   * The rest is the stroke's handwriting. --mark-rake is the one that matters
+   * most: it is the run of the chisel cut across the stroke's own height, and it
+   * is what makes the shape a parallelogram instead of a rectangle. Without it
+   * the mark reads as a highlight box no matter what else is done to it.
+   */
+  --c-mark: #f3e24e;
+  --mark-bleed: 0.42em; /* how far it stands past the cap line, above and below */
+  --mark-reach: 0.7em; /* and past the first and last letter — a nib overruns */
+  --mark-rake: 0.85em; /* the run of the chisel cut across the stroke's height */
+  --mark-tilt: -1.6deg; /* the lean of the whole stroke, because a hand has one */
+  --mark-dry: 52%; /* the ink left at the bottom edge, where the nib ran out */
+
   --focus-ring:
     0 0 0 2px var(--c-paper), 0 0 0 4px var(--c-focus);
   --hairline: 1px solid var(--c-ink-16);

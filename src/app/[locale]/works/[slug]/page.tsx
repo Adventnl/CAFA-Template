@@ -61,34 +61,40 @@ export default async function WorkPage({ params }: WorkParams) {
   return (
     <Grid className={styles.page}>
       <JsonLd data={creativeWorkJsonLd(work, locale, getCoverImage(work))} />
-      <WorkRail
-        locale={locale}
-        works={getWorkListings()}
-        covers={getIndexCovers()}
-        activeSlug={work.slug}
-        label={dictionary.a11y.worksRail}
-        className={styles.rail}
-      />
-      <StickyColumn className={styles.meta}>
-        <WorkMetaPanel
-          work={work}
+      {/* The three columns of the work itself, in a subgrid so they keep the
+          page's tracks while ending where the media column ends. That boundary
+          is the point — page.module.css. */}
+      <div className={styles.spread}>
+        <WorkRail
           locale={locale}
-          labels={dictionary.work}
-          statusLabel={dictionary.works.status[work.status]}
+          works={getWorkListings()}
+          covers={getIndexCovers()}
+          activeSlug={work.slug}
+          label={dictionary.a11y.worksRail}
+          className={styles.rail}
         />
-      </StickyColumn>
-      <MediaSequence
-        slug={work.slug}
-        cover={work.cover}
-        media={work.media}
-        locale={locale}
-        className={styles.media}
-      />
+        <StickyColumn className={styles.meta}>
+          <WorkMetaPanel
+            work={work}
+            locale={locale}
+            labels={dictionary.work}
+            statusLabel={dictionary.works.status[work.status]}
+          />
+        </StickyColumn>
+        <MediaSequence
+          slug={work.slug}
+          cover={work.cover}
+          media={work.media}
+          locale={locale}
+          className={styles.media}
+        />
+      </div>
       <WorkPager
         locale={locale}
         {...getWorkNeighbours(slug)}
         labels={dictionary.work}
         navLabel={dictionary.a11y.workPager}
+        note={dictionary.footer.note}
         className={styles.pager}
       />
     </Grid>

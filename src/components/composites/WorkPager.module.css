@@ -1,20 +1,82 @@
-.pager {
+/*
+ * The block that closes a work page: prev and next at the two ends and the
+ * site's footer note between them, one line. SiteFooter stands down when this
+ * is on the page, so the padding below is the bottom of the document rather
+ * than the bottom of a section — SiteFooter.module.css carries the other half
+ * of that arrangement.
+ */
+.close {
   border-block-start: var(--hairline);
   column-gap: var(--grid-gap);
   display: grid;
   grid-template-columns: 1fr 1fr;
+  padding-block-end: max(var(--space-l), env(safe-area-inset-bottom));
   padding-block-start: var(--space-l);
+  row-gap: var(--space-l);
   /* Its own part: it rises in last on entering a work and is pinned when paging
      between works, so it reads as a fixture rather than something navigated. §3. */
   view-transition-name: var(--vt-pager);
 }
 
-/* The dim behind a rail preview sits on the links rather than on .pager, whose
-   own opacity belongs to its rise scene — and the links are what the pager's
-   snapshot paints anyway, so it travels into the transition. tokens.css. */
+/* Subgrid, so the two links place on the tracks the note is placed against
+   while staying inside the <nav> that the note is deliberately outside of.
+   :first-child / :last-child rather than a class, because a missing neighbour
+   is an empty div and it still has to hold its end. */
+.steps {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-row: 1;
+  grid-template-columns: subgrid;
+}
+
+.steps > :first-child {
+  grid-column: 1;
+}
+
+.steps > :last-child {
+  grid-column: 2;
+}
+
+/* Below --bp-md the note takes its own line under the links: three things
+   abreast on a phone leaves each work title about forty pixels. */
+.note {
+  color: var(--c-ink-70);
+  grid-column: 1 / -1;
+  text-align: center;
+}
+
+@media (width >= 768px) {
+  .close {
+    grid-template-columns: 1fr auto 1fr;
+    row-gap: 0;
+  }
+
+  .steps > :last-child {
+    grid-column: 3;
+  }
+
+  /* Onto the nav's own row and into the track it leaves empty between the two
+     links. They overlap as grid areas and never as ink. */
+  .note {
+    align-self: center;
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
 .step {
+  /* The <Mark> stroke, drawn on the link itself rather than on a run inside it:
+     what is marked here is the whole prev/next block, label and title together,
+     so the box that takes the dab has to be the control. Mark.module.css draws
+     it for a control that is its own mark as well as for one wrapping a run. */
+  composes: mark from '../primitives/Mark.module.css';
   color: var(--c-ink);
   display: grid;
+  /* Both rows shrink to their own text and the link shrinks to both, so the dab
+     is drawn to the run it marks. Left to fill, the step owns half the page
+     grid and the mark behind it becomes a stripe across the page. */
+  justify-items: start;
+  justify-self: start;
   min-block-size: var(--tap-min);
   opacity: var(--preview-dim);
   row-gap: var(--space-3xs);
@@ -24,15 +86,26 @@
 
 .step[data-align='end'] {
   justify-items: end;
+  justify-self: end;
   text-align: end;
 }
 
 .label {
   color: var(--c-ink-62);
+  transition: color var(--dur-fast) var(--ease-io);
+}
+
+/* Hover and focus do what they do in the header bar: the label comes to full
+   ink and the step takes the <Mark> stroke. It used to fade the whole step to
+   --dim instead — the index's inversion applied to a two-item nav, where there
+   are no siblings for it to invert against, so it just read as the link going
+   away under the pointer. */
+.step:focus-visible .label {
+  color: var(--c-ink);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .step:hover {
-    opacity: var(--dim);
+  .step:hover .label {
+    color: var(--c-ink);
   }
 }

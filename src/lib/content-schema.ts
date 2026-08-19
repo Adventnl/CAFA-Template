@@ -290,7 +290,7 @@ function parseDictionary(value: unknown, locale: string): Dictionary {
       workPager: a11y('workPager'),
       close: a11y('close'),
     },
-    home: { statement: home('statement'), worksLink: home('worksLink') },
+    home: { statement: home('statement') },
     works: {
       title: works('title'),
       description: works('description'),

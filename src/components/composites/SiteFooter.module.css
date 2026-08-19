@@ -4,48 +4,28 @@
   margin-block-start: var(--space-3xl);
 }
 
+/*
+ * A work page already closes itself: the pager draws the rule, sets the prev and
+ * next work at its two ends and carries this note between them. It is the
+ * footer, so this one stands down rather than drawing a second rule --space-3xl
+ * below the first and ending the page with two footers stacked and a screen of
+ * paper between them. WorkPager.module.css takes on the padding that closed the
+ * document, since nothing follows it any more.
+ *
+ * WorkPager sets data-page-close; <main> and this <footer> are siblings, which
+ * is what makes the lookup one selector rather than a prop threaded through the
+ * layout for a page that does not own the footer.
+ */
+main:has([data-page-close]) + .footer {
+  display: none;
+}
+
 .inner {
   padding-block-start: var(--space-l);
   padding-block-end: max(var(--space-l), env(safe-area-inset-bottom));
-  row-gap: var(--space-2xs);
 }
 
-.note,
-.contact {
+.note {
   grid-column: 1 / -1;
-}
-
-.address {
-  color: var(--c-ink-62);
-  grid-column: 1 / -1;
-}
-
-.email {
-  align-items: center;
-  color: inherit;
-  display: inline-flex;
-  min-block-size: var(--tap-min);
-  text-decoration: underline;
-  text-underline-offset: 0.22em;
-  transition: text-decoration-color var(--dur-fast) var(--ease-io);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .email:hover {
-    text-decoration-color: var(--c-ink-62);
-  }
-}
-
-@media (width >= 768px) {
-  .note {
-    grid-column: 1 / 5;
-  }
-
-  .contact {
-    grid-column: 5 / 9;
-  }
-
-  .address {
-    grid-column: 9 / -1;
-  }
+  text-align: center;
 }

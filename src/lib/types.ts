@@ -141,7 +141,7 @@ export interface Dictionary {
     /** The close mark on the contact card is drawn, so this is its only name. */
     close: string;
   };
-  home: { statement: string; worksLink: string };
+  home: { statement: string };
   works: { title: string; description: string; status: Record<WorkStatus, string> };
   work: {
     index: string;

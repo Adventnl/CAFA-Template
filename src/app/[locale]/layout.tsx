@@ -106,7 +106,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         <main id="main" tabIndex={-1}>
           <PageTransition>{children}</PageTransition>
         </main>
-        <SiteFooter locale={locale} site={site} dictionary={dictionary} />
+        <SiteFooter dictionary={dictionary} />
         {/* Contact is not a page: it is a card the nav's Contact button pins over
             whichever page you are on. It lives here, outside <main>, because the
             layout is the one thing that outlives a route change — so the card

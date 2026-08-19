@@ -67,6 +67,7 @@ the one place in the codebase that touches image markup.
     │   │   ├── Media.tsx            # an ImageRef, resolved to its intrinsic dimensions
     │   │   ├── MediaFrame.tsx       # the only <picture>: srcset, intrinsic size, required alt
     │   │   ├── Text.tsx             # renders a token type-role as any element
+    │   │   ├── Mark.tsx             # a Text the control around it highlights on hover
     │   │   └── Grid.tsx             # the 12-col page grid
     │   ├── motion/
     │   │   ├── PageTransition.tsx   # React <ViewTransition> around every page
@@ -87,7 +88,7 @@ the one place in the codebase that touches image markup.
     │       ├── WorkIndexRow.tsx
     │       ├── WorkRail.tsx         # the index compressed to a column of numbers — §5.2
     │       ├── WorkMetaPanel.tsx    # sticky left column on detail
-    │       ├── WorkPager.tsx        # previous / next, in editorial order
+    │       ├── WorkPager.tsx        # previous / next; the rule the footer joins onto
     │       ├── MediaSequence.tsx    # scrolling right column on detail
     │       ├── StudioSequence.tsx   # the home page below the fold, full bleed
     │       ├── StudioStrip.tsx      # the same photographs, sideways, on About

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { Grid } from '@/components/primitives/Grid';
+import { Mark } from '@/components/primitives/Mark';
 import { Text } from '@/components/primitives/Text';
 import { panels, routes } from '@/lib/routes';
 import type { Dictionary, Locale, SiteContent } from '@/lib/types';
@@ -32,13 +33,14 @@ export function SiteHeader({ locale, site, dictionary }: SiteHeaderProps) {
               where the reader stands. `popovertarget` needs no JavaScript and no
               state up here — the browser owns the open/close, the Esc key and
               the button's aria-expanded. components/motion/PinnedNote. */}
+          {/* <Mark> is the label rather than the link because the stroke is drawn
+              over the *word*: the link is a --tap-min box and a highlighter the
+              height of a touch target is a banner. */}
           <nav aria-label={dictionary.a11y.primaryNav} className={styles.links}>
             {site.nav.map((item) =>
               'route' in item ? (
                 <Link key={item.route} href={routes[item.route](locale)} className={styles.link}>
-                  <Text role="label" as="span">
-                    {item.label[locale]}
-                  </Text>
+                  <Mark role="label">{item.label[locale]}</Mark>
                 </Link>
               ) : (
                 <button
@@ -47,9 +49,7 @@ export function SiteHeader({ locale, site, dictionary }: SiteHeaderProps) {
                   popoverTarget={panels[item.opens]}
                   className={styles.link}
                 >
-                  <Text role="label" as="span">
-                    {item.label[locale]}
-                  </Text>
+                  <Mark role="label">{item.label[locale]}</Mark>
                 </button>
               ),
             )}

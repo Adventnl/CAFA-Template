@@ -16,6 +16,17 @@
   color: var(--c-ink);
 }
 
+/*
+ * The stroke itself is the <Mark> primitive's, and the switch renders one for
+ * every locale but the current. It is not consistency for its own sake: the
+ * switch sits a hand's width from the nav in the same bar, so a reader who has
+ * just watched WORKS take a mark and then finds EN doing nothing reads it as a
+ * broken control rather than as restraint.
+ */
+.option:focus-visible {
+  color: var(--c-ink);
+}
+
 @media (hover: hover) and (pointer: fine) {
   .option:hover {
     color: var(--c-ink);

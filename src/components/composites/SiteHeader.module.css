@@ -124,6 +124,12 @@
   transition: color var(--dur-fast) var(--ease-io);
 }
 
+/* Keyboard parity for the label's ink; the stroke behind it is the <Mark>
+   primitive's own, and the whole gesture is documented there. */
+.link:focus-visible {
+  color: var(--c-ink);
+}
+
 @media (hover: hover) and (pointer: fine) {
   .link:hover {
     color: var(--c-ink);

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 
 import { StudioSequence } from '@/components/composites/StudioSequence';
 import { Recede } from '@/components/motion/Recede';
@@ -37,17 +36,17 @@ export default async function HomePage({ params }: LocaleParams) {
       <JsonLd data={organisationJsonLd(locale)} />
       {/* The statement recedes as it leaves the top rather than simply scrolling
           off, which is the same figure a navigation makes. It is the first thing
-          on the site that moves, and it sets the vocabulary for the rest. */}
+          on the site that moves, and it sets the vocabulary for the rest.
+
+          Set in `label`, the same role as the nav: the first screen is one line
+          of the same small type the bar is set in, centred in the empty page,
+          and nothing else. There is no link to the works index here because the
+          nav already carries one on every page including this one. */}
       <Recede>
         <Grid className={styles.above}>
-          <Text role="display" as="h1" className={styles.statement}>
+          <Text role="label" as="h1" className={styles.statement}>
             {dictionary.home.statement}
           </Text>
-          <Link href={routes.works(locale)} className={styles.link}>
-            <Text role="label" as="span">
-              {dictionary.home.worksLink}
-            </Text>
-          </Link>
         </Grid>
       </Recede>
       {/* Genuinely below the fold — see .above — so these stay lazy and the

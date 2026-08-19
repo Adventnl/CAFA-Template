@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { Mark } from '@/components/primitives/Mark';
 import { Text } from '@/components/primitives/Text';
 import { swapLocale } from '@/lib/routes';
 import type { Locale } from '@/lib/types';
@@ -35,9 +36,17 @@ export function LocaleSwitch({ current, options, navLabel }: LocaleSwitchProps) 
           aria-current={locale === current ? 'true' : undefined}
           className={styles.option}
         >
-          <Text role="label" as="span">
-            {name}
-          </Text>
+          {/* The current locale is exempt from the stroke. It is already at full
+              ink, and marking it would say "you can go here" about the page the
+              reader is standing on — so it is a plain run rather than a <Mark>
+              the stylesheet then has to take the stroke back off. */}
+          {locale === current ? (
+            <Text role="label" as="span">
+              {name}
+            </Text>
+          ) : (
+            <Mark role="label">{name}</Mark>
+          )}
         </Link>
       ))}
     </nav>
