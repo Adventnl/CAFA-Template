@@ -112,7 +112,16 @@
     container-type: inline-size;
     overflow: clip;
   }
-  [data-scene='pin-scrub'] [data-pinned] > * {
+  /*
+   * :not([data-still]) — a pinned window may also hold *furniture*: something
+   * positioned against the window rather than carried across it. The filmstrip's
+   * scroll rule is the one such thing today. Without the exclusion every child
+   * of the window inherits the scene's effect, so the rule would pan off the
+   * edge along with the strip it measures; with it, the convention this block
+   * relies on — the window's content is what moves — is stated rather than left
+   * to the component to keep by only ever rendering one child.
+   */
+  [data-scene='pin-scrub'] [data-pinned] > *:not([data-still]) {
     animation-name: var(--eff-name);
     animation-fill-mode: both;
     animation-timing-function: linear;

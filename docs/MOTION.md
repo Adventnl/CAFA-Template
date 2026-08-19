@@ -443,6 +443,7 @@ The rule is that every surface names a trigger. This table is the acceptance tes
 | work detail — pager | `progress` | `rise` over the last 15% |
 | programmes — each entry | `stack` | the entry's parts `slide` d2 in as it rises; `recede` as it hands off |
 | about — studio filmstrip | `pin-scrub` + `pan` | horizontal filmstrip under vertical scroll |
+| about — the strip's rule | the same `--pin` | the margin rule turned on its side, drawn for the pin and no longer; §5.5d |
 | about — prose | `batch` | `split` d1 per paragraph |
 | mentors — grid | `batch` | `rise` d1, staggered by column |
 | mentors — portrait | `scrub` | `focus` d1, nested inside the card |
@@ -552,6 +553,25 @@ that bounds its length is too narrow to hold it — the same width `WorkRail` st
 the same reason. And it is not drawn under `prefers-reduced-motion`: cancelling the swell
 leaves a column of identical dashes, and a thing whose entire content is its travel has
 nothing to say standing still.
+
+**The same instrument, turned on its side.** The filmstrip is the site's one horizontal
+reading, and horizontal travel under vertical scroll is precisely the motion a reader has no
+built-in indicator for — the scrollbar is measuring the page, not the room. So a band of the
+same hairlines lies under the plates, growing upward instead of outward, and it appears as
+the section takes the screen and leaves with it: chrome for the length of one figure and
+nothing on either side of it. It lives in `StudioStrip` rather than in `ScrollTicks`, and
+that is not duplication deferred until the rule of three — the two share a figure and share
+neither a mechanism nor a subject. The margin rule measures the *document*, on
+`scroll(root)`, and has to find its key points by measuring the DOM because only the DOM
+knows where a programme sits; this one measures the *pin*, which is already a timeline, so
+every line is one `contain`-ranged animation on `--pin`, there are no key points to find, and
+it renders on the server and ships nothing at all.
+
+The one piece of machinery it needed is in `triggers.css`: a `pin-scrub` window drives every
+child it has, so a second child would have panned off the edge along with the strip it was
+measuring. `[data-still]` marks a child as furniture — positioned against the window rather
+than carried across it — which states a convention `StudioStrip` had until now been keeping
+by only ever rendering one child.
 
 ### 5.5b `pin` — the one figure that is not attached to a route at all
 

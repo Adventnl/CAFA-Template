@@ -364,6 +364,22 @@
   --strip-plate-block: 52svh;
   --strip-plate-inline: max(15rem, 40vw);
 
+  /*
+   * And the strip's own scroll rule: the band of hairlines below the plates that
+   * says how far along the strip the pan has got (components/composites/
+   * StudioStrip). It is the margin rule of --tick-* turned on its side, so it
+   * borrows that object's rest and ink rather than restating them — the two are
+   * meant to read as one instrument, and a second pair of numbers is a second
+   * instrument however close the values start out.
+   *
+   * The width is bounded rather than a plain fraction of the window, and for the
+   * reason the vertical one's --tick-track is: the lines are spread over the
+   * band, so a band that grew with the viewport would space them out at 2560px
+   * until the column stopped reading as one object, and crowd them at 390px
+   * until it read as a solid line.
+   */
+  --strip-rule-track: clamp(16rem, 34vw, 28rem);
+
   /* And the vertical form of the same idea: the home page's full-bleed plates.
      Capped well under the viewport so two are never on screen at once and the
      scroll keeps its beat — the column's counterpart to --strip-plate-block. */

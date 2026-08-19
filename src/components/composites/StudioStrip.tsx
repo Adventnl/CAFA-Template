@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 import { Media } from '@/components/primitives/Media';
 import { Text } from '@/components/primitives/Text';
 import { scenes, sceneAttrs } from '@/lib/choreography';
@@ -18,6 +20,11 @@ interface StudioStripProps {
  */
 const SIZES = '(min-width: 600px) 40vw, 15rem';
 
+/** How many hairlines the strip's scroll rule is drawn with. */
+const LINES = 28;
+/** And how many of them either side of the pan are lifted to full length. */
+const REACH = 3.5;
+
 /**
  * The studio, sideways. MOTION.md §5.2 and the §5.5 audit's "about — studio
  * filmstrip: pin-scrub + pan".
@@ -34,16 +41,18 @@ const SIZES = '(min-width: 600px) 40vw, 15rem';
  * nothing else — no layout, no props, no motion — and the third use is what
  * earns an abstraction, not the second (CLAUDE.md §5).
  *
- * Everything moving is the pan on one element. No 'use client': the pin, the
- * travel and the fallbacks are all CSS, so this ships nothing.
+ * Everything moving is the pan on one element, plus the rule below it. No
+ * 'use client': the pin, the travel and the fallbacks are all CSS, so this ships
+ * nothing.
  */
 export function StudioStrip({ images, locale, title, className }: StudioStripProps) {
   return (
     // The section is the track and the window inside it is what sticks. No class
     // of its own, because everything a track has — its height, its timeline —
     // comes from the trigger; the only thing the page has to say about it is the
-    // space above it. The window takes exactly one child: the trigger drives
-    // every child it has, and only the strip should move.
+    // space above it. The window's *content* is the one thing the trigger drives,
+    // which is why the rule beside it is marked [data-still]: furniture, held
+    // against the window rather than carried across it (triggers.css).
     <section className={className} {...sceneAttrs(scenes.studioStrip)}>
       <div className={styles.window} data-pinned="">
         <div className={styles.track}>
@@ -59,7 +68,58 @@ export function StudioStrip({ images, locale, title, className }: StudioStripPro
             </div>
           ))}
         </div>
+        <StripRule />
       </div>
     </section>
   );
+}
+
+/**
+ * How far along the strip the pan has got — the margin's scroll rule
+ * (components/motion/ScrollTicks) turned on its side and pointed at this one
+ * figure instead of at the document.
+ *
+ * The strip is the site's one horizontal reading, and horizontal travel under
+ * vertical scroll is exactly the motion a reader has no built-in indicator for:
+ * the scrollbar is measuring the page, not the room. So the same instrument is
+ * laid under the plates, where it appears as the section takes the screen and
+ * leaves with it — chrome for the length of one figure, and nothing before or
+ * after it.
+ *
+ * The figure is the vertical one's: the lines never move, only their length
+ * does, so what crosses the band is a swell rather than a bar filling up. What
+ * it *cannot* borrow is the measurement — and does not need to. ScrollTicks has
+ * to find its key points in the layout because only the DOM knows where a
+ * programme sits; here the quantity being drawn is the pin's own progress, which
+ * is a timeline, so every line is one `contain`-ranged animation on `--pin` and
+ * this renders once, on the server, and ships nothing.
+ */
+function StripRule() {
+  return (
+    // Decorative: it says what the plates moving under it already say, and it
+    // cannot be reached or operated. [data-still] keeps the scene's `pan` off it.
+    <div className={styles.rule} data-still="" aria-hidden="true">
+      {Array.from({ length: LINES }, (_, line) => (
+        <span key={line} className={styles.tick} style={lens(line / (LINES - 1))} />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * The slice of the pinned span one line answers to: its own position along the
+ * band, give or take the reach. The two at each end fall outside 0–100% on
+ * purpose — the first line has to already stand at full length at the frame the
+ * pan begins, so its range has to open before the pin does.
+ */
+function lens(at: number): CSSProperties {
+  const reach = REACH / (LINES - 1);
+  return {
+    animationRangeStart: `contain ${percent(at - reach)}%`,
+    animationRangeEnd: `contain ${percent(at + reach)}%`,
+  };
+}
+
+function percent(fraction: number): string {
+  return (fraction * 100).toFixed(3);
 }

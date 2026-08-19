@@ -10,6 +10,9 @@
  *                its child and says what to do when there is no trigger.
  *   .track       the strip itself, as wide as its contents. The one thing that
  *                actually moves.
+ *   .rule        the band of hairlines under the plates. Furniture, not content:
+ *                it is [data-still], so the scene's `pan` passes it by and it
+ *                reads --pin itself.
  */
 
 .window {
@@ -69,6 +72,124 @@
 }
 
 /*
+ * The strip's scroll rule — see StudioStrip.tsx for what it is and why it is
+ * here rather than in the margin.
+ *
+ * Absolutely positioned, so it takes no part in the window's flex centring and
+ * the plates sit where they sat before it existed; the window is sticky, hence
+ * positioned, so it is already the containing block and no `position: relative`
+ * has to be added anywhere for this to land.
+ *
+ * Not drawn at all without a scroll timeline. There is no static form of this:
+ * with nothing driving it, the band is a row of identical dashes measuring
+ * something the reader cannot see it measure, and the window is a plain
+ * horizontal scroller in that fallback anyway — which has a scrollbar, which is
+ * the indicator. MOTION.md §5.6.
+ */
+.rule {
+  display: none;
+}
+
+@supports (animation-timeline: view()) {
+  .rule {
+    /* They stand up from one baseline, toward the plates. */
+    align-items: end;
+    /* Appears as the section takes the screen, holds for the pan, leaves with
+       it. The shorthand first: it resets animation-timeline, so the timeline has
+       to be stated after it. */
+    animation: strip-rule linear both;
+    animation-range: contain 0% contain 100%;
+    animation-timeline: --pin;
+    /* The lines are spread over the band rather than given a gap, so the rule
+       keeps its proportion at every width it is drawn at. */
+    display: grid;
+    grid-auto-flow: column;
+    inline-size: var(--strip-rule-track);
+    /*
+     * Under the plates by a fixed gap, rather than up from the bottom of the
+     * window by one: the plates are centred (the window is a centred flex box),
+     * so 50% is their middle and half a plate is their lower edge. Measured off
+     * the window's bottom instead, the band held its distance from the edge and
+     * the plates came down to meet it as the viewport got shorter — the two
+     * collided a little under 700px tall. This way the gap is the gap at every
+     * height, which is the thing that was actually meant.
+     */
+    inset-block-start: calc(50% + var(--strip-plate-block) / 2 + var(--space-l));
+    /* inset-inline: 0 with a definite width and auto margins is what centres the
+       band on the window without a percentage translate — the transform belongs
+       to the lines, and only to the lines. */
+    inset-inline: 0;
+    justify-content: space-between;
+    margin-inline: auto;
+    /* It sits over the window, which is empty there by construction, but nothing
+       about it is reachable and it must never take a press meant for the page. */
+    pointer-events: none;
+    position: absolute;
+  }
+}
+
+/*
+ * One keyframe set for every line, and the whole figure is in it: a line stands
+ * to its full height and full ink as the pan reaches the part of the strip it
+ * stands for, and settles back as it passes. What differs between lines is only
+ * when it runs, which is the range StudioStrip computes per line and sets inline.
+ *
+ * linear, because it is bound to the scroll — DESIGN-SYSTEM.md §6. The curve the
+ * eye reads is not in the timing anyway; it is the two dozen neighbours each a
+ * little further along the same ramp.
+ */
+@keyframes swell {
+  from {
+    opacity: var(--tick-ink);
+    transform: scaleY(var(--tick-rest));
+  }
+
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+
+  to {
+    opacity: var(--tick-ink);
+    transform: scaleY(var(--tick-rest));
+  }
+}
+
+/* And the band as a whole, over the pinned span: in as the strip catches the
+   screen, out as it lets go. Nothing in between — the swell is the content. */
+@keyframes strip-rule {
+  from {
+    opacity: 0;
+  }
+
+  6%,
+  94% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.tick {
+  animation: swell linear both;
+  /* After the shorthand, which resets both of these. The range is inline, per
+     line, and inline wins over the fallback stated here. */
+  animation-range: contain 0% contain 100%;
+  animation-timeline: --pin;
+  background-color: var(--c-ink);
+  block-size: var(--space-s);
+  inline-size: 1px;
+  /* The resting state, stated as well as keyframed: it is what a line holds
+     before its range opens and after it closes. */
+  opacity: var(--tick-ink);
+  transform: scaleY(var(--tick-rest));
+  /* From the baseline upward — a line grows toward the photographs. */
+  transform-origin: 50% 100%;
+}
+
+/*
  * Reduced motion. The trigger has already released the pin and un-clipped the
  * window; what is left is a row several screens wide with nowhere to go, so the
  * strip stops being a strip and becomes a gallery. Not a horizontal scroller:
@@ -77,6 +198,13 @@
  * every plate is simply on the page. MOTION.md §9.
  */
 @media (prefers-reduced-motion: reduce) {
+  /* And the rule goes with the strip it measured. There is nothing left for it
+     to say once the plates are a wrapped gallery, and a thing whose entire
+     content is its travel says nothing standing still. MOTION.md §9. */
+  .rule {
+    display: none;
+  }
+
   .window {
     overflow: visible;
   }
