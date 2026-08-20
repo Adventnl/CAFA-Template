@@ -18,6 +18,10 @@ import { parseMedia, type MediaFacts } from './content-schema';
  * and this file only has to know the intrinsic size of each original — which
  * the admin measured when it was uploaded, and which the content bundle
  * carries. The aspect box the CLS budget depends on is unchanged.
+ *
+ * Unless the zone cannot transform, which is a state a Free plan can be left in
+ * and which nothing on the page would report. The bundle says which it is, and
+ * `deliveryUrl` is the one place that branches on the answer.
  */
 
 /** What the admin measured, plus where the original lives. */
@@ -53,6 +57,31 @@ const base = (() => {
 })();
 
 /**
+ * Whether this zone can transform, as the admin found it.
+ *
+ * Image Transformations are a zone setting on a paid plan, and a zone that does
+ * not have them answers `/cdn-cgi/image/…` with something that is not an image
+ * — so the whole site renders with every photograph broken, and nothing errors.
+ * The admin cannot turn the setting on and cannot see it from here, so it tells
+ * us instead: `mediaTransform: false` means ask for the originals.
+ *
+ * Absent reads as false, and that asymmetry is the point. The field arrived
+ * after the first revisions were published, so a bundle without it is one that
+ * predates the question rather than one answering yes — and of the two ways to
+ * be wrong, full-size originals are a heavy page and `/cdn-cgi/image/` on a
+ * zone that cannot serve it is no page at all. A value that is *present and not
+ * a boolean* still fails the build.
+ */
+const transforms = (() => {
+  const value: unknown = bundle.mediaTransform;
+  if (value === undefined) return false;
+  if (typeof value !== 'boolean') {
+    throw new Error('content: bundle.mediaTransform — expected a boolean');
+  }
+  return value;
+})();
+
+/**
  * Throws rather than degrading: a record referencing a photograph the bundle
  * does not describe is a content error, and it should stop the build rather
  * than ship an <img> with no dimensions and a broken URL.
@@ -68,17 +97,29 @@ export function getImage(src: string): ImageEntry {
 }
 
 /**
+ * Where a photograph is actually fetched from at a given width.
+ *
  * `fit=scale-down` is what stops a 900px original being served at 1200: it
  * never enlarges, so the ladder below matches `targetWidths()` in the pipeline
  * this replaced — every step under the original's own width, then the original.
+ *
+ * With transforms off there is no width to ask for. The original is the only
+ * thing in the bucket, and the URL is the key against the media origin.
  */
-function transformUrl(src: string, width: number): string {
+function deliveryUrl(src: string, width: number): string {
+  if (!transforms) return `${base}/${src}`;
   const options = `width=${width},quality=${QUALITY},format=auto,fit=scale-down`;
   return `/cdn-cgi/image/${options}/${base}/${src}`;
 }
 
 export function variants(entry: ImageEntry): ImageVariant[] {
+  // One derivative, because there is one file. Declared at the original's own
+  // width rather than at the ladder's steps: a srcset that offers 480w and
+  // hands over 2400 pixels is a lie the browser plans its `sizes` around, and
+  // it would pick the smallest candidate for every slot on the page.
+  if (!transforms) return [{ src: deliveryUrl(entry.src, entry.width), width: entry.width }];
+
   const cap = Math.min(entry.width, WIDTHS[WIDTHS.length - 1] ?? entry.width);
   const steps = [...new Set([...WIDTHS.filter((width) => width < cap), cap])];
-  return steps.map((width) => ({ src: transformUrl(entry.src, width), width }));
+  return steps.map((width) => ({ src: deliveryUrl(entry.src, width), width }));
 }

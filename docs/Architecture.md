@@ -13,7 +13,7 @@ Companion to `CLAUDE.md`. That file is the law; this is the map.
 | Animation | Browser-native: view transitions + scroll-driven animations | The budget for `motion` was ~5 KB and it has not been spent. React's `<ViewTransition>` hands route changes to the browser's View Transitions API, and `animation-timeline: view()` binds scroll motion to the compositor. Both are CSS from that point on, so the most animated surface on the site ships no animation runtime at all. §5.4–5.5. |
 | Content | Fetched from CAFA-Admin (D1) at build time | `scripts/fetch-content.mjs` calls `src/services/content-api.mts` and writes `content/bundle.generated.json` before `next build`; `lib/content-schema.ts` re-parses every field, so a malformed record fails the build instead of rendering. No runtime fetch, no CMS client, no server. The studio edits in the admin and presses Publish; a deploy hook rebuilds this. |
 | i18n | Route segment + dictionary | Two locales don't justify a library. `[locale]` segment, a `dictionaries/` map, `generateStaticParams` emits both trees. |
-| Images | R2 originals, transformed on delivery | `next/image` optimisation is unavailable under `output: 'export'`, and a build-time `sharp` pass cannot survive CI — its incremental cache dies with the container, so every build would re-encode ~700 AVIF derivatives. Cloudflare transforms the original per request and caches it; `format=auto` negotiates AVIF or WebP. Nothing is derived at build time and no media ships in `out/`. |
+| Images | R2 originals, transformed on delivery when the zone can | `next/image` optimisation is unavailable under `output: 'export'`, and a build-time `sharp` pass cannot survive CI — its incremental cache dies with the container, so every build would re-encode ~700 AVIF derivatives. Cloudflare transforms the original per request and caches it; `format=auto` negotiates AVIF or WebP. Nothing is derived at build time and no media ships in `out/`. |
 | Deploy | Cloudflare Workers, static assets | `out/` is the whole artefact — HTML, CSS and JS, no media. Builds are triggered by a deploy hook the admin pokes on publish. |
 
 **The `next/image` caveat, handled.** `next.config.ts` sets `images: { unoptimized: true }`.
@@ -195,6 +195,12 @@ Rules:
 - `ImageRef` carries no dimensions. The admin measures them from the uploaded bytes and
   the bundle carries them; `lib/media.ts` hands the numbers to `Media`, so a content record
   cannot disagree with the file in the bucket and nobody has to type a pixel count.
+- The bundle's `media` map carries one more measurement beside them: `tint`, the
+  photograph's dominant hue as an OKLCH angle, which is what the works index draws the band
+  behind a hovered row from (DESIGN-SYSTEM.md §7). It is nullable, and both readings of null
+  are the same answer — a monochrome photograph has no hue, and neither has one the admin
+  uploaded before it measured such things. Both get `--c-tint-none`. A hue that is *present
+  and out of range* still fails the build.
 - A **private** work publishes no photographs. The admin drops its cover and media when it
   builds a revision, and `parseWorks` drops them again on the way in — which is why an
   empty `src` is legal for exactly that case and nowhere else.
@@ -442,6 +448,22 @@ picks AVIF or WebP from the request's `Accept` header, so one `srcset` replaces 
 the width ladder `[480, 768, 1200, 1800, 2400]` safe to apply to an original of any size —
 a 900px photograph yields 480 and 900, exactly as the old `targetWidths()` did.
 
+**Unless the zone cannot transform.** Image Transformations are a zone setting on a paid
+plan; on a Free zone the toggle is an upgrade prompt, and every `/cdn-cgi/image/…` URL
+answers with something that is not an image — a site that builds, deploys and renders with
+every photograph broken, reporting nothing. The admin knows which it is (it is the
+`MEDIA_TRANSFORM` var, and `npm run media` over there checks it against the real zone) and
+says so in the bundle as `mediaTransform`. When it is false, `lib/media.ts` points every
+`<img>` at `<mediaBase>/<key>` — the original, at the 2400px the browser downscaled it to
+on upload — and the `srcset` carries one candidate at that intrinsic width rather than a
+ladder of five URLs that all resolve to the same file.
+
+That is a deliberate, temporary derogation from CLAUDE.md §7, and it is the smaller of two
+failures: a heavy page against no page at all. The compliant state is a zone on a plan that
+transforms — turn Images → Transformations on, drop `MEDIA_TRANSFORM` from the admin's
+`wrangler.jsonc`, redeploy and publish once, and the ladder comes back with no change
+here.
+
 `MediaFrame.tsx` emits:
 
 ```html
@@ -454,7 +476,10 @@ a 900px photograph yields 480 and 900, exactly as the old `targetWidths()` did.
 No wrapper div: the intrinsic `width`/`height` attributes give the browser the ratio and
 `height: auto` holds the box open, which is one element fewer for the same zero CLS. Those
 dimensions come from the bundle, not from the file, which is why the admin measures them
-from the uploaded bytes rather than trusting a form field. `sizes` is a required prop —
+from the uploaded bytes rather than trusting a form field. The one measurement that does
+come from the client is `tint`: finding a hue means decoding pixels, which a Worker cannot
+do, and a wrong hue is a slightly wrong ground behind one row rather than layout shift.
+`sizes` is a required prop —
 forgetting it is the single most common cause of over-downloading, so the type forbids it.
 A key the bundle does not describe throws rather than rendering a broken `<img>`.
 
