@@ -1,13 +1,18 @@
 import type { Metadata } from 'next';
 
-import { MentorGrid } from '@/components/composites/MentorGrid';
+import { MentorStrip } from '@/components/composites/MentorStrip';
 import { PageHeading } from '@/components/composites/PageHeading';
-import { StudioStrip } from '@/components/composites/StudioStrip';
+import { WorkGrid } from '@/components/composites/WorkGrid';
 import { partClass } from '@/components/motion/Part';
 import { Grid } from '@/components/primitives/Grid';
 import { Text } from '@/components/primitives/Text';
 import { scenes, sceneAttrs } from '@/lib/choreography';
-import { getDictionary, getMentors, getSite, requireLocale } from '@/lib/content';
+import {
+  getDictionary,
+  getMentors,
+  getPublishedWorkListings,
+  requireLocale,
+} from '@/lib/content';
 import { pageMetadata } from '@/lib/metadata';
 import { routes, type LocaleParams } from '@/lib/routes';
 
@@ -47,22 +52,21 @@ export default async function AboutPage({ params }: LocaleParams) {
           ))}
         </div>
       </Grid>
-      {/* The same photographs the home page carries as a full-bleed column, read
-          the other way: a single row travelling across a pinned window. It is
-          the page's one place, between what the studio says about itself and who
-          is in it. MOTION.md §5.2. */}
-      <StudioStrip
-        images={getSite().studio}
+      {/* The people, read across: a single row of portraits travelling through a
+          pinned window, between what the studio says about itself and what it
+          has made. MOTION.md §5.2. */}
+      <MentorStrip
+        mentors={getMentors()}
         locale={locale}
-        title={dictionary.about.studioTitle}
-        className={styles.studio}
+        title={dictionary.about.mentorsTitle}
+        className={styles.strip}
       />
       <Grid>
-        <MentorGrid
-          mentors={getMentors()}
+        <WorkGrid
+          works={getPublishedWorkListings()}
           locale={locale}
-          heading={dictionary.about.mentorsTitle}
-          className={styles.mentors}
+          heading={dictionary.about.worksTitle}
+          className={styles.works}
         />
       </Grid>
     </>

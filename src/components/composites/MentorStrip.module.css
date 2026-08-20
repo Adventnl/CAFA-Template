@@ -1,5 +1,5 @@
 /*
- * Three elements and each has exactly one job, which is what lets the trigger
+ * Four elements and each has exactly one job, which is what lets the trigger
  * own the motion and this file own only the shape:
  *
  *   the section  the track. Its height is the scroll the pan is spent over, and
@@ -10,6 +10,9 @@
  *                its child and says what to do when there is no trigger.
  *   .track       the strip itself, as wide as its contents. The one thing that
  *                actually moves.
+ *   .plate       one mentor: the portrait, and under it who it is. A fixed total
+ *                height with the portrait taking whatever the caption leaves —
+ *                see below, because that is what holds the strip's horizon.
  *   .rule        the band of hairlines under the plates. Furniture, not content:
  *                it is [data-still], so the scene's `pan` passes it by and it
  *                reads --pin itself.
@@ -23,7 +26,7 @@
    * animation-timeline the whole @supports block never applies, so nothing pins
    * and nothing pans — and a row several viewports wide with no clip would push
    * the *document* sideways. A plain scroll container is the honest degradation:
-   * every photograph is still reachable, by hand, in order. MOTION.md §5.6.
+   * every mentor is still reachable, by hand, in order. MOTION.md §5.6.
    */
   overflow: auto hidden;
   overscroll-behavior-x: contain;
@@ -49,21 +52,32 @@
   white-space: nowrap;
 }
 
+/*
+ * A common horizon, and it is the plate rather than the portrait that is held to
+ * it: the whole figure — picture plus caption — stands at --strip-plate-block,
+ * and the portrait is the flexible part inside it. Sizing the *portrait* instead
+ * and letting the caption hang below it would make every plate a different
+ * height and give the row a ragged foot; worse, it would move the strip's own
+ * scroll rule, which is positioned off half a plate (see .rule).
+ */
 .plate {
   block-size: var(--strip-plate-block);
+  display: flex;
   flex: 0 0 auto;
+  flex-direction: column;
   inline-size: var(--strip-plate-inline);
+  row-gap: var(--space-2xs);
   scroll-snap-align: center;
 }
 
 /*
- * A common horizon: every plate the same height, cropped to fit. Selected
- * through the <picture> rather than as `.plate img`, which would tie with
- * MediaFrame's own rule at 0-1-1 and be settled by whichever module the bundler
- * emitted last — the exact race that file's header warns about.
+ * Selected through the <picture> rather than as `.plate img`, which would tie
+ * with MediaFrame's own rule at 0-1-1 and be settled by whichever module the
+ * bundler emitted last — the exact race that file's header warns about.
  */
 .plate picture {
-  block-size: 100%;
+  flex: 1 1 auto;
+  min-block-size: 0;
 }
 
 .plate picture img {
@@ -72,7 +86,27 @@
 }
 
 /*
- * The strip's scroll rule — see StudioStrip.tsx for what it is and why it is
+ * Two single lines, always, which is what keeps every caption the same height
+ * and therefore every portrait the same height. Names and disciplines are short
+ * by content design — the clip is a guard against one that is not, and it never
+ * fires at the widths §9 asks for.
+ */
+.caption {
+  flex: 0 0 auto;
+}
+
+.caption > * {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.discipline {
+  color: var(--c-ink-70);
+}
+
+/*
+ * The strip's scroll rule — see MentorStrip.tsx for what it is and why it is
  * here rather than in the margin.
  *
  * Absolutely positioned, so it takes no part in the window's flex centring and
@@ -132,7 +166,7 @@
  * One keyframe set for every line, and the whole figure is in it: a line stands
  * to its full height and full ink as the pan reaches the part of the strip it
  * stands for, and settles back as it passes. What differs between lines is only
- * when it runs, which is the range StudioStrip computes per line and sets inline.
+ * when it runs, which is the range MentorStrip computes per line and sets inline.
  *
  * linear, because it is bound to the scroll — DESIGN-SYSTEM.md §6. The curve the
  * eye reads is not in the timing anyway; it is the two dozen neighbours each a
@@ -185,7 +219,7 @@
      before its range opens and after it closes. */
   opacity: var(--tick-ink);
   transform: scaleY(var(--tick-rest));
-  /* From the baseline upward — a line grows toward the photographs. */
+  /* From the baseline upward — a line grows toward the portraits. */
   transform-origin: 50% 100%;
 }
 

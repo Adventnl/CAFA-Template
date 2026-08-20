@@ -75,6 +75,17 @@
   --type-label-tracking: 0.09em;
   --type-label-weight: 500;
 
+  /*
+   * Not a seventh role, and it sets no display type: it is the size a *control*
+   * a reader types into has to be, because iOS Safari zooms the viewport when a
+   * focused field measures under 16px. On a card that is already an overlay
+   * pinned near the top of the screen that zoom is disorienting, and the only
+   * other way to stop it is to forbid pinch-zoom, which CLAUDE.md §10 rules out.
+   * So it is a floor under the body size rather than a size of its own — above
+   * 16px the fluid body value wins and the field tracks the page.
+   */
+  --type-field-size: max(1rem, var(--type-body-size));
+
   /* §4 Space — 8px base with a fluid multiplier. Nine steps, no more. */
   --space-3xs: 0.25rem; /*  4 */
   --space-2xs: 0.5rem; /*  8 */
@@ -287,7 +298,23 @@
    * and this changes with it, the same arrangement --space-pin already uses.
    */
   --note-inset: calc(var(--space-header) + var(--tap-min));
-  --note-inline: min(26rem, calc(100dvw - var(--space-gutter) * 2));
+  /*
+   * The card is a landscape sheet rather than a column, because what is on it is
+   * two things side by side: where the atelier is, and the box you write in. At
+   * 26rem those stacked into a strip taller than most windows; at 38rem they sit
+   * as two columns from --bp-md up, which is the same width at which the header
+   * collapses to one row and --note-inset above steps with it.
+   *
+   * --note-details is the narrow column of that pair — the addresses, set in the
+   * meta role. It is a width rather than a fraction because it is sized by what
+   * it holds, and what it holds is one line: the street address is the longest
+   * thing on the card that must not wrap, and at 11px it measures a little over
+   * 13rem in both locales. Under that the postcode drops to a line of its own,
+   * which reads as a mistake rather than as a second line. Past about 15rem it
+   * is the form column that starts to feel cramped instead.
+   */
+  --note-inline: min(38rem, calc(100dvw - var(--space-gutter) * 2));
+  --note-details: 14rem;
 
   /*
    * MOTION.md §4 — scroll as continuous state. ScrollField writes these each
@@ -343,21 +370,31 @@
   --stack-track: 120svh;
 
   /*
-   * And the one surface that spends that scroll: the studio filmstrip on About.
+   * And the one surface that spends that scroll: the mentor filmstrip on About.
    * A plate stands at a fixed height and a fluid width, because a strip is read
-   * along a common horizon — letting each photograph keep its own proportions,
+   * along a common horizon — letting each portrait keep its own proportions,
    * which is right for a column (MediaFrame says so), would give a row a ragged
    * top edge and no strip at all. The width is what flexes, and the crop with it.
+   *
+   * The height is the *plate's*, portrait and caption together, so the name
+   * under a face is inside the horizon rather than hanging below it — see
+   * MentorStrip.module.css, where the portrait is the flexible part.
    *
    * The width is a viewport fraction with a floor and *no ceiling*, and that is
    * the whole reason it is written as max() rather than the clamp() this file
    * otherwise prefers. `pan` travels the strip's width minus the window's, so a
    * capped plate width means the strip stops growing while the window keeps
-   * going: at 2560px a 32rem cap left five plates barely wider than the screen,
+   * going: at 2560px a 32rem cap left the plates barely wider than the screen,
    * and the figure became three viewport-heights of scroll spent moving a
-   * photograph a few hundred pixels. Proportional, the travel is always about
-   * 100vw and the strip keeps pace with the scroll at every width — measured at
-   * 390, 768, 1440 and 2560, where the ratio lands between 0.86 and 1.08.
+   * photograph a few hundred pixels. Proportional, the travel keeps pace with
+   * the scroll at every width — measured with six portraits at 390, 768, 1440
+   * and 2560, the strip moves between 0.7 and 1.4 pixels sideways per pixel of
+   * scroll, which is roughly half a screen of reading per plate.
+   *
+   * Both ends of that band are content, not layout: the count comes from the
+   * admin, so a strip of ten would travel nearly twice as far over the same
+   * --pin-track. It is the number to check here if the pan ever feels hurried,
+   * and the fix is the track rather than the plate.
    *
    * The floor is what a phone needs instead: at 390px, 40vw is a contact sheet.
    */
@@ -367,7 +404,7 @@
   /*
    * And the strip's own scroll rule: the band of hairlines below the plates that
    * says how far along the strip the pan has got (components/composites/
-   * StudioStrip). It is the margin rule of --tick-* turned on its side, so it
+   * MentorStrip). It is the margin rule of --tick-* turned on its side, so it
    * borrows that object's rest and ink rather than restating them — the two are
    * meant to read as one instrument, and a second pair of numbers is a second
    * instrument however close the values start out.
@@ -402,8 +439,9 @@
   /*
    * The scroll rule — the column of lines in the margin that says where in the
    * page the reader is (components/motion/ScrollTicks). Its lines never move, so
-   * every value here is either where the column stands or how far a line
-   * *extends*, and there is nothing about position among them.
+   * every value here is either where the column stands, how far a line
+   * *extends*, or — the two --tick-wake-* below — how far the reader has to have
+   * come before the column is drawn at all. Nothing here is a line's position.
    *
    * The two horizontals are measured off --space-gutter rather than given sizes
    * of their own, because the one thing the column must never do is reach the
@@ -422,6 +460,19 @@
   --tick-rest: 0.3; /* what a line keeps of its length away from the reader */
   --tick-stop-rest: 0.62; /* and what a key point keeps, so it stays a mark */
   --tick-ink: 0.2; /* the ink it holds there, against full ink at the reader */
+  /*
+   * Where the column arrives. It is an answer to a question the reader has not
+   * asked yet at the top of a page — nothing has been scrolled, so there is no
+   * position to report — and drawing it there makes it furniture rather than an
+   * indicator. So it is absent until the first --tick-wake-start of travel and
+   * has fully arrived by --tick-wake-end, which is inside the first screen: the
+   * reader who has begun reading has it, and the one still at the title does
+   * not. Distances, not fractions of the document, because "a bit of scroll" is
+   * a fixed amount of the reader's movement whether the page is four screens or
+   * forty.
+   */
+  --tick-wake-start: 20svh;
+  --tick-wake-end: 60svh;
 
   --focus-dim: 0.55; /* how far media dims at the edges of its pass; §6 */
   --focus-min-0: 0.94;
@@ -453,6 +504,37 @@
   --mark-rake: 0.85em; /* the run of the chisel cut across the stroke's height */
   --mark-tilt: -1.6deg; /* the lean of the whole stroke, because a hand has one */
   --mark-dry: 52%; /* the ink left at the bottom edge, where the nib ran out */
+
+  /*
+   * The index row tint — DESIGN-SYSTEM.md §2, §7. The band drawn behind the row
+   * under the pointer, in the hue of that work's own photograph.
+   *
+   * Only the hue travels. It is measured from the cover when the photograph is
+   * uploaded and arrives in the bundle beside the width and the height; the row
+   * publishes it as --tint-h and these two supply everything else. That is the
+   * whole reason this is safe to put text on: lightness and chroma are ours and
+   * constant, so contrast over the band is one measurement rather than a
+   * property of whichever photograph the atelier uploaded. --c-ink measures
+   * 14.36:1 over it and --c-ink-62 — the row numbers, the year, the status, and
+   * the tightest thing on the row — measures 4.72:1, at every hue on the circle.
+   *
+   * --tint-c is not a taste value. 0.038 is the widest chroma that keeps all 360
+   * hues inside sRGB at this lightness, and staying inside matters: past it the
+   * browser gamut-maps by cutting chroma, which it does by different amounts at
+   * different hues, and the constant this all rests on would quietly stop being
+   * constant — blues muted, yellows untouched.
+   *
+   * This is not --c-mark and must not drift into it. The mark is one fixed
+   * pigment laid on a label that goes somewhere; this is a ground under a row,
+   * it has no colour of its own, and what colour it borrows is the work's. §2
+   * still holds: the work supplies all colour.
+   */
+  --tint-l: 0.92;
+  --tint-c: 0.038;
+  /* A cover with no hue to give — a black-and-white photograph, or one the admin
+     has not measured yet. The same band at the paper's own warmth, so the row
+     still answers to the pointer instead of doing nothing. */
+  --c-tint-none: oklch(var(--tint-l) 0.008 95);
 
   --focus-ring:
     0 0 0 2px var(--c-paper), 0 0 0 4px var(--c-focus);

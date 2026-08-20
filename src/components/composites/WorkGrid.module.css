@@ -17,16 +17,31 @@
   padding: 0;
 }
 
-.portrait {
+/* The whole card is the target — DESIGN-SYSTEM.md §7 wants one hit area per
+   destination, not a title that is a link beside a photograph that is not. */
+.card {
+  color: inherit;
+  display: block;
+  text-decoration: none;
+}
+
+.cover {
   margin-block-end: var(--space-s);
 }
 
-.discipline {
+/* The particulars on one line, wrapping to two in a narrow column: what it is,
+   then when. The year is pushed to the end so a scan down the grid reads a
+   column of years however many disciplines a project carries. */
+.meta {
   color: var(--c-ink-70);
+  column-gap: var(--space-2xs);
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.note {
+.year {
   color: var(--c-ink-62);
+  margin-inline-start: auto;
 }
 
 /*

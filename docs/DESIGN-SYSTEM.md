@@ -56,8 +56,28 @@ is the moment to delete it.
   --c-scrim:        rgb(20 20 15 / 0.35);  /* over-media legibility */
   --c-veil:         rgb(247 246 242 / 0.55); /* paper over the hover backdrop */
   --c-mark:         #F3E24E;               /* the hover stroke on a nav label, §7 */
+  --tint-l:         0.92;                  /* the index row band: lightness, §7 */
+  --tint-c:         0.038;                 /*                     and chroma    */
+  --c-tint-none:    oklch(var(--tint-l) 0.008 95);  /* a cover with no hue to give */
 }
 ```
+
+The last three are not a second exception to the rule above, they are the rule being
+taken literally. `--tint-l` and `--tint-c` are a band's lightness and chroma with no hue
+of their own; the hue arrives per row from the photograph the row is about, measured on
+upload and carried in the bundle beside the width and the height. Nothing in the system
+holds a colour — the work supplies it, which is what §2 asked for in the first place.
+
+Fixing L and C rather than sampling them is what makes it safe to put text on. Contrast
+over the band is one measurement instead of a property of whichever photograph the
+atelier uploaded — `--c-ink` at 14.4:1 and `--c-ink-62`, the tightest thing on the row,
+at 4.7:1, **at every hue on the circle**. A black cover cannot produce a black band,
+because the lightness was never the photograph's to give.
+
+`--tint-c` is measured, not chosen: 0.038 is the widest chroma at which all 360 hues stay
+inside sRGB at `--tint-l`. Past it the browser gamut-maps by cutting chroma, and it cuts
+different amounts at different hues — blues muted, yellows untouched — so the constant
+the contrast figures rest on would quietly stop being constant.
 
 Contrast check, measured rather than estimated — the first three figures written here were
 all wrong, and the tertiary one was wrong in a way that failed WCAG AA:
@@ -285,9 +305,22 @@ Rules that make it feel like the references rather than a template:
 
 - **Links in prose:** underline at 1px with `text-underline-offset: 0.22em`; on hover the
   underline goes to `--c-ink-45`, the text stays. No colour change.
-- **Index rows:** the row itself does nothing on hover; the *backdrop* changes and the other
-  rows dim to `--c-ink-dim` over `--dur-base`. The hovered row stays at `--c-ink`. This
-  inversion — dimming the siblings rather than highlighting the target — is the ium move.
+- **Index rows:** the *backdrop* changes, the other rows dim to `--c-ink-dim` over
+  `--dur-base`, and the hovered row stays at `--c-ink`. That inversion — dimming the
+  siblings rather than highlighting the target — is the ium move, and it is still what
+  does most of the work.
+  Under it, the hovered row takes a band: `oklch(var(--tint-l) var(--tint-c) H)` where `H`
+  is the dominant hue of that work's cover, over `--dur-base`. It overruns the first and
+  last column by `--space-2xs` for the reason `--mark-reach` overruns a word — flush edges
+  read as a table cell selected. It is opaque on purpose: this row is sitting over a
+  full-bleed photograph behind `--c-veil`, where §2 can only promise 5.2:1 for the worst
+  cover that might arrive, and the band replaces that with the constant above. A cover with
+  no hue — monochrome, or not yet measured — gets `--c-tint-none`, the same band at the
+  paper's own warmth. Hover and `:focus-visible` both; nothing on touch, where the row
+  already carries its cover inline and has the work's colour on it without a band. Never on
+  a private row, which is not a link and does not go anywhere.
+  The band is not `--c-mark` and must not drift into it: the mark is one fixed pigment on a
+  label, this is a ground with no colour of its own.
 - **Nav:** `label` role, `--c-ink-70` at rest, `--c-ink` on hover, `--dur-fast` — and,
   behind the word, a chisel-nib stroke in `--c-mark` swept across it over `--dur-base`.
   It is a mark, not a shape around the label, and four things are what make that true:
@@ -303,6 +336,17 @@ Rules that make it feel like the references rather than a template:
   the pager. It is `components/primitives/Mark`, drawn by whichever control it sits in;
   the three that draw it are the nav, the locale switch — but never its current locale —
   and the work pager's prev/next.
+- **Fields:** the contact card holds the only two on the site, and they are ruled lines
+  rather than wells. Transparent, no border but a `--hairline` under them, no placeholder —
+  the label is a real `<label>` above the control, so it is still there once there is
+  something written against it. On focus the rule alone goes to `--c-ink` over `--dur-fast`.
+  A boxed input would break §8.2 and §8.3 at once, and on a card that is already a sheet of
+  paper the honest form of a place to write is a line to write on. Their type is
+  `--type-field-size`, which is not a seventh role: it is a 16px floor under the body size,
+  and it exists because iOS Safari zooms the viewport at a focused field under 16px.
+- **Submit:** a `label` role under the same underline, `--c-ink-70` to `--c-ink` over
+  `--dur-fast` — the nav's treatment, never `--c-mark`. The highlighter marks a label that
+  goes somewhere, and submitting is not navigating; §2's bound is the job, not the surface.
 - **Focus:** `--focus-ring` on `:focus-visible` only, never suppressed.
 - **Disabled / private:** `--c-ink-45`, `cursor: default`, not a link at all.
 

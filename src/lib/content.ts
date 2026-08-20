@@ -88,6 +88,19 @@ export function getWorkListings(): readonly WorkListing[] {
   return listings;
 }
 
+/**
+ * The same listings, minus the works that publish no cover.
+ *
+ * A row can carry a private work — a number, a title, and no link — but a card
+ * cannot: it is a photograph with a name under it, so a private work would be a
+ * hole in the grid. The filter lives here rather than in the page, because
+ * "which works may be shown as pictures" is a question about the content, and
+ * pages assemble rather than decide (CLAUDE.md §3).
+ */
+export function getPublishedWorkListings(): readonly WorkListing[] {
+  return listings.filter((work) => work.status !== 'private');
+}
+
 /** The works that have a page of their own. A private work is listed, not opened. */
 export function getPublishedWorks(): readonly Work[] {
   return works.filter((work) => work.status !== 'private');

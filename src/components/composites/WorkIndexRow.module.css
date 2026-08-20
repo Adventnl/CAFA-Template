@@ -15,10 +15,60 @@
   column-gap: var(--grid-gap);
   display: grid;
   grid-template-columns: repeat(var(--grid-cols), minmax(0, 1fr));
+  /* Holds the band's negative z-index below the row's own text and no further,
+     the same arrangement and for the same reason as Mark.module.css. */
+  isolation: isolate;
   padding-block: var(--space-s);
+  position: relative;
   row-gap: var(--space-xs);
   text-decoration: none;
   transition: opacity var(--dur-base) var(--ease-io);
+}
+
+/*
+ * The band behind the row under the pointer, in the hue of that work's own
+ * photograph. DESIGN-SYSTEM.md §7.
+ *
+ * It runs past the first and last column by --space-2xs, which is the same
+ * argument --mark-reach makes about the nib: a ground laid under a row stops
+ * where the hand stops, not where the grid does. Flush edges read as a table
+ * cell selected, which is the one thing this must not look like.
+ *
+ * Opaque, not translucent, and that is the point of it. Under a fine pointer
+ * this row is sitting over a full-bleed photograph behind --c-veil, where
+ * DESIGN-SYSTEM.md §2 can only promise 5.2:1 for the worst cover the atelier
+ * might upload. The band replaces that whole question with a constant: the row
+ * is on a known ground whatever is behind it, which is why the small text can
+ * stay at --c-ink-62 rather than being pushed up a step to survive the photo.
+ *
+ * Only opacity moves. Fading a background-color is two of the things CLAUDE.md
+ * §7 forbids at once — a paint-bound property, and one that cannot be composited
+ * — so the colour is set once and the layer is what transitions.
+ */
+.link::before {
+  background-color: var(--c-tint-none);
+  content: '';
+  inset-block: 0;
+  inset-inline: calc(var(--space-2xs) * -1);
+  opacity: 0;
+  position: absolute;
+  transition: opacity var(--dur-base) var(--ease-io);
+  z-index: -1;
+}
+
+/* A cover that had a hue to give. Lightness and chroma stay ours — that is the
+   whole contract, and tokens.css carries the measurements it rests on. */
+.link[data-tinted]::before {
+  background-color: oklch(var(--tint-l) var(--tint-c) var(--tint-h));
+}
+
+/*
+ * Keyboard parity, CLAUDE.md §10 — outside the hover query, so the band is not
+ * a pointer-only reward. A private row is excluded from both: it is not a link,
+ * it does not go anywhere, and a ground under it would say that it does.
+ */
+.link:not([data-private]):focus-visible::before {
+  opacity: 1;
 }
 
 .link[data-private] {
@@ -97,6 +147,17 @@
 
   [data-previewing] .link:hover,
   [data-previewing] .link:focus-visible {
+    opacity: 1;
+  }
+
+  /*
+   * And the band, which is the half of this the inversion above cannot do. The
+   * siblings stepping back says *not these*; the ground says *this one*, and it
+   * is the row's own photograph saying it. §9: nothing on touch, which is
+   * decided rather than inherited — a touch row already carries its cover
+   * inline, so it has the work's colour on it without needing a band.
+   */
+  .link:not([data-private]):hover::before {
     opacity: 1;
   }
 }

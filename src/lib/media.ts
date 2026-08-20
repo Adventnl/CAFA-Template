@@ -1,6 +1,6 @@
 import bundle from '@/content/bundle.generated.json';
 
-import { parseMedia } from './content-schema';
+import { parseMedia, type MediaFacts } from './content-schema';
 
 /**
  * Where the derivatives come from.
@@ -20,12 +20,10 @@ import { parseMedia } from './content-schema';
  * carries. The aspect box the CLS budget depends on is unchanged.
  */
 
-export interface ImageEntry {
+/** What the admin measured, plus where the original lives. */
+export interface ImageEntry extends MediaFacts {
   /** The R2 object key, e.g. "works/edible-house/01.jpg". */
   src: string;
-  /** Intrinsic size of the original, for the aspect box. */
-  width: number;
-  height: number;
 }
 
 export interface ImageVariant {

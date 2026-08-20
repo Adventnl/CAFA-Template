@@ -68,6 +68,23 @@ function whole(value: unknown, at: string): number {
   return value;
 }
 
+/**
+ * A hue on the colour circle, or null where there is none to have.
+ *
+ * Absent and null both read as null, and that is not laxity: a photograph with
+ * no chromatic content genuinely has no hue, and neither does one the admin has
+ * not measured yet. Both want the same neutral band, so both produce the same
+ * value rather than one of them being an error. A hue that is *present and out
+ * of range* still fails the build, because that is a bug rather than an absence.
+ */
+function hue(value: unknown, at: string): number | null {
+  if (value === undefined || value === null) return null;
+  if (typeof value !== 'number' || !Number.isFinite(value) || value < 0 || value >= 360) {
+    fail(at, 'a hue in [0, 360) or null');
+  }
+  return value;
+}
+
 /** A slug is part of a URL forever, so it is checked rather than trusted. */
 function slug(value: unknown, at: string): string {
   const found = text(value, at);
@@ -318,8 +335,8 @@ function parseDictionary(value: unknown, locale: string): Dictionary {
       title: about('title'),
       description: about('description'),
       body: each(object(record.about, `${at}.about`).body, `${at}.about.body`, filled),
-      studioTitle: about('studioTitle'),
       mentorsTitle: about('mentorsTitle'),
+      worksTitle: about('worksTitle'),
     },
     contact: {
       title: contact('title'),
@@ -328,31 +345,48 @@ function parseDictionary(value: unknown, locale: string): Dictionary {
       address: contact('address'),
       hours: contact('hours'),
       note: contact('note'),
+      from: contact('from'),
+      message: contact('message'),
+      subject: contact('subject'),
+      send: contact('send'),
     },
     notFound: { title: notFound('title'), body: notFound('body'), home: notFound('home') },
     footer: { note: footer('note') },
   };
 }
 
+/** What the admin measured about a photograph when it was uploaded. */
+export interface MediaFacts {
+  /** Intrinsic size of the original, which is what holds the aspect box open. */
+  width: number;
+  height: number;
+  /**
+   * The photograph's dominant hue, or null where it has none — a monochrome
+   * image, or one the admin has not measured. Only the works index reads it,
+   * to tint the band behind the row under the pointer. DESIGN-SYSTEM.md §7.
+   */
+  tint: number | null;
+}
+
 /**
- * Intrinsic dimensions, keyed by R2 object key.
+ * What was measured, keyed by R2 object key.
  *
  * These are what hold a slot open before a photograph arrives, so a bad number
  * here is layout shift on the live site. Checking them at the same gate as
  * everything else means a malformed one fails `next build` rather than showing
  * up in a field measurement weeks later.
  */
-export function parseMedia(value: unknown): Record<string, { width: number; height: number }> {
+export function parseMedia(value: unknown): Record<string, MediaFacts> {
   const record = object(value, 'media');
-  const parsed: Record<string, { width: number; height: number }> = {};
+  const parsed: Record<string, MediaFacts> = {};
 
   for (const [key, entry] of Object.entries(record)) {
     const at = `media["${key}"]`;
-    const size = object(entry, at);
-    const width = whole(size.width, `${at}.width`);
-    const height = whole(size.height, `${at}.height`);
+    const facts = object(entry, at);
+    const width = whole(facts.width, `${at}.width`);
+    const height = whole(facts.height, `${at}.height`);
     if (width <= 0 || height <= 0) fail(at, 'positive dimensions');
-    parsed[key] = { width, height };
+    parsed[key] = { width, height, tint: hue(facts.tint, `${at}.tint`) };
   }
 
   return parsed;

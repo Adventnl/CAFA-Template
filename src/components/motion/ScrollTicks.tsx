@@ -42,11 +42,16 @@ import styles from './ScrollTicks.module.css';
  * scroll path entirely: no read of any kind happens while the page is moving.
  *
  * A page with no key points gets no column at all, which is how this stays
- * mounted in the layout while appearing on the programmes index alone. Two
- * decisions rather than two omissions: it is not drawn below --bp-lg, where the
+ * mounted in the layout while appearing on the programmes index alone. Three
+ * decisions rather than three omissions: it is not drawn below --bp-lg, where the
  * gutter it lives in is too narrow to hold it and a phone has its own scrollbar;
- * and it is not drawn under `prefers-reduced-motion`, where a thing whose entire
- * content is its motion has nothing left to say.
+ * it is not drawn under `prefers-reduced-motion`, where a thing whose entire
+ * content is its motion has nothing left to say; and it is not drawn at the top
+ * of a page, because at scroll 0 an indicator of the reader's position is
+ * reporting a position they have not taken, and a thing that is simply there
+ * when the page arrives reads as furniture rather than as an answer. It fades in
+ * over the first --tick-wake-* of travel, which — being one more animation on
+ * the same scroll timeline as the lines — is entirely in the stylesheet.
  */
 
 /** How many lines the column is drawn with. */

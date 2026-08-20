@@ -1,27 +1,45 @@
 /*
  * Contact is the one thing on this site that is a single object rather than a
- * region of it, so it is drawn as one: a card of raised paper on the board,
- * square, a hairline for an edge, and a tack holding it at the top. Everything
- * else here is ink directly on the ground; this is the exception that proves it.
+ * region of it, so it is drawn as one: a sheet on the board, a hairline for an
+ * edge, and a tack holding it at the top.
  *
- * The restraint rules in CLAUDE.md §2 are kept rather than bent. No shadow — the
- * card lifts off the page by tone and edge, which is what a raised paper token
- * and a hairline are for. No radius — --radius is 0 and every corner here is
- * square. The tack is a rotated square, not an icon: it is a mark of the same
- * family as the hairlines, at the same weight, in the same ink.
+ * The ground is --c-paper, the page's own. It was --c-paper-raised, and that was
+ * the wrong reading of DESIGN-SYSTEM.md §8.3 — the rule is that no box has a
+ * background different from the page unless it contains media, and this one
+ * contains type. A cold #ffffff sheet on warm paper does not read as lifted; it
+ * reads as pasted on from somewhere else, which is what --c-paper-raised is for
+ * behind a photograph and not what it does behind text. What lifts the card is
+ * the edge, the tack and the lean it hangs at, which is what a card is lifted by
+ * on a real board.
  *
- * The spacing is a note's, not a page's. It was --space-l and --space-xl when
- * this was a column on a page of its own and had a whole viewport to be generous
- * in; a floating card sized to its own contents has to fit on a 320px screen
- * without a scroll container to hide in, and at those steps it does not.
+ * The rest of §2's restraint is kept rather than bent. No shadow. No radius —
+ * --radius is 0 and every corner here is square. The tack is a rotated square,
+ * not an icon: a mark of the same family as the hairlines, at the same weight,
+ * in the same ink.
  */
 .block {
-  background-color: var(--c-paper-raised);
+  background-color: var(--c-paper);
   border: var(--hairline);
+  column-gap: var(--space-l);
   display: grid;
   padding: var(--space-m);
   position: relative;
   row-gap: var(--space-m);
+}
+
+/*
+ * Two columns from --bp-md up: the addresses at --note-details, the form in what
+ * is left. That is the same width at which the header bar collapses to one row
+ * and tokens.css steps --note-inset with it, and it is a viewport query rather
+ * than a container query on purpose — this card is rendered in exactly one place
+ * at a width that is a pure function of the viewport (--note-inline), so a
+ * container query here would ask a question whose answer is already known.
+ */
+@media (width >= 768px) {
+  .block {
+    grid-template-columns: minmax(0, var(--note-details)) minmax(0, 1fr);
+    padding: var(--space-l);
+  }
 }
 
 /*
@@ -52,14 +70,65 @@
 }
 
 /*
+ * The lead line, spanning both columns — how the atelier answers, which is what
+ * the form under it is for. Set in the index role rather than body: at 13px it
+ * is the same size the works index sets its rows at, and it keeps the card to
+ * two sizes of type instead of three. --measure still bounds it, because a line
+ * of prose running the whole width of a landscape sheet is a line nobody reads
+ * twice.
+ *
  * The card's top-right corner belongs to PinnedNote's close mark — a --tap-min
- * target sitting over this row. The address is the only line long enough to
- * reach it, and only once the card is down to a phone's width, where it wraps.
- * Reserving the corner here is the coupling admitted rather than hidden: this
- * card is rendered in exactly one place and it is that overlay.
+ * target sitting over this row. Reserving it here is the coupling admitted
+ * rather than hidden: this card is rendered in exactly one place and it is that
+ * overlay. It is this element rather than the addresses because this is the one
+ * that is first in the DOM at every width.
  */
-.email {
+.note {
+  color: var(--c-ink-70);
+  grid-column: 1 / -1;
+  max-inline-size: var(--measure);
   padding-inline-end: var(--tap-min);
+}
+
+/* Start-aligned rather than stretched: the form column is the taller of the two
+   at most widths, and four addresses spread down its height read as a table. */
+.facts {
+  align-content: start;
+  display: grid;
+  row-gap: var(--space-s);
+}
+
+/*
+ * Label over value rather than beside it. The two-column arrangement this had
+ * was right when the card was 26rem across and the whole width was one column;
+ * in a --note-details column the label's gutter is a third of the room, and the
+ * address wraps to three lines to pay for it.
+ */
+.fact {
+  display: grid;
+  row-gap: var(--space-3xs);
+}
+
+/*
+ * The email is the one value that is also a control, so its box is --tap-min
+ * tall (CLAUDE.md §9) where its text is thirteen pixels, and it carries a focus
+ * ring reaching four pixels past that box. Both want more room than the other
+ * three facts need: closed up to --space-3xs the ring struck through the label
+ * above it, and the row's own centring already reads as a gap without one.
+ * ContactForm's fields are held off their labels by the same value, for the
+ * same ring.
+ */
+.fact:has(.link) {
+  row-gap: var(--space-2xs);
+}
+
+.factLabel {
+  color: var(--c-ink-62);
+}
+
+.factValue {
+  color: var(--c-ink-70);
+  margin-inline-start: 0;
 }
 
 .link {
@@ -67,9 +136,8 @@
   color: var(--c-ink);
   display: inline-flex;
   min-block-size: var(--tap-min);
-  /* At 320px the address is wider than the card, and it is one unbreakable
-     token to a line-breaking algorithm — without this it sets the card's width
-     and pushes it off the screen. */
+  /* An address is one unbreakable token to a line-breaking algorithm, and at
+     320px the column is narrow enough for that to matter. */
   overflow-wrap: anywhere;
   text-decoration: underline;
   text-underline-offset: 0.22em;
@@ -80,30 +148,4 @@
   .link:hover {
     text-decoration-color: var(--c-ink-62);
   }
-}
-
-.facts {
-  display: grid;
-  row-gap: var(--space-2xs);
-}
-
-.fact {
-  column-gap: var(--space-s);
-  display: grid;
-  grid-template-columns: minmax(0, max-content) minmax(0, 1fr);
-}
-
-.factLabel {
-  color: var(--c-ink-62);
-  padding-block-start: var(--space-3xs);
-}
-
-.factValue {
-  color: var(--c-ink-70);
-  margin-inline-start: 0;
-}
-
-.note {
-  color: var(--c-ink-70);
-  max-inline-size: var(--measure);
 }

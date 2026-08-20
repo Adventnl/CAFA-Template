@@ -157,8 +157,8 @@ export interface Dictionary {
     title: string;
     description: string;
     body: string[];
-    studioTitle: string;
     mentorsTitle: string;
+    worksTitle: string;
   };
   /** No `description`: contact is a card, not a page, so it fills no <meta>. */
   contact: {
@@ -168,6 +168,12 @@ export interface Dictionary {
     address: string;
     hours: string;
     note: string;
+    /** The message form. `from` and `message` name the two fields; `subject` is
+        the line the reader's mail client opens with, so it is copy too. */
+    from: string;
+    message: string;
+    subject: string;
+    send: string;
   };
   notFound: { title: string; body: string; home: string };
   footer: { note: string };

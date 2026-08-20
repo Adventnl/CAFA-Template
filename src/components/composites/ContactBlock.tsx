@@ -1,6 +1,9 @@
+import type { ReactNode } from 'react';
+
 import { Text } from '@/components/primitives/Text';
 import type { Dictionary, Locale, SiteContent } from '@/lib/types';
 
+import { ContactForm } from './ContactForm';
 import styles from './ContactBlock.module.css';
 
 interface ContactBlockProps {
@@ -10,41 +13,56 @@ interface ContactBlockProps {
 }
 
 /**
- * There is no form, and there will not be one: this site has no backend, and a
- * form that silently discards what someone typed is worse than an address. If a
- * form is ever wanted it is a link to whoever hosts it. ARCHITECTURE.md §7.
+ * The contact card: a line about how the atelier answers, where it is, and a box
+ * to write in.
  *
- * This is the card and nothing else — the paper, the edge, the tack and nine
- * lines of type. Where it sits, how it arrives and how it is moved belong to
- * components/motion/PinnedNote, which is the only thing that renders it. It has
- * stayed a server component through that: PinnedNote takes it as `children`, so
- * the copy is in the prerendered HTML and none of it reaches the JS bundle.
+ * It is laid out as a landscape sheet rather than a column because it holds two
+ * unlike things — addresses, which are read, and a form, which is used — and
+ * stacking them made the second one something you had to scroll a card to find.
+ * From --bp-md up they sit side by side, the addresses in the narrow column at
+ * --note-details and the form taking the rest; below it they stack, which is the
+ * only arrangement a phone has room for.
+ *
+ * The addresses are set small on purpose. They were a --title-role email over
+ * three lines of metadata, which made the loudest thing on the card the one
+ * thing a reader can already copy off any page of the site; the form is what the
+ * card is for now, so the addresses are metadata beside it.
+ *
+ * This stays a server component. ContactForm is the only client boundary and it
+ * holds no copy of its own — every string here is prerendered, including the
+ * ones handed across that boundary as props.
+ *
+ * Where the card sits, how it arrives and how it is moved belong to
+ * components/motion/PinnedNote, which is the only thing that renders it.
  */
 export function ContactBlock({ site, locale, labels }: ContactBlockProps) {
   const { contact } = site;
 
   return (
     <div className={styles.block}>
-      <Text role="title" as="p" className={styles.email}>
-        <a href={`mailto:${contact.email}`} className={styles.link}>
-          {contact.email}
-        </a>
+      {/* First in the DOM at every width, which is also what lets it be the one
+          element that reserves PinnedNote's close mark its corner. */}
+      <Text role="index" as="p" className={styles.note}>
+        {labels.note}
       </Text>
 
       <dl className={styles.facts}>
-        <Fact label={labels.wechat}>{contact.wechat}</Fact>
+        <Fact label={labels.email}>
+          <a href={`mailto:${contact.email}`} className={styles.link}>
+            {contact.email}
+          </a>
+        </Fact>
         <Fact label={labels.address}>{contact.address[locale]}</Fact>
+        <Fact label={labels.wechat}>{contact.wechat}</Fact>
         <Fact label={labels.hours}>{contact.hours[locale]}</Fact>
       </dl>
 
-      <Text role="body" className={styles.note}>
-        {labels.note}
-      </Text>
+      <ContactForm to={contact.email} labels={labels} />
     </div>
   );
 }
 
-function Fact({ label, children }: { label: string; children: string }) {
+function Fact({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className={styles.fact}>
       <Text role="label" as="dt" className={styles.factLabel}>

@@ -90,11 +90,12 @@ the one place in the codebase that touches image markup.
     │       ├── WorkMetaPanel.tsx    # sticky left column on detail
     │       ├── WorkPager.tsx        # previous / next; the rule the footer joins onto
     │       ├── MediaSequence.tsx    # scrolling right column on detail
+    │       ├── WorkGrid.tsx         # the projects as covers, on About
     │       ├── StudioSequence.tsx   # the home page below the fold, full bleed
-    │       ├── StudioStrip.tsx      # the same photographs, sideways, on About
+    │       ├── MentorStrip.tsx      # the mentors, sideways through a pinned window
     │       ├── ProgramList.tsx
-    │       ├── MentorGrid.tsx
-    │       └── ContactBlock.tsx     # the card PinnedNote carries
+    │       ├── ContactBlock.tsx     # the card PinnedNote carries
+    │       └── ContactForm.tsx      # its two fields and Send — a mailto, no backend
     ├── content/
     │   └── bundle.generated.json    # fetched by prebuild; gitignored, never committed
     ├── lib/
@@ -218,6 +219,20 @@ on — `components/motion/PinnedNote`, mounted once in the locale layout and ope
 nav item. The reasoning is MOTION.md §5.5b; the consequence for this section is that a nav
 item is no longer necessarily a route, which is why `SiteContent.nav` is a union of "has an
 `href`" and "`opens` a panel" rather than a list of links with one special case in it.
+
+**The card carries a form, and where it sends is the whole of the decision.** §1 ships no
+server runtime, so there is nowhere for a POST to land — and a form that takes a message
+and drops it is worse than printing an address. So `ContactForm` never holds the message:
+Send composes a `mailto:` and navigates, which hands the fields to software the reader
+already trusts and leaves the message in their sent items. The `action` on the `<form>` is
+the same address again as the no-script path; JavaScript intercepts it only to write a
+subject line and a readable body. This is the one client component under the card, it is
+about forty lines, and it holds no copy — every string is prerendered and passed in.
+
+If the atelier ever wants messages arriving in an inbox it owns, that is an endpoint URL in
+that `action` and the deletion of one `onSubmit`. It is not an architecture change and it
+does not make §1 false: a form POST to somebody else's origin is not this site fetching its
+own content at runtime.
 
 - **Two root layouts, and no `app/layout.tsx`.** A root layout cannot read route params, so
   a single one would have to hardcode `<html lang>` — wrong on every page of the other
@@ -461,7 +476,9 @@ Listed so it stays absent:
 - No CMS, no `getStaticProps`-style data fetching, no API routes, no server actions.
 - No global state. The one piece of shared client state (hovered work) is `useState` inside
   `WorkIndex`.
-- No i18n, form, icon, carousel, lightbox or UI library.
+- No i18n, form, icon, carousel, lightbox or UI library. The contact form is two inputs, a
+  button and a `mailto:` — see §4. What stays absent is the *library*, and with it the
+  validation schema, the resolver and the controlled-input re-render on every keystroke.
 - No dark mode. The palette is near-monochrome by design; a second theme adds tokens,
   testing surface and contrast bugs for no editorial gain. Revisit only if asked.
 - No animation library, still. What replaced the "no page transitions" line that used to sit

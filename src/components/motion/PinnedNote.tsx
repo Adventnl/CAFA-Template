@@ -80,8 +80,17 @@ export function PinnedNote({ id, label, closeLabel, children }: PinnedNoteProps)
   function onPointerDown(event: ReactPointerEvent<HTMLDivElement>) {
     const el = note.current;
     if (el === null || event.pointerType !== 'mouse' || event.button !== 0) return;
-    // The link and the close mark keep their own behaviour.
-    if (event.target instanceof Element && event.target.closest('a, button') !== null) return;
+    // The controls on the card keep their own behaviour. The fields are why this
+    // list is not just `a, button`: a press inside one that travels four pixels
+    // is a selection being made, and moving the card out from under it would
+    // both lose the selection and put the caret somewhere the reader did not
+    // click. The card is picked up by its paper, not by what is written on it.
+    if (
+      event.target instanceof Element &&
+      event.target.closest('a, button, input, textarea, select, label') !== null
+    ) {
+      return;
+    }
 
     // The one DOM read in the whole interaction, and it is deliberately here:
     // before anything has been written this frame, and never again until the

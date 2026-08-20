@@ -48,6 +48,15 @@ export function WorkIndexRow({
   onPreview,
   onChoose,
 }: WorkIndexRowProps) {
+  /*
+   * The hue the row's band takes, or null for a private work, a monochrome
+   * photograph, or a cover the admin has not measured — all three of which get
+   * the neutral band rather than a special case. Published as a custom property
+   * because it is a value, not a state: the colour is composed in the
+   * stylesheet out of it and two tokens, so this file never names one.
+   */
+  const tint = cover?.tint ?? null;
+
   const contents = (
     <RowContents
       work={work}
@@ -73,6 +82,8 @@ export function WorkIndexRow({
         <Link
           href={routes.work(locale, work.slug)}
           className={styles.link}
+          data-tinted={tint === null ? undefined : ''}
+          style={tint === null ? undefined : { '--tint-h': tint }}
           onPointerEnter={() => onPreview(work.slug)}
           onPointerLeave={() => onPreview(null)}
           onPointerDown={() => onChoose(work.slug)}

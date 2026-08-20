@@ -1,0 +1,96 @@
+/*
+ * The fields are ruled lines, not boxes. DESIGN-SYSTEM.md §8 says no borders
+ * where whitespace can do the job and no box whose background differs from the
+ * page unless it holds media — a pair of outlined input wells would break both
+ * at once, and on a card that is already a sheet of paper the honest form of a
+ * place to write is a line to write on. So each control is transparent, has no
+ * border but its --hairline underneath, and the whole state change on focus is
+ * that line going to full ink.
+ */
+
+.form {
+  display: grid;
+  /* The send sits at the trailing edge under the fields, so the column is what
+     the fields set rather than what the button does. */
+  justify-items: stretch;
+  row-gap: var(--space-s);
+}
+
+/*
+ * The gap is the focus ring's, and that is the whole reason it is this value.
+ * --focus-ring reaches four pixels past the control's box on every side, and a
+ * --tap-min field sat tight under its label put that ring straight through the
+ * word — the label was legible until the moment it was focused, which is the
+ * one moment it has to be. --space-2xs leaves the ring four pixels of paper.
+ */
+.field {
+  display: grid;
+  row-gap: var(--space-2xs);
+}
+
+.label {
+  color: var(--c-ink-62);
+}
+
+/*
+ * `font: inherit` in globals.css already puts these in the site's face at the
+ * body size; --type-field-size is the 16px floor under it, which tokens.css
+ * explains is a control's minimum rather than a type role.
+ */
+.input,
+.message {
+  background: none;
+  border: 0;
+  border-block-end: var(--hairline);
+  color: var(--c-ink);
+  /* PinnedNote puts `cursor: grab` on the whole card and cursor inherits, so a
+     field has to say what it is — the card is carried by its paper, not by the
+     line you write on. It is the same boundary PinnedNote's drag check draws. */
+  cursor: text;
+  font-size: var(--type-field-size);
+  inline-size: 100%;
+  padding: 0;
+  transition: border-color var(--dur-fast) var(--ease-io);
+}
+
+.input {
+  /* CLAUDE.md §9's target floor. A single-line field has no other height. */
+  min-block-size: var(--tap-min);
+}
+
+.message {
+  /* The grip the UA draws for a resizable field is the one piece of chrome on
+     this card that is neither type nor hairline, and at four rows over a sheet
+     this size there is nothing it buys. The field scrolls instead. */
+  resize: none;
+  /* The single-line field gets its air from --tap-min; this one has rows, so it
+     takes just enough to sit off its own label. */
+  padding-block-start: var(--space-2xs);
+}
+
+.input:focus,
+.message:focus {
+  border-color: var(--c-ink);
+}
+
+/* A label under a rule, at the nav's rest and hover ink. DESIGN-SYSTEM.md §7 —
+   and the same underline the address carries, because on this card the two are
+   the only things there are to press. */
+.send {
+  background: none;
+  border: 0;
+  color: var(--c-ink-70);
+  cursor: pointer;
+  justify-self: end;
+  min-block-size: var(--tap-min);
+  padding-inline: 0;
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  transition: color var(--dur-fast) var(--ease-io);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .send:hover {
+    color: var(--c-ink);
+  }
+}

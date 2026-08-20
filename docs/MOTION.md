@@ -188,11 +188,11 @@ Delete the page-level `<ViewTransition default="page">`. Replace with a name reg
 | `cover-{slug}` | hover backdrop ⇄ detail hero | the existing morph, now per-slug |
 | `heading` | page `h1` | |
 | `intro` | the block that says what the page is | Programmes' lead line, About's prose |
-| `listing` | the page's main body of repeated things | programme list, mentor grid |
+| `listing` | the page's main body of repeated things | programme list, About's project grid |
 | `meta` | sticky metadata column | |
 | `pager` | prev/next | |
 | `chrome-nav` | header nav list | |
-| `item-{key}` | one entry *inside* a listing — a programme, a mentor | the list unzips |
+| `item-{key}` | one entry *inside* a listing — a programme, a project card | the list unzips |
 
 `item-{key}` is the one that made the section-page figures ensembles rather than slides, and
 it is the same insight as `rail-{slug}` one level down. A `listing` on its own is a single
@@ -202,7 +202,7 @@ and travel one at a time — the sheet goes as a sheet and the things printed on
 order, which is `enter-work`'s unzip arriving on the pages that had nothing.
 
 They are keyed, never positional. `item-3` on two pages would *pair*, and the browser would
-morph a programme entry into a mentor card because they happened to be third. Keyed, they
+morph a programme entry into a project card because they happened to be third. Keyed, they
 are always only-children, which is what every figure here actually wants. The stagger rides
 on three step classes alongside (`step-1`…`step-3`), because a `::view-transition-*`
 pseudo-element can be selected by name and class and by nothing else — there is no
@@ -442,11 +442,11 @@ The rule is that every surface names a trigger. This table is the acceptance tes
 | work detail — meta panel | `link` to media | `dim` while a plate is centred |
 | work detail — pager | `progress` | `rise` over the last 15% |
 | programmes — each entry | `stack` | the entry's parts `slide` d2 in as it rises; `recede` as it hands off |
-| about — studio filmstrip | `pin-scrub` + `pan` | horizontal filmstrip under vertical scroll |
+| about — mentor filmstrip | `pin-scrub` + `pan` | horizontal filmstrip under vertical scroll |
 | about — the strip's rule | the same `--pin` | the margin rule turned on its side, drawn for the pin and no longer; §5.5d |
 | about — prose | `batch` | `split` d1 per paragraph |
-| mentors — grid | `batch` | `rise` d1, staggered by column |
-| mentors — portrait | `scrub` | `focus` d1, nested inside the card |
+| about — project grid | `batch` | `rise` d1, staggered by column |
+| about — project cover | `scrub` | `focus` d1, nested inside the card |
 | contact | — | not a surface; an overlay pinned over one. §5.5b |
 | footer | `progress` | `rise` at document end |
 
@@ -468,7 +468,7 @@ will otherwise be reintroduced:
 back down again; `enter` and `batch` bind an animation to a *slice* of the pass
 (`entry 0% → entry 50%`) with `animation-fill-mode: both`. So the curve completes during
 the entrance and then holds its final keyframe — which for `focus` is the dimmed, shrunk
-one. "mentors — grid: batch + focus d1" therefore left every mentor card permanently at
+one. "About's grid: batch + focus d1" therefore left every card on that page permanently at
 0.9 scale and 55% opacity once it had scrolled in. It looked like a loading state that
 never resolved.
 
@@ -548,18 +548,28 @@ because it is the obvious implementation: the mark lands a hair off the line bes
 spacing shared with nothing, and the eye reads two rulers that disagree rather than one rule
 with some long lines in it.
 
-Two decisions rather than two omissions. It is not drawn below `--bp-lg`, where the gutter
-that bounds its length is too narrow to hold it — the same width `WorkRail` stops at, for
-the same reason. And it is not drawn under `prefers-reduced-motion`: cancelling the swell
+Three decisions rather than three omissions. It is not drawn below `--bp-lg`, where the
+gutter that bounds its length is too narrow to hold it — the same width `WorkRail` stops at,
+for the same reason. It is not drawn under `prefers-reduced-motion`: cancelling the swell
 leaves a column of identical dashes, and a thing whose entire content is its travel has
-nothing to say standing still.
+nothing to say standing still. And it is not drawn at the top of a page. An indicator of
+where the reader is, present before the reader has gone anywhere, is reporting a position
+nobody has taken — it arrives with the page as part of the furniture rather than as an
+answer to a question, which is what made it read as odd on the programmes index. So the
+column itself is a twenty-ninth animation on the same `scroll(root)`: absent through the
+first `--tick-wake-start` of travel, fully there by `--tick-wake-end`, both distances rather
+than fractions of the document, because "a bit of scroll" is a fixed amount of the reader's
+movement and not a proportion of a page they cannot see the length of. It is scrubbed like
+everything else here, so scrolling back to the top takes it away again — the figure the
+header rule already runs (`SiteHeader.module.css`), which fades its hairline in over the
+first `--space-xl`.
 
 **The same instrument, turned on its side.** The filmstrip is the site's one horizontal
 reading, and horizontal travel under vertical scroll is precisely the motion a reader has no
-built-in indicator for — the scrollbar is measuring the page, not the room. So a band of the
+built-in indicator for — the scrollbar is measuring the page, not the row. So a band of the
 same hairlines lies under the plates, growing upward instead of outward, and it appears as
 the section takes the screen and leaves with it: chrome for the length of one figure and
-nothing on either side of it. It lives in `StudioStrip` rather than in `ScrollTicks`, and
+nothing on either side of it. It lives in `MentorStrip` rather than in `ScrollTicks`, and
 that is not duplication deferred until the rule of three — the two share a figure and share
 neither a mechanism nor a subject. The margin rule measures the *document*, on
 `scroll(root)`, and has to find its key points by measuring the DOM because only the DOM
@@ -570,7 +580,7 @@ it renders on the server and ships nothing at all.
 The one piece of machinery it needed is in `triggers.css`: a `pin-scrub` window drives every
 child it has, so a second child would have panned off the edge along with the strip it was
 measuring. `[data-still]` marks a child as furniture — positioned against the window rather
-than carried across it — which states a convention `StudioStrip` had until now been keeping
+than carried across it — which states a convention `MentorStrip` had until now been keeping
 by only ever rendering one child.
 
 ### 5.5b `pin` — the one figure that is not attached to a route at all
@@ -662,7 +672,7 @@ so it looks identical scrolling up and down.
 | depth | `--focus-min` | drift | blur | used by |
 |---|---|---|---|---|
 | 0 | 0.96 | ±1.2% | 0 | rail thumbnails, small portraits |
-| 1 | 0.92 | ±2.0% | 1px | programme and mentor imagery |
+| 1 | 0.92 | ±2.0% | 1px | programme imagery, About's project covers |
 | 2 | 0.88 | ±2.5% | 2px | work detail media column |
 | 3 | 0.82 | ±3.5% | 3px | full-bleed plates |
 

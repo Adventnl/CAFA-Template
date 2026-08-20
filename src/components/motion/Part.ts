@@ -45,7 +45,7 @@ export function partClass(role: PartRole): string {
 }
 
 /**
- * And the repeated things *inside* a listing: one programme, one mentor.
+ * And the repeated things *inside* a listing: one programme, one project card.
  *
  * A `listing` on its own is a single sheet, so a figure can only slide it as a
  * block — which is why arriving at Programmes and arriving at About looked like

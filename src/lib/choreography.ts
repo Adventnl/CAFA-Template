@@ -82,16 +82,16 @@ export const scenes = {
    */
   programmes: { kind: 'stack', effect: 'slide', depth: 2 },
   /**
-   * About, the studio: five photographs on one strip, travelling sideways while
+   * About, the mentors: six portraits on one strip, travelling sideways while
    * the section holds the screen. MOTION.md §5.2 and the §5.5 audit's "pin +
    * pan"; the effect that had a name and a keyframe budget in the plan and no
-   * surface to run on until this page carried the images.
+   * surface to run on until this page carried a row of images.
    *
    * Depth is stated for the shape of the type, not read: `pan` measures its
    * travel off the window it is inside, because a filmstrip that goes 75% of the
    * way is not a subtler filmstrip, it is two plates the reader never reaches.
    */
-  studioStrip: { kind: 'pin-scrub', effect: 'pan', depth: 3 },
+  mentorStrip: { kind: 'pin-scrub', effect: 'pan', depth: 3 },
   /**
    * About prose: paragraph by paragraph, staggered as the block scrolls in.
    *
@@ -102,25 +102,25 @@ export const scenes = {
    */
   prose: { kind: 'batch', effect: 'split', depth: 1 },
   /**
-   * Mentor grid: the *cards* assemble, staggered by the batch.
+   * The project grid on About: the *cards* assemble, staggered by the batch.
    *
    * This used to read `focus`, and that was a defect rather than a taste
    * question. `focus` is a symmetric scrub curve — down, up, down — and `batch`
    * runs its children over `entry 0% → entry 50%` with `animation-fill-mode:
    * both`. So the curve completed during the entrance and then *held its end
-   * keyframe*, which is the dimmed, shrunk one: every mentor card came to rest
+   * keyframe*, which is the dimmed, shrunk one: every card came to rest
    * permanently at 0.9 scale and 55% opacity, and stayed there for as long as
    * the page was open. Anything ending at its start state (`rise`, `slide`,
    * `unmask`) is safe on a ranged trigger; the two symmetric effects, `focus`
    * and `drift`, only ever belong on `scrub`, which runs the whole pass.
    *
-   * The portraits still focus — see mentorPortrait, which nests a scrub inside
-   * each card. That is the composition the effect vocabulary is built for, and
-   * it is what the §5.5 audit's "focus d1" was actually asking for.
+   * The covers still focus — see workCardCover, which nests a scrub inside each
+   * card. That is the composition the effect vocabulary is built for, and it is
+   * what the §5.5 audit's "focus d1" was actually asking for.
    */
-  mentors: { kind: 'batch', effect: 'rise', depth: 1 },
-  /** And the portrait inside each card, on its own continuous pass. */
-  mentorPortrait: { kind: 'scrub', effect: 'focus', depth: 1 },
+  workCards: { kind: 'batch', effect: 'rise', depth: 1 },
+  /** And the cover inside each card, on its own continuous pass. */
+  workCardCover: { kind: 'scrub', effect: 'focus', depth: 1 },
   /*
    * Contact had a scene here — `scrub` + `sway`, a card pinned at its top edge
    * turning a fraction of a degree as the page moved under it. It went with the

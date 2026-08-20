@@ -30,6 +30,23 @@
 }
 
 /*
+ * And the column's own arrival, on the same timeline as everything else here:
+ * it is not drawn at the top of a page, where it would be reporting a position
+ * the reader has not moved to yet, and fades in over the first --tick-wake-* of
+ * travel. Scrubbed rather than triggered, so returning to the top takes it away
+ * again — the same figure the header rule runs on (SiteHeader.module.css).
+ */
+@keyframes wake {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/*
  * Not drawn unless the browser can drive it off the scroll, and not below
  * --bp-lg. Both are the same decision: a column that cannot say where you are
  * is a row of dashes in the margin, and the gutter under 1024px is too narrow
@@ -45,6 +62,10 @@
       /* The lines are spread over the band rather than given a gap, so the
          column keeps its proportion at every viewport height. */
       align-content: space-between;
+      /* The shorthand first — it resets the two properties under it. */
+      animation: wake linear both;
+      animation-range: var(--tick-wake-start) var(--tick-wake-end);
+      animation-timeline: scroll(root);
       block-size: var(--tick-track);
       display: grid;
       inline-size: var(--tick-len);
@@ -73,8 +94,11 @@
 .tick {
   animation: swell linear both;
   /* After the shorthand, which resets both of these to their initial values.
-     The range itself is inline, per line, and inline wins over this rule. */
-  animation-timeline: scroll();
+     The range itself is inline, per line, and inline wins over this rule.
+     Named root rather than left to `nearest`: every line and the column itself
+     are measuring the document, and this element is inside a fixed one, which
+     has no scroller of its own to be nearest to. */
+  animation-timeline: scroll(root);
   background-color: var(--c-ink);
   block-size: 1px;
   /* The resting state, stated as well as keyframed: it is what the line holds
