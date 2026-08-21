@@ -1,9 +1,9 @@
 /*
- * --space-2xl between plates, not --space-3xl. The 3xl step is reserved for the
- * break between the statement and this sequence, which is the major section
- * change DESIGN-SYSTEM.md §4 means; repeating it between every plate left so
- * much paper that the photographs read as isolated incidents rather than as a
- * body of work, which is the opposite of what this page is for.
+ * --space-2xl between plates, not --space-3xl. The 3xl step is what separates
+ * one section of a page from the next, which is the major change
+ * DESIGN-SYSTEM.md §4 means; repeating it between every plate left so much
+ * paper that the photographs read as isolated incidents rather than as a body
+ * of work, which is the opposite of what a gallery is for.
  */
 .sequence {
   display: grid;

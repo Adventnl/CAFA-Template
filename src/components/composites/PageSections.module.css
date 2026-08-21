@@ -1,0 +1,79 @@
+/*
+ * The rhythm of a page, which is now a property of the page rather than of
+ * whichever blocks it happens to have.
+ *
+ * --space-3xl is the token DESIGN-SYSTEM.md §4 reserves for the break between
+ * major sections, and a section is exactly that. One rule sets every gap, so a
+ * page composed in the admin has the site's spacing whatever order its blocks
+ * arrive in — which is the point: an editor moving a gallery above the prose
+ * should not be able to produce a rhythm no page has ever had.
+ */
+.section + .section {
+  margin-block-start: var(--space-3xl);
+}
+
+/*
+ * Except after a heading, which carries its own space below it
+ * (PageHeading.module.css). Same specificity as the rule above and written
+ * after it, so it wins.
+ */
+.heading + .section {
+  margin-block-start: 0;
+}
+
+/*
+ * The statement gets the first screen to itself, centred on both axes. This is
+ * what makes "below the fold" true for whatever follows it rather than
+ * approximately true at desktop widths only — at 390px a photograph under it
+ * was arriving inside the initial viewport and becoming the LCP element.
+ *
+ * svh, not vh: the small viewport height is the one that survives a mobile
+ * browser's collapsing toolbar without the next block creeping back up.
+ *
+ * The padding is what centres the line on the *viewport* rather than on this
+ * box. The box begins --space-pin down the page — the sticky header plus the
+ * padding globals.css gives <main> — so centring inside it puts the line half
+ * of --space-pin below the middle of the screen, which is what it looked like:
+ * low. Reserving that same distance at the foot of the box moves the midpoint
+ * back up onto the middle of the viewport, header included. The box still ends
+ * exactly at the fold, so what is below it has not moved.
+ */
+.above {
+  align-content: center;
+  justify-items: center;
+  min-block-size: calc(100svh - var(--space-pin));
+  padding-block-end: var(--space-pin);
+}
+
+/*
+ * Set in the `label` role, so it needs no size of its own — only somewhere to
+ * stop wrapping. --measure is a prose limit in ch, which at label size is a
+ * short centred block at every width, and is why this needs no breakpoint.
+ */
+.statement {
+  grid-column: 1 / -1;
+  max-inline-size: var(--measure);
+  text-align: center;
+  text-wrap: balance;
+}
+
+.prose {
+  color: var(--c-ink-70);
+  display: grid;
+  grid-column: 1 / -1;
+  max-inline-size: var(--measure);
+  row-gap: var(--space-m);
+}
+
+/* A block that takes the whole page grid: the works index places itself, these
+   two are handed the span from here because neither knows what it sits in. */
+.full {
+  grid-column: 1 / -1;
+}
+
+/* DESIGN-SYSTEM.md §5: prose in columns 4–9. */
+@media (width >= 768px) {
+  .prose {
+    grid-column: 4 / 10;
+  }
+}

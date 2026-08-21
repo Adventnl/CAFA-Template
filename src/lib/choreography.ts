@@ -51,8 +51,8 @@ export interface Scene {
  * honest degradation until it does.
  */
 export const scenes = {
-  /** Home, the studio plates below the fold: biggest at centre, drifting. */
-  studioPlate: { kind: 'scrub', effect: 'focus', depth: 3 },
+  /** A gallery’s plates: biggest at centre, drifting. */
+  galleryPlate: { kind: 'scrub', effect: 'focus', depth: 3 },
   /** Works index rows: assemble as the list scrolls in. */
   worksRows: { kind: 'batch', effect: 'slide', depth: 1 },
   /**

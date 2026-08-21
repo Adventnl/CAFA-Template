@@ -5,7 +5,7 @@ import { PageHeading } from '@/components/composites/PageHeading';
 import { Grid } from '@/components/primitives/Grid';
 import { Text } from '@/components/primitives/Text';
 import { getDictionary, getSite } from '@/lib/content';
-import { routes } from '@/lib/routes';
+import { HOME_SLUG, routes } from '@/lib/routes';
 
 import styles from './page.module.css';
 
@@ -31,7 +31,7 @@ export default function NotFoundPage() {
       <Text role="body" className={styles.body}>
         {notFound.body}
       </Text>
-      <Link href={routes.home(locale)} className={styles.link}>
+      <Link href={routes.page(locale, HOME_SLUG)} className={styles.link}>
         <Text role="label" as="span">
           {notFound.home}
         </Text>

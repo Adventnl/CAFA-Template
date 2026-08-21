@@ -15,22 +15,39 @@ export function swapLocale(pathname: string, locale: Locale): string {
   return ['', locale, ...rest].join('/');
 }
 
+/**
+ * The front page's slug.
+ *
+ * A page is one segment under the locale and the front page is the one with no
+ * segment at all, which the empty string is the honest spelling of: it is a
+ * page like the others, with sections like the others, that happens to sit at
+ * the locale's own address. Named rather than written as `''` at four call
+ * sites, so "which page is the front page" is a question with one answer.
+ */
+export const HOME_SLUG = '';
+
+/**
+ * The two addresses the site has.
+ *
+ * `page` covers every page the studio has made — there is one route file behind
+ * it and the slug comes from the content, so adding a page adds a URL without
+ * touching this. `work` is the one shape that is not a page record: a work's
+ * own page is generated from the works registry, under a fixed segment, because
+ * its address has to stay valid for as long as the work is cited anywhere.
+ */
 export const routes = {
-  home: (l: Locale) => `/${l}`,
-  works: (l: Locale) => `/${l}/works`,
+  page: (l: Locale, slug: string) => (slug === HOME_SLUG ? `/${l}` : `/${l}/${slug}`),
   work: (l: Locale, slug: string) => `/${l}/works/${slug}`,
-  programs: (l: Locale) => `/${l}/programs`,
-  about: (l: Locale) => `/${l}/about`,
 } as const;
 
 /**
  * The destinations that are not URLs.
  *
- * Contact used to be `/{locale}/contact` and is not a page any more: it is a
- * card pinned over whatever page you are already on, opened by the nav item
- * rather than navigated to. That is still a destination, so it still belongs in
- * the one file that answers "where does a nav item point" — but it is an element
- * id, not a path, and the difference is deliberate rather than an omission.
+ * Contact is a card pinned over whatever page you are already on, opened by the
+ * nav item rather than navigated to. That is still a destination, so it still
+ * belongs in the one file that answers "where does a nav item point" — but it is
+ * an element id, not a path, and the difference is deliberate rather than an
+ * omission.
  *
  * The value is the popover's HTML id, which the trigger button's `popovertarget`
  * and the panel's `id` both have to spell the same way. Written once here for

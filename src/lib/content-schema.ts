@@ -2,11 +2,11 @@
  * The gate between the content bundle and the rest of the app.
  *
  * The content is fetched from CAFA-Admin at build time and written to
- * `content/bundle.generated.json` by scripts/fetch-content.mjs. That it now
- * comes over the wire rather than out of six checked-in files changes nothing
- * about what has to be true of it, and it makes this gate matter more rather
- * than less: it is the only thing standing between a database somebody edited
- * this morning and a page that renders `undefined`.
+ * `content/bundle.generated.json` by scripts/fetch-content.mjs. That it comes
+ * over the wire rather than out of checked-in files changes nothing about what
+ * has to be true of it, and it makes this gate matter more rather than less: it
+ * is the only thing standing between a database somebody edited this morning
+ * and a page that renders `undefined`.
  *
  * JSON costs the compiler its knowledge of the shape — a parsed field is
  * `string` where the app needs `WorkStatus`, and `string[]` where it needs a
@@ -15,8 +15,14 @@
  * caught, with a path to the offending field instead of a blank on a page.
  * Nothing here is a cast: every narrowing is a check that can fail, and failing
  * stops the build — which leaves the previous deploy serving.
+ *
+ * Since pages became content, this gate also checks the two rules a page has to
+ * satisfy that no database column can express: exactly one front page across
+ * the site, and exactly one heading on each page. Both are structural — the
+ * first is a 404 at the site's own address, the second is an accessibility
+ * defect — and both are cheap to check here, once, before anything renders.
  */
-import { panels, routes } from './routes';
+import { HOME_SLUG } from './routes';
 import {
   LOCALES,
   type Dictionary,
@@ -24,10 +30,10 @@ import {
   type Locale,
   type LocalisedText,
   type Mentor,
-  type NavEntry,
-  type NavPanel,
-  type NavRoute,
+  type Page,
+  type PageSection,
   type Program,
+  type SectionKind,
   type SiteContent,
   type Work,
   type WorkStatus,
@@ -85,10 +91,19 @@ function hue(value: unknown, at: string): number | null {
   return value;
 }
 
+const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 /** A slug is part of a URL forever, so it is checked rather than trusted. */
 function slug(value: unknown, at: string): string {
   const found = text(value, at);
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(found)) fail(at, 'a kebab-case slug');
+  if (!SLUG.test(found)) fail(at, 'a kebab-case slug');
+  return found;
+}
+
+/** The same, plus the empty string — which is the front page's address. */
+function pageSlug(value: unknown, at: string): string {
+  const found = text(value, at);
+  if (found !== HOME_SLUG && !SLUG.test(found)) fail(at, 'a kebab-case slug, or "" for the front page');
   return found;
 }
 
@@ -96,10 +111,16 @@ function each<T>(value: unknown, at: string, read: (item: unknown, at: string) =
   return array(value, at).map((item, position) => read(item, `${at}[${position}]`));
 }
 
+/** A list the site would render as a hole if it were empty. */
+function some<T>(values: T[], at: string, expected: string): T[] {
+  if (values.length === 0) fail(at, expected);
+  return values;
+}
+
 /**
- * Non-empty, as a value the compiler believes. `locales[0]` and the first
- * studio plate are read without a guard all over the app, and under
- * `noUncheckedIndexedAccess` that is only sound if the type says so.
+ * Non-empty, as a value the compiler believes. `locales[0]` is read without a
+ * guard all over the app, and under `noUncheckedIndexedAccess` that is only
+ * sound if the type says so.
  */
 function atLeastOne<T>(values: T[], at: string): [T, ...T[]] {
   const [first, ...rest] = values;
@@ -174,13 +195,21 @@ function work(value: unknown, at: string): Work {
   };
 }
 
+/** Slugs are addresses. Two records answering to one is a page that shadows another. */
+function unique(values: readonly string[], at: string): void {
+  const seen = new Set<string>();
+  for (const value of values) {
+    if (seen.has(value)) fail(`${at} "${value}"`, 'a slug used once');
+    seen.add(value);
+  }
+}
+
 function parseWorks(value: unknown): Work[] {
   const found = each(value, 'works', work);
-  const seen = new Set<string>();
-  for (const entry of found) {
-    if (seen.has(entry.slug)) fail(`works "${entry.slug}"`, 'a slug used once');
-    seen.add(entry.slug);
-  }
+  unique(
+    found.map((entry) => entry.slug),
+    'works',
+  );
   return found;
 }
 
@@ -210,30 +239,110 @@ function parseMentors(value: unknown): Mentor[] {
   });
 }
 
-/** Predicates rather than casts: an unknown nav key has to be able to fail. */
-function isNavRoute(name: string): name is NavRoute {
-  return name !== 'work' && Object.hasOwn(routes, name);
-}
+/**
+ * The kinds, listed once so a bad one can be reported with the set it missed.
+ * `satisfies` rather than a bare array: a kind added to `PageSection` and
+ * forgotten here is a compile error, which is the only way this list stays the
+ * same list the union is.
+ */
+const SECTION_KINDS = [
+  'heading',
+  'statement',
+  'prose',
+  'gallery',
+  'works-index',
+  'works-grid',
+  'programs',
+  'mentors',
+] as const satisfies readonly SectionKind[];
 
-function isNavPanel(name: string): name is NavPanel {
-  return Object.hasOwn(panels, name);
-}
+/** The kinds that set a page's `h1`. Exactly one of them per page — see `page`. */
+const HEADING_KINDS: readonly SectionKind[] = ['heading', 'statement'];
 
-function navEntry(value: unknown, at: string): NavEntry {
+function section(value: unknown, at: string): PageSection {
   const record = object(value, at);
-  const label = localised(record.label, `${at}.label`);
+  const kind = text(record.kind, `${at}.kind`);
 
-  if (Object.hasOwn(record, 'opens')) {
-    const opens = text(record.opens, `${at}.opens`);
-    if (!isNavPanel(opens)) fail(`${at}.opens`, `a panel in lib/routes (${Object.keys(panels)})`);
-    return { label, opens };
+  // No `default`, and every branch returns: a kind added to the union without a
+  // branch here fails to compile rather than parsing into something unrenderable.
+  switch (kind) {
+    case 'heading':
+      return { kind };
+    case 'statement':
+      return { kind, text: localised(record.text, `${at}.text`) };
+    case 'prose':
+      return {
+        kind,
+        paragraphs: some(
+          each(record.paragraphs, `${at}.paragraphs`, localised),
+          `${at}.paragraphs`,
+          'at least one paragraph',
+        ),
+      };
+    case 'gallery':
+      return {
+        kind,
+        images: some(
+          each(record.images, `${at}.images`, image),
+          `${at}.images`,
+          'at least one photograph',
+        ),
+      };
+    case 'works-index':
+      return { kind };
+    case 'works-grid':
+      return { kind, text: localised(record.text, `${at}.text`) };
+    case 'programs':
+      return { kind };
+    case 'mentors':
+      return { kind, text: localised(record.text, `${at}.text`) };
   }
 
-  const route = text(record.route, `${at}.route`);
-  if (!isNavRoute(route)) {
-    fail(`${at}.route`, `a route in lib/routes (${Object.keys(routes).filter(isNavRoute)})`);
+  return fail(`${at}.kind`, SECTION_KINDS.join(' | '));
+}
+
+function page(value: unknown, at: string): Page {
+  const record = object(value, at);
+  const sections = each(record.sections, `${at}.sections`, section);
+
+  /*
+   * CLAUDE.md §10: one h1 per page, and every page has one. Two headings is a
+   * broken document outline; none is a page a screen reader cannot name. The
+   * admin refuses to save either, so this is the second of two gates — and the
+   * one that also holds for a revision published before the rule existed.
+   */
+  const headings = sections.filter((entry) => HEADING_KINDS.includes(entry.kind));
+  if (headings.length !== 1) {
+    fail(`${at}.sections`, `exactly one ${HEADING_KINDS.join(' or ')} section, found ${headings.length}`);
   }
-  return { label, route };
+
+  return {
+    slug: pageSlug(record.slug, `${at}.slug`),
+    title: localised(record.title, `${at}.title`),
+    description: localised(record.description, `${at}.description`),
+    // Absent and null both mean "not in the bar". A label that is *present* is
+    // held to the same both-languages rule as every other piece of copy.
+    navLabel:
+      record.navLabel === undefined || record.navLabel === null
+        ? null
+        : localised(record.navLabel, `${at}.navLabel`),
+    sections,
+  };
+}
+
+function parsePages(value: unknown): Page[] {
+  const found = each(value, 'pages', page);
+  unique(
+    found.map((entry) => entry.slug),
+    'pages',
+  );
+
+  const home = found.filter((entry) => entry.slug === HOME_SLUG);
+  if (home.length !== 1) {
+    fail('pages', `exactly one page with an empty slug — the front page — found ${home.length}`);
+  }
+
+  return found;
 }
 
 function isLocale(value: string): value is (typeof LOCALES)[number] {
@@ -259,8 +368,6 @@ function parseSite(value: unknown): SiteContent {
       zh: filled(localeNames.zh, 'site.localeNames.zh'),
       en: filled(localeNames.en, 'site.localeNames.en'),
     },
-    nav: each(record.nav, 'site.nav', navEntry),
-    studio: atLeastOne(each(record.studio, 'site.studio', image), 'site.studio'),
     contact: {
       email: filled(contact.email, 'site.contact.email'),
       wechat: filled(contact.wechat, 'site.contact.wechat'),
@@ -282,12 +389,8 @@ function parseDictionary(value: unknown, locale: string): Dictionary {
 
   const meta = group('meta');
   const a11y = group('a11y');
-  const home = group('home');
-  const works = group('works');
   const workStatus = object(object(record.works, `${at}.works`).status, `${at}.works.status`);
   const detail = group('work');
-  const programs = group('programs');
-  const about = group('about');
   const contact = group('contact');
   const notFound = group('notFound');
   const footer = group('footer');
@@ -307,10 +410,7 @@ function parseDictionary(value: unknown, locale: string): Dictionary {
       workPager: a11y('workPager'),
       close: a11y('close'),
     },
-    home: { statement: home('statement') },
     works: {
-      title: works('title'),
-      description: works('description'),
       status: {
         completed: filled(workStatus.completed, `${at}.works.status.completed`),
         'in-progress': filled(workStatus['in-progress'], `${at}.works.status.in-progress`),
@@ -326,19 +426,8 @@ function parseDictionary(value: unknown, locale: string): Dictionary {
       previous: detail('previous'),
       next: detail('next'),
     },
-    programs: {
-      title: programs('title'),
-      description: programs('description'),
-      intro: programs('intro'),
-    },
-    about: {
-      title: about('title'),
-      description: about('description'),
-      body: each(object(record.about, `${at}.about`).body, `${at}.about.body`, filled),
-      mentorsTitle: about('mentorsTitle'),
-      worksTitle: about('worksTitle'),
-    },
     contact: {
+      nav: contact('nav'),
       title: contact('title'),
       email: contact('email'),
       wechat: contact('wechat'),
@@ -396,6 +485,7 @@ export interface ContentBundle {
   /** The published revision this build came from. 0 for a draft preview. */
   revision: number;
   site: SiteContent;
+  pages: Page[];
   works: Work[];
   programs: Program[];
   mentors: Mentor[];
@@ -405,11 +495,9 @@ export interface ContentBundle {
 /**
  * The whole payload, in one gate.
  *
- * Content used to arrive as six imported JSON files and now arrives as one
- * fetched bundle, which changes where it comes from and nothing about what has
- * to be true of it. Every function this calls is the same one that checked the
- * files, so a field the admin gets wrong still fails the build with a path to
- * itself, and the previous deploy stays up.
+ * Every function this calls can fail, and failing stops `next build` with a
+ * path to the offending field — which leaves the previous deploy serving rather
+ * than replacing it with a page that renders `undefined`.
  */
 export function parseBundle(value: unknown): ContentBundle {
   const record = object(value, 'bundle');
@@ -418,6 +506,7 @@ export function parseBundle(value: unknown): ContentBundle {
   return {
     revision: whole(record.revision, 'bundle.revision'),
     site: parseSite(record.site),
+    pages: parsePages(record.pages),
     works: parseWorks(record.works),
     programs: parsePrograms(record.programs),
     mentors: parseMentors(record.mentors),

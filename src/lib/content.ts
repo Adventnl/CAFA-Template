@@ -6,6 +6,8 @@ import type {
   Dictionary,
   Locale,
   Mentor,
+  NavItem,
+  Page,
   Program,
   SiteContent,
   Work,
@@ -28,6 +30,7 @@ import { LOCALES } from './types';
 const content = parseBundle(bundle);
 
 const site: SiteContent = content.site;
+const pages: readonly Page[] = content.pages;
 const works: readonly Work[] = content.works;
 const programs: readonly Program[] = content.programs;
 const mentors: readonly Mentor[] = content.mentors;
@@ -53,6 +56,32 @@ export function getSite(): SiteContent {
 
 export function getDictionary(locale: Locale): Dictionary {
   return dictionaries[locale];
+}
+
+/** Every page, in the studio's order. What generateStaticParams enumerates. */
+export function getPages(): readonly Page[] {
+  return pages;
+}
+
+export function getPage(slug: string): Page | undefined {
+  return pages.find((page) => page.slug === slug);
+}
+
+/**
+ * The nav bar, as a projection of the pages rather than a list of its own.
+ *
+ * This is the whole of "adding a page adds a nav item": the bar is derived, so
+ * it cannot name a page that was deleted and cannot omit a page that asked to
+ * be in it. The Contact item is not here — it opens a panel over the page you
+ * are on rather than leading to one, so SiteHeader appends it from the
+ * dictionary, where its label lives.
+ */
+const nav: readonly NavItem[] = pages.flatMap((page) =>
+  page.navLabel === null ? [] : [{ slug: page.slug, label: page.navLabel }],
+);
+
+export function getNav(): readonly NavItem[] {
+  return nav;
 }
 
 export function getWorks(): readonly Work[] {

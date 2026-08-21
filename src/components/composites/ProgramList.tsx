@@ -1,4 +1,4 @@
-import { itemClass, partClass } from '@/components/motion/Part';
+import { itemClass } from '@/components/motion/Part';
 import { Text } from '@/components/primitives/Text';
 import { scenes, sceneAttrs } from '@/lib/choreography';
 import { cx } from '@/lib/class-names';
@@ -34,14 +34,12 @@ interface ProgramListProps {
  */
 export function ProgramList({ programs, locale, className }: ProgramListProps) {
   return (
-    // The page's `listing` part, and the scene that drives its children. A route
-    // change carries the sheet; the entries on it are named separately below and
-    // travel one after another, which is what makes the list unzip rather than
-    // slide as a block. MOTION.md §3.
-    <ul
-      className={cx(styles.list, partClass('listing'), className)}
-      {...sceneAttrs(scenes.programmes)}
-    >
+    // The scene that drives its children, and — when PageSections has given this
+    // section the role — the page's `listing` part, which arrives as a class. A
+    // route change carries the sheet; the entries on it are named separately
+    // below and travel one after another, which is what makes the list unzip
+    // rather than slide as a block. MOTION.md §3.
+    <ul className={cx(styles.list, className)} {...sceneAttrs(scenes.programmes)}>
       {programs.map((program, index) => (
         // The <li> is the track: it carries the timeline the entry inside it is
         // driven by, and it is never the sticky one — a stuck element's view

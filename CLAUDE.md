@@ -94,10 +94,16 @@ Every one of these is a bug, not a style preference:
   measured when the photograph is uploaded and travel in the bundle; alt text is a
   required field on the content record.
 - A work, programme, mentor or nav item spelled out in JSX. It comes from the bundle.
+- **A page spelled out as a route file.** A page is a record — a slug, a title, and an
+  ordered list of sections — and `app/[locale]/[[...path]]` renders all of them.
+  `components/composites/PageSections` is the only page body; each section kind is exactly
+  one component and each such component is exactly one kind. A new *kind* is code, because
+  a kind nothing draws is a blank on a page; a new *page* is not.
 
-Test: **adding a new work must require nothing but the admin UI — no commit, no deploy,
-nothing touched in this repository at all.** If that isn't true, the architecture is
-wrong — fix it.
+Test: **adding a new work, or a new page, must require nothing but the admin UI — no
+commit, no deploy, nothing touched in this repository at all.** The same goes for deleting
+one, reordering the sections on one, or taking it out of the nav. If that isn't true, the
+architecture is wrong — fix it.
 
 ## 5. YAGNI
 

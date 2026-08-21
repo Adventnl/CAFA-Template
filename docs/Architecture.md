@@ -54,12 +54,8 @@ the one place in the codebase that touches image markup.
     │   │   └── not-found/page.tsx   # becomes out/404.html via scripts/emit-404.mjs
     │   ├── [locale]/
     │   │   ├── layout.tsx           # <html lang>, header + <main> + footer + the contact card
-    │   │   ├── page.tsx             # home — SANAA-minimal
-    │   │   ├── works/
-    │   │   │   ├── page.tsx         # ium-style index
-    │   │   │   └── [slug]/page.tsx  # ium-style detail
-    │   │   ├── programs/page.tsx
-    │   │   └── about/page.tsx       # …and no contact/ — see §4
+    │   │   ├── [[...path]]/page.tsx # every page the studio has made — see §3a
+    │   │   └── works/[slug]/page.tsx # ium-style detail; the one route that is not a page record
     │   ├── robots.ts
     │   └── sitemap.ts
     ├── components/
@@ -90,8 +86,9 @@ the one place in the codebase that touches image markup.
     │       ├── WorkMetaPanel.tsx    # sticky left column on detail
     │       ├── WorkPager.tsx        # previous / next; the rule the footer joins onto
     │       ├── MediaSequence.tsx    # scrolling right column on detail
-    │       ├── WorkGrid.tsx         # the projects as covers, on About
-    │       ├── StudioSequence.tsx   # the home page below the fold, full bleed
+    │       ├── PageSections.tsx     # a page record → a page. The only page body — §3a
+    │       ├── WorkGrid.tsx         # the projects as covers
+    │       ├── Gallery.tsx          # photographs, full bleed, one at a time
     │       ├── MentorStrip.tsx      # the mentors, sideways through a pinned window
     │       ├── ProgramList.tsx
     │       ├── ContactBlock.tsx     # the card PinnedNote carries
@@ -100,7 +97,7 @@ the one place in the codebase that touches image markup.
     │   └── bundle.generated.json    # fetched by prebuild; gitignored, never committed
     ├── lib/
     │   ├── content-schema.ts        # JSON → typed records, or a build failure
-    │   ├── content.ts               # getSite, getWorks, getWorkListings … — typed, pure
+    │   ├── content.ts               # getPages, getNav, getWorks, getWorkListings … — typed, pure
     │   ├── routes.ts                # every path in the site, as functions
     │   ├── metadata.ts              # canonical + hreflang, built from a route function
     │   ├── json-ld.ts               # schema.org payloads, so no page knows a vocabulary
@@ -111,7 +108,7 @@ the one place in the codebase that touches image markup.
     │   ├── vt-uniqueness.ts         # dev-only assertion: one name, one element
     │   ├── css-duration.ts          # reads a duration token so no timer is a literal
     │   ├── class-names.ts           # cx() — a component's class joined with its caller's
-    │   └── types.ts                 # Work, WorkListing, Program, Mentor, Dictionary …
+    │   └── types.ts                 # Page, PageSection, Work, Program, Mentor, Dictionary …
     ├── types/
     │   └── react-canary.d.ts        # pulls in the <ViewTransition> declaration
     └── styles/
@@ -174,10 +171,26 @@ export interface Work {
 }
 ```
 
-`SiteContent.studio` is a non-empty tuple rather than a single `ImageRef`: the home page
-below the fold is a sequence, not a photograph. The type is
-`readonly [ImageRef, ...ImageRef[]]` so "there is at least one" is checked at compile time
-instead of asserted at the call site.
+```ts
+/** A block on a page. One kind, one component — see §3a. */
+export type PageSection =
+  | { kind: 'heading' }                                  // the page's title, as its h1
+  | { kind: 'statement'; text: LocalisedText }           // one line, holding the first screen
+  | { kind: 'prose'; paragraphs: readonly LocalisedText[] }
+  | { kind: 'gallery'; images: readonly ImageRef[] }     // full bleed, one at a time
+  | { kind: 'works-index' }                              // the ium list
+  | { kind: 'works-grid'; text: LocalisedText }          // the same registry, picture first
+  | { kind: 'programs' }
+  | { kind: 'mentors'; text: LocalisedText };
+
+export interface Page {
+  slug: string;                 // one segment under the locale; '' is the front page
+  title: LocalisedText;         // the document title, and what a `heading` section sets
+  description: LocalisedText;   // the meta description
+  navLabel: LocalisedText | null; // the word in the bar, or null for a page it omits
+  sections: readonly PageSection[];
+}
+```
 
 Rules:
 
@@ -204,27 +217,77 @@ Rules:
 - A **private** work publishes no photographs. The admin drops its cover and media when it
   builds a revision, and `parseWorks` drops them again on the way in — which is why an
   empty `src` is legal for exactly that case and nowhere else.
-- `lib/content.ts` exports pure functions only: `getSite()`, `getWorks()`, `getWork(slug)`,
-  `getPrograms()`, `getMentors()`, `getDictionary(locale)` and `requireLocale(param)`.
+- `lib/content.ts` exports pure functions only: `getSite()`, `getPages()`, `getPage(slug)`,
+  `getNav()`, `getWorks()`, `getWork(slug)`, `getPrograms()`, `getMentors()`,
+  `getDictionary(locale)` and `requireLocale(param)`.
   Components never import from `content/` directly; pages do, through `lib/content`.
+
+---
+
+## 3a. Pages are content
+
+**There is one page body in the app, and the site's pages are rows in a database.**
+
+This used to be four route files — home, works, programmes, about — each spelling out
+which blocks it had and in what order. That made the *set* of pages, and the composition
+of each one, a fact about this repository: adding a page was a commit, deleting one was a
+commit, and moving the mentors above the prose was a commit. Only the words inside those
+blocks were editable, which is a CMS in the shape of a hardcoded site.
+
+Now:
+
+- `app/[locale]/[[...path]]/page.tsx` is the only page route. Its `generateStaticParams`
+  enumerates `getPages()`, so a page the studio adds becomes a URL the next time the site
+  builds and a page it deletes stops being one. The catch-all is *optional* because the
+  front page is a page like the others whose slug happens to be empty.
+- `components/composites/PageSections.tsx` turns a page's `sections` into its body. Its
+  switch has no `default` and every branch returns, so a kind added to `PageSection`
+  without a component behind it is a TypeScript error rather than a blank on a page.
+- **One kind, one component.** `gallery` is `Gallery`, `mentors` is `MentorStrip`,
+  `programs` is `ProgramList`, `works-index` is `WorkIndex`, `works-grid` is `WorkGrid`.
+  There is exactly one of each in the codebase, and the database decides how many times
+  and on which pages each appears.
+- The **nav is a projection of the pages** (`getNav()`), not a list of its own, so it
+  cannot name a page that was deleted or omit one that asked to be in it. Contact is the
+  one item that is not a page — it opens a panel over the page you are on — so its label
+  is dictionary copy and `SiteHeader` appends it.
+- Two rules no database column can express are checked at the build gate instead:
+  **exactly one page with an empty slug** (a site with no front page 404s at its own
+  address) and **exactly one heading-bearing section per page** (`heading` or `statement`
+  — CLAUDE.md §10 wants one `h1`, and wants one).
+- What is *not* a page record: a work's own page. `app/[locale]/works/[slug]` is generated
+  from the works registry under a fixed segment, because a work's address has to stay valid
+  for as long as anything cites it. Next resolves its static `works` segment ahead of the
+  catch-all's dynamic one, so the two coexist without either knowing about the other.
+
+The consequence for the dictionary is that it shrank to what it always should have been:
+the words on the *chrome*. A page's title, its prose and the headings over its sections
+belong to a page that can be deleted, so they live on the page record; the pager on a work,
+the labels a screen reader hears, the contact card and the footer outlive every page, so
+they stay copy.
 
 ---
 
 ## 4. Routing and i18n
 
 ```
-/                    → redirect (static) to /zh        via app/page.tsx
-/zh                  → home, Chinese
-/zh/works            /zh/works/[slug]    /zh/programs   /zh/about
-/en                  → home, English
-/en/works            …
+/                    → redirect (static) to /zh        via app/(root)/page.tsx
+/zh                  → the page whose slug is ''       via app/[locale]/[[...path]]
+/zh/{slug}           → any other page the studio has made, same route
+/zh/works/{slug}     → a work's own page               via app/[locale]/works/[slug]
+/en, /en/{slug}      …the same, in English
 ```
+
+The second and third lines are one file, and which slugs exist is a question for the
+database rather than for the filesystem — §3a. The fourth is the one route that is not a
+page record.
 
 There is no `/contact`. It was a page and is now a card pinned over whichever page you are
 on — `components/motion/PinnedNote`, mounted once in the locale layout and opened by the
-nav item. The reasoning is MOTION.md §5.5b; the consequence for this section is that a nav
-item is no longer necessarily a route, which is why `SiteContent.nav` is a union of "has an
-`href`" and "`opens` a panel" rather than a list of links with one special case in it.
+nav item. The reasoning is MOTION.md §5.5b; the consequence for this section is that the
+nav bar is the pages *plus one item that is not a page*, which is why `SiteHeader` renders
+`getNav()` and then appends the Contact button rather than iterating one list with a
+special case in it.
 
 **The card carries a form, and where it sends is the whole of the decision.** §1 ships no
 server runtime, so there is nowhere for a POST to land — and a form that takes a message
@@ -248,8 +311,9 @@ own content at runtime.
 - `app/[locale]/layout.tsx` exports
   `generateStaticParams: () => [{locale:'zh'}, {locale:'en'}]`, which covers every page
   nested under it.
-- `app/[locale]/works/[slug]/page.tsx` exports `generateStaticParams` producing the cross
-  product of locales × work slugs. Every detail page is pre-rendered.
+- `app/[locale]/[[...path]]/page.tsx` and `app/[locale]/works/[slug]/page.tsx` each export
+  `generateStaticParams` producing the cross product of locales × their own records —
+  pages for the first, work slugs for the second. Every page is pre-rendered.
 - **No middleware** — it doesn't run under static export. Root `/` is a static page that
   renders a `<meta http-equiv="refresh">` plus a link. Keep it dumb.
 - **The 404 is a route, not `app/not-found.tsx`.** That file sits above both root layouts,
@@ -259,14 +323,15 @@ own content at runtime.
   directory. The segment cannot be called `404`: the exporter writes its own built-in error
   page over anything at that path.
 - `lib/routes.ts` is the only place a path string exists, and — since contact stopped being
-  one — the only place the destinations that are *not* paths exist either:
+  one — the only place the destinations that are *not* paths exist either. Two shapes, not
+  five, because the pages stopped being enumerable here:
   ```ts
+  /** The front page's slug. A page like any other, at the locale's own address. */
+  export const HOME_SLUG = '';
+
   export const routes = {
-    home:    (l: Locale) => `/${l}`,
-    works:   (l: Locale) => `/${l}/works`,
-    work:    (l: Locale, slug: string) => `/${l}/works/${slug}`,
-    programs:(l: Locale) => `/${l}/programs`,
-    about:   (l: Locale) => `/${l}/about`,
+    page: (l: Locale, slug: string) => (slug === HOME_SLUG ? `/${l}` : `/${l}/${slug}`),
+    work: (l: Locale, slug: string) => `/${l}/works/${slug}`,
   } as const;
 
   /** Popover ids. Two ends of one identity — the trigger's `popovertarget`
@@ -279,9 +344,11 @@ own content at runtime.
   present in one and missing from the other fails the build rather than the page. They are
   stored as one flat `copy` table keyed by dotted path, with a `zh` and an `en` column, so
   a missing translation is a blank column rather than an absent key.
-- The **nav labels** live in that same copy table and are lifted into `site.nav` by the
-  admin. The nav's *shape* — the order, and which route or panel each item points at — is
-  code, because it is wired to `lib/routes.ts`. The words are not.
+- The **nav labels** are not in that table any more. A page carries its own `navLabel`, so
+  the bar's shape *and* its words are both content: reordering the pages reorders the bar,
+  and clearing a label takes a page out of it without deleting the page. The one exception
+  is Contact, whose label is still copy, because the panel it opens is chrome rather than
+  a page.
 
 ---
 

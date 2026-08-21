@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { Focus } from '@/components/motion/Focus';
 import { Parallax } from '@/components/motion/Parallax';
-import { itemClass, partClass } from '@/components/motion/Part';
+import { itemClass } from '@/components/motion/Part';
 import { Media } from '@/components/primitives/Media';
 import { Text } from '@/components/primitives/Text';
 import { scenes, sceneAttrs } from '@/lib/choreography';
@@ -40,9 +40,13 @@ interface WorkGridProps {
  */
 export function WorkGrid({ works, locale, heading, className }: WorkGridProps) {
   return (
-    // The `listing` part, taken at the section rather than the grid so its own
-    // h2 travels with the cards it labels instead of being left on the surface.
-    <section className={cx(styles.section, partClass('listing'), className)}>
+    // The `listing` part arrives as a class from PageSections when this is the
+    // page's first list — taken at the section rather than at the grid, so its
+    // own h2 travels with the cards it labels instead of being left on the
+    // surface. Which section holds the role is the page's question, not this
+    // component's: two elements sharing a view-transition-name abort the
+    // transition, and only the page knows what else is on it.
+    <section className={cx(styles.section, className)}>
       <Text role="label" as="h2" className={styles.heading}>
         {heading}
       </Text>

@@ -39,9 +39,9 @@ interface MentorStripProps {
  * then who it is and what they work in. That caption is the whole difference
  * between this and a contact sheet, and it is why the plate is a <figure>.
  *
- * It is not StudioSequence. That one is the home page's full-bleed vertical
- * column of the studio itself, one photograph at a time with a lot of paper
- * between them; this is a single row of people read across a pinned window. They
+ * It is not Gallery. That one is a full-bleed vertical column of photographs,
+ * one at a time with a lot of paper between them; this is a single row of
+ * people read across a pinned window. They
  * share nothing — no images, no layout, no props, no motion — and the third use
  * is what earns an abstraction, not the second (CLAUDE.md §5).
  *

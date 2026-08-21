@@ -11,7 +11,7 @@ import { PinnedNote } from '@/components/motion/PinnedNote';
 import { ScrollField } from '@/components/motion/ScrollField';
 import { ScrollTicks } from '@/components/motion/ScrollTicks';
 import { Text } from '@/components/primitives/Text';
-import { getDictionary, getSite, getWorks, requireLocale } from '@/lib/content';
+import { getDictionary, getNav, getSite, getWorks, requireLocale } from '@/lib/content';
 import { sectionSegment, type NavContext } from '@/lib/nav-intent';
 import { panels, routes } from '@/lib/routes';
 
@@ -61,13 +61,11 @@ function navContext(): NavContext {
     locales: site.locales,
     worksSection: sectionSegment(routes.work(probe, 'x')) ?? '',
     workIndex: Object.fromEntries(getWorks().map((work) => [work.slug, work.index])),
-    // Only the items that are routes: `lateral`'s direction is the order of the
-    // *pages* along the bar, and the contact item opens a panel over the page
-    // you are on rather than being one of them.
-    sectionOrder: site.nav
-      .flatMap((item) => ('route' in item ? [routes[item.route](probe)] : []))
-      .map(sectionSegment)
-      .filter((segment): segment is string => segment !== undefined),
+    // The order of the *pages* along the bar, which is what gives `lateral` its
+    // direction. A page's slug is its section segment, so this needs no
+    // parsing — and the contact item is not in it, because it opens a panel
+    // over the page you are on rather than being one of them.
+    sectionOrder: getNav().map((item) => item.slug),
   };
 }
 
@@ -110,7 +108,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             {dictionary.a11y.skipToContent}
           </Text>
         </a>
-        <SiteHeader locale={locale} site={site} dictionary={dictionary} />
+        <SiteHeader locale={locale} site={site} nav={getNav()} dictionary={dictionary} />
         {/* tabIndex -1 so following the skip link actually moves focus here.
             Without it the hash changes and focus stays on <body>, and the next
             Tab goes back to the top of the nav. */}
