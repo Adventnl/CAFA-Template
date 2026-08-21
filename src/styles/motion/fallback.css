@@ -1,0 +1,90 @@
+/*
+ * The `enter` fallback MOTION.md §5.6 promises for a browser that cannot run
+ * triggers.css at all — Firefox today (§5.6 records why). It reads only the
+ * `data-seen` attribute components/motion/EnterFallback adds; nothing here runs
+ * without that component's JavaScript, and that component never runs where
+ * `@supports (animation-timeline: view())` already does — the two tests are the
+ * same one, made twice on purpose, so this file is purely additive and never a
+ * second animation racing the first.
+ *
+ * Only three effects appear below: `rise`, `slide`, `split` — every one §5.4
+ * already calls "safe on a ranged trigger" because it ends at its start state.
+ * `focus` and `drift` are the opposite — their rest state is the *middle* of the
+ * curve — so a browser that cannot scrub them is already showing the picture
+ * doing nothing, and needs no fallback; `pin-scrub`'s is the plain scroll
+ * container MentorStrip.module.css builds, which is furniture, not a reveal.
+ * Neither one is a gap this file leaves — they were never its job.
+ *
+ * The tokens are the ones effects.css's keyframes read — --eff-rise, --eff-
+ * slide, --eff-split, --eff-depth, --slide-sign, --eff-unmask — and effects.css
+ * computes every one of them unconditionally, outside its own @supports block,
+ * so a surface tuned there is tuned here for free.
+ */
+@supports not (animation-timeline: view()) {
+  [data-scene='progress'][data-effect='rise'],
+  [data-scene='batch'][data-effect='rise'] > *,
+  [data-scene='batch'][data-effect='slide'] > *,
+  [data-scene='batch'][data-effect='split'] > *,
+  [data-scene='stack'][data-effect='slide'] > * [data-stuck] > * {
+    transition:
+      clip-path var(--dur-slow) var(--ease-out),
+      opacity var(--dur-slow) var(--ease-out),
+      transform var(--dur-slow) var(--ease-out);
+  }
+
+  /* rise — progress' own reveal (the pager, the footer) and a batch's, direct. */
+  [data-scene='progress'][data-effect='rise'],
+  [data-scene='batch'][data-effect='rise'] > * {
+    opacity: 0;
+    transform: translateY(calc(var(--eff-rise) * var(--eff-depth)));
+  }
+  [data-scene='progress'][data-effect='rise'][data-seen],
+  [data-scene='batch'][data-effect='rise'] > *[data-seen] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* slide — a batch's children directly (the works rows), or a stack entry's
+     parts, a level down inside the block that catches (the programme list). */
+  [data-scene='batch'][data-effect='slide'] > *,
+  [data-scene='stack'][data-effect='slide'] > * [data-stuck] > * {
+    opacity: 0;
+    transform: translateX(calc(var(--eff-slide) * var(--eff-depth) * var(--slide-sign)));
+  }
+  [data-scene='batch'][data-effect='slide'] > *[data-seen],
+  [data-scene='stack'][data-effect='slide'] > *[data-seen] [data-stuck] > * {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* split — About's prose, paragraph by paragraph. */
+  [data-scene='batch'][data-effect='split'] > * {
+    clip-path: inset(0 calc(100% - var(--eff-unmask)) 0 0);
+    opacity: 0;
+    transform: translateY(calc(var(--eff-split) * var(--eff-depth)));
+  }
+  [data-scene='batch'][data-effect='split'] > *[data-seen] {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+    transform: none;
+  }
+
+  /*
+   * No scripting at all: nothing will ever set data-seen, so nothing above
+   * should wait on it. globals.css's reduced-motion rule already covers the
+   * other half of "never rely on the JS" — effects.css resets every one of
+   * these same selectors under prefers-reduced-motion, with !important, which
+   * outranks this file regardless of import order.
+   */
+  @media (scripting: none) {
+    [data-scene='progress'][data-effect='rise'],
+    [data-scene='batch'][data-effect='rise'] > *,
+    [data-scene='batch'][data-effect='slide'] > *,
+    [data-scene='batch'][data-effect='split'] > *,
+    [data-scene='stack'][data-effect='slide'] > * [data-stuck] > * {
+      clip-path: none;
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

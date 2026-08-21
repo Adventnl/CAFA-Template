@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import { ContactBlock } from '@/components/composites/ContactBlock';
 import { SiteFooter } from '@/components/composites/SiteFooter';
 import { SiteHeader } from '@/components/composites/SiteHeader';
+import { EnterFallback } from '@/components/motion/EnterFallback';
 import { NavStage } from '@/components/motion/NavStage';
 import { PageTransition } from '@/components/motion/PageTransition';
 import { PinnedNote } from '@/components/motion/PinnedNote';
@@ -89,10 +90,12 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         />
       </head>
       <body>
-        {/* The first two render nothing. NavStage writes each navigation's
+        {/* The first three render nothing. NavStage writes each navigation's
             figure onto <html> before the transition and owns scroll restoration
             (§2); ScrollField publishes scroll velocity and the pointer position
-            as custom properties for the effects to read (§4). ScrollTicks draws
+            as custom properties for the effects to read (§4). EnterFallback is
+            the one that only ever does anything on a browser that cannot run
+            styles/motion/triggers.css — MOTION.md §5.6. ScrollTicks draws
             the column in the margin that says where in the page the reader is,
             on the pages that mark their key points and nowhere else (§5.5) — it
             is here rather than on a page because it is fixed to the viewport,
@@ -100,6 +103,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
             against whichever part of it carries a view-transition-name. */}
         <NavStage context={navContext()} />
         <ScrollField />
+        <EnterFallback />
         <ScrollTicks />
         <a href="#main" className={styles.skip}>
           <Text role="label" as="span">

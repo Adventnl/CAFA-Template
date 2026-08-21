@@ -627,13 +627,27 @@ there is no open-state in React anywhere and the header never becomes a client c
 ### 5.6 Support and fallback
 
 `animation-timeline`, `view-timeline-name` and `timeline-scope` are available in current
-Chrome, Edge, Safari and Firefox. Everything above sits inside
-`@supports (animation-timeline: view())`.
+Chrome, Edge and Safari. **Firefox is not one of them** — as of this writing it ships all
+three only behind `layout.css.scroll-driven-animations.enabled`, not on release (Mozilla
+bug 1676779, still open). Everything above sits inside
+`@supports (animation-timeline: view())`, which is therefore false on every release
+Firefox, and the whole trigger vocabulary in triggers.css goes inert there — this is not a
+rare edge case, it is a widely-used browser getting nothing.
 
-The fallback is one shared `IntersectionObserver` that adds a class, giving `enter` behaviour
-and nothing else — no scrub, no pin, no link. This is deliberate and should not be "fixed":
-emulating scrub in JS means a main-thread handler per element, which is the thing that makes
-scroll-animated sites feel bad. Old browsers get a calm site; current ones get this one.
+The fallback is one shared `IntersectionObserver` (`components/motion/EnterFallback`) that
+adds `data-seen`, giving `enter` behaviour and nothing else — no scrub, no pin, no link —
+read by `styles/motion/fallback.css`, itself gated by `@supports not (animation-timeline:
+view())` so it only ever parses where the trigger CSS cannot run. This is deliberate and
+should not be extended into emulating scrub in JS: a main-thread handler per element is the
+thing that makes scroll-animated sites feel bad. Firefox gets a calm site with one honest
+entrance per surface; Chrome, Edge and Safari get the full figure.
+
+Two kinds need no fallback at all, for opposite reasons. `scrub`'s effects (`focus`,
+`drift`) rest at the *middle* of their curve, not an edge — a browser that cannot scrub
+them is already showing the right picture doing nothing. `pin-scrub`'s fallback is
+structural, not a reveal: MentorStrip.module.css's plain, natively-scrollable `.window`
+(with a visible `scrollbar-color`/`-width`, or the row is a cut edge with no sign there is
+more) — the honest degradation the pinned filmstrip has no motion-based equivalent for.
 
 ### 5.7 On GSAP
 

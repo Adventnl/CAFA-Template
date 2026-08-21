@@ -31,6 +31,16 @@
   overflow: auto hidden;
   overscroll-behavior-x: contain;
   scroll-snap-type: x proximity;
+  /*
+   * Visible only in that same fallback: once triggers.css's [data-pinned] rule
+   * wins the cascade and sets overflow: clip, this box is no longer a scroll
+   * container and neither property paints anything. Firefox has no functioning
+   * animation-timeline yet, so it is the browser that reads these today — and
+   * without a visible track a strip a few thousand pixels wide just looks like a
+   * row that ends at the viewport edge, not one the reader can drag further.
+   */
+  scrollbar-color: var(--c-ink-62) var(--c-ink-16);
+  scrollbar-width: thin;
 }
 
 .track {

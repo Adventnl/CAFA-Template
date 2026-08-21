@@ -15,6 +15,8 @@
 @import './locale.css';
 @import './restore.css';
 
-/* §5 the trigger system: effects (the "what") then triggers (the "when"). */
+/* §5 the trigger system: effects (the "what"), triggers (the "when"), then the
+   fallback for a browser that can run neither. */
 @import './effects.css';
 @import './triggers.css';
+@import './fallback.css';
