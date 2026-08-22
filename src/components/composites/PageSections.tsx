@@ -89,6 +89,7 @@ export function PageSections({
    */
   const intro = sections.findIndex((section) => section.kind === 'prose');
   const listing = sections.findIndex((section) => LISTING_KINDS.includes(section.kind));
+  const lead = leadSection(sections);
 
   return (
     <>
@@ -104,6 +105,7 @@ export function PageSections({
           dictionary={dictionary}
           content={content}
           role={at === intro ? 'intro' : at === listing ? 'listing' : null}
+          lead={at === lead}
         />
       ))}
     </>
@@ -120,13 +122,52 @@ export function PageSections({
  */
 const LISTING_KINDS: readonly SectionKind[] = ['works-grid', 'programs'];
 
+/** The kinds that put a photograph on the page, and so can hold the LCP. */
+const IMAGE_KINDS: readonly SectionKind[] = ['gallery', 'works-grid', 'mentors'];
+
+/**
+ * Which section holds the page's LCP image, or -1 for a page whose first screen
+ * is type.
+ *
+ * CLAUDE.md §7 asks the LCP image to be eager and `fetchPriority="high"` and
+ * every other image to be lazy, which was a property of the route file back when
+ * a page was one: the front page put its statement above the photographs and the
+ * work page knew its cover came first. A page composed in the admin has no such
+ * author, so the question is answered here, from the order the sections actually
+ * arrive in — otherwise a studio that begins a page with a gallery ships its
+ * largest image `loading="lazy"`, which is the one way to miss the budget by a
+ * whole network round trip rather than by milliseconds.
+ *
+ * Leading headings are skipped: a title is a line of type, and the photograph
+ * under it is still on the first screen. Anything else that is not a photograph
+ * — a statement, which CSS gives the whole first screen, prose, the works index
+ * — means the LCP is text, and nothing below it should be pulled forward.
+ */
+function leadSection(sections: readonly PageSection[]): number {
+  for (const [at, section] of sections.entries()) {
+    if (section.kind === 'heading') continue;
+    return IMAGE_KINDS.includes(section.kind) ? at : -1;
+  }
+  return -1;
+}
+
 interface SectionProps extends Omit<PageSectionsProps, 'sections'> {
   section: PageSection;
   /** The view-transition part this section carries, if the page gave it one. */
   role: 'intro' | 'listing' | null;
+  /** Whether this section's first photograph is the page's LCP image. */
+  lead: boolean;
 }
 
-function Section({ section, title, locale, dictionary, content, role }: SectionProps): ReactNode {
+function Section({
+  section,
+  title,
+  locale,
+  dictionary,
+  content,
+  role,
+  lead,
+}: SectionProps): ReactNode {
   // Every section is separated from the last by one token — the one
   // DESIGN-SYSTEM.md §4 reserves for exactly this — so the rhythm of a page is
   // a property of the page rather than of whichever blocks it happens to have.
@@ -181,7 +222,7 @@ function Section({ section, title, locale, dictionary, content, role }: SectionP
 
     case 'gallery':
       // Outside a Grid, so the plates run edge to edge.
-      return <Gallery images={section.images} locale={locale} className={outer} />;
+      return <Gallery images={section.images} locale={locale} priority={lead} className={outer} />;
 
     case 'works-index':
       return (
@@ -203,6 +244,7 @@ function Section({ section, title, locale, dictionary, content, role }: SectionP
             works={content.publishedWorks}
             locale={locale}
             heading={section.text[locale]}
+            priority={lead}
             className={cx(styles.full, part)}
           />
         </Grid>
@@ -227,6 +269,7 @@ function Section({ section, title, locale, dictionary, content, role }: SectionP
           mentors={content.mentors}
           locale={locale}
           title={section.text[locale]}
+          priority={lead}
           className={outer}
         />
       );

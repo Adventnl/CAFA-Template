@@ -23,6 +23,11 @@ interface WorkGridProps {
   works: readonly WorkListing[];
   locale: Locale;
   heading: string;
+  /**
+   * Whether the first cover is the page's LCP image — true when the grid is the
+   * first thing on the page. PageSections.leadSection is where that is decided.
+   */
+  priority?: boolean;
   className?: string;
 }
 
@@ -38,7 +43,7 @@ interface WorkGridProps {
  * Server-rendered throughout. There is no hover backdrop here and no state to
  * hold — a card is a link — so unlike WorkIndex this ships nothing.
  */
-export function WorkGrid({ works, locale, heading, className }: WorkGridProps) {
+export function WorkGrid({ works, locale, heading, priority = false, className }: WorkGridProps) {
   return (
     // The `listing` part arrives as a class from PageSections when this is the
     // page's first list — taken at the section rather than at the grid, so its
@@ -79,6 +84,7 @@ export function WorkGrid({ works, locale, heading, className }: WorkGridProps) {
                     image={work.cover}
                     locale={locale}
                     sizes="(min-width: 768px) 30vw, (min-width: 480px) 45vw, 92vw"
+                    priority={priority && index === 0}
                   />
                 </Parallax>
               </Focus>

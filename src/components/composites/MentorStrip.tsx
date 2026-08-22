@@ -22,6 +22,11 @@ interface MentorStripProps {
   mentors: readonly Mentor[];
   locale: Locale;
   title: string;
+  /**
+   * Whether the first portrait is the page's LCP image — true when the strip is
+   * the first thing on the page. PageSections.leadSection decides.
+   */
+  priority?: boolean;
   className?: string;
 }
 
@@ -49,7 +54,13 @@ interface MentorStripProps {
  * 'use client': the pin, the travel and the fallbacks are all CSS, so this ships
  * nothing.
  */
-export function MentorStrip({ mentors, locale, title, className }: MentorStripProps) {
+export function MentorStrip({
+  mentors,
+  locale,
+  title,
+  priority = false,
+  className,
+}: MentorStripProps) {
   return (
     // The section is the track and the window inside it is what sticks. No class
     // of its own, because everything a track has — its height, its timeline —
@@ -67,9 +78,14 @@ export function MentorStrip({ mentors, locale, title, className }: MentorStripPr
           <Text role="label" as="h2" className={styles.title}>
             {title}
           </Text>
-          {mentors.map((mentor) => (
+          {mentors.map((mentor, at) => (
             <figure key={mentor.slug} className={styles.plate}>
-              <Media image={mentor.portrait} locale={locale} sizes={SIZES} />
+              <Media
+                image={mentor.portrait}
+                locale={locale}
+                sizes={SIZES}
+                priority={priority && at === 0}
+              />
               <figcaption className={styles.caption}>
                 <Text role="index" as="h3">
                   {mentor.name[locale]}

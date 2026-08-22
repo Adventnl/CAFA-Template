@@ -29,9 +29,29 @@ interface WorkParams {
   params: Promise<{ locale: string; slug: string }>;
 }
 
+/**
+ * The one path this route exports when the registry has no work with a page.
+ *
+ * `output: export` refuses a dynamic route that prerenders nothing — Next reads
+ * an empty `generateStaticParams` as no `generateStaticParams` at all — so a
+ * studio that has not added its first work yet, or has just made its last one
+ * private, would fail the build rather than publish a site without a works
+ * section. That is a legitimate state of the content, so the route answers with
+ * one path instead of none.
+ *
+ * It is not reachable as a work: `content-schema` holds every slug to
+ * kebab-case alphanumerics, so nothing the admin can save collides with it, and
+ * `getWork` returns undefined for it — which is the `notFound()` below. Nothing
+ * links to it, and it disappears from the export the moment a work exists.
+ */
+const NO_WORKS = '_none';
+
 export function generateStaticParams() {
+  const works = getPublishedWorks();
   return getSite().locales.flatMap((locale) =>
-    getPublishedWorks().map((work) => ({ locale, slug: work.slug })),
+    works.length === 0
+      ? [{ locale, slug: NO_WORKS }]
+      : works.map((work) => ({ locale, slug: work.slug })),
   );
 }
 
