@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-import { getPages, getPublishedWorks, getSite } from '@/lib/content';
+import { getPublishedWorks, getSite } from '@/lib/content';
 import { routes } from '@/lib/routes';
 import type { Locale } from '@/lib/types';
 
@@ -10,10 +10,12 @@ export const dynamic = 'force-static';
 /**
  * Every page, in both locales, each carrying its own hreflang alternates.
  *
- * Read off the content rather than listed here, so a page the studio adds is in
- * the sitemap the first time the site builds and a page it deletes is out of it
- * — which is the same guarantee generateStaticParams gives the routes, from the
- * same source.
+ * The four pages are named here because there are four of them and the set is
+ * code; what is *not* written here is a path — every one of them resolves
+ * through lib/routes, so a segment cannot be spelled one way in the sitemap and
+ * another in the nav. The works come from the registry, so a work the studio
+ * publishes is in the sitemap the first time the site builds and one it deletes
+ * is out of it.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const site = getSite();
@@ -21,7 +23,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     new URL(`${route(locale)}/`, site.url).toString();
 
   const pages: ((locale: Locale) => string)[] = [
-    ...getPages().map((page) => (locale: Locale) => routes.page(locale, page.slug)),
+    routes.home,
+    routes.works,
+    routes.programs,
+    routes.about,
     ...getPublishedWorks().map((work) => (locale: Locale) => routes.work(locale, work.slug)),
   ];
 

@@ -1,5 +1,5 @@
 import { getSite } from './content';
-import { HOME_SLUG, routes } from './routes';
+import { routes } from './routes';
 import type { Locale, Work } from './types';
 
 /**
@@ -12,7 +12,7 @@ export function organisationJsonLd(locale: Locale): object {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: site.name[locale],
-    url: new URL(`${routes.page(locale, HOME_SLUG)}/`, site.url).toString(),
+    url: new URL(`${routes.home(locale)}/`, site.url).toString(),
     email: site.contact.email,
     address: { '@type': 'PostalAddress', streetAddress: site.contact.address[locale] },
   };

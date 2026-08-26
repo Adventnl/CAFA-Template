@@ -1,0 +1,25 @@
+/*
+ * The paragraphs that open the page. A grid rather than one block, because the
+ * copy is authored as paragraphs and the batch stagger is per paragraph — a
+ * browser cannot address a line box from CSS, so the unit the content is
+ * written in is the unit that moves.
+ */
+.intro {
+  color: var(--c-ink-70);
+  display: grid;
+  grid-column: 1 / -1;
+  margin-block-end: var(--space-2xl);
+  max-inline-size: var(--measure);
+  row-gap: var(--space-m);
+}
+
+.list {
+  grid-column: 1 / -1;
+}
+
+/* DESIGN-SYSTEM.md §5: prose in columns 4–9. */
+@media (width >= 768px) {
+  .intro {
+    grid-column: 4 / 10;
+  }
+}

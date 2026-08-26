@@ -75,81 +75,81 @@ export interface Mentor {
 }
 
 /**
- * A block on a page, and the unit the studio composes a page out of.
+ * The four pages the site has.
  *
- * **Every kind here is exactly one component, and every component that can
- * stand on a page is exactly one kind.** That correspondence is the whole
- * point: a page is no longer a `.tsx` file that spells out which blocks it has
- * — it is a row in the database with a list of these under it, so adding a
- * block to a page, reordering two, or deleting one is an edit in CAFA-Admin
- * rather than a commit here. Adding a *new kind* is the one thing that is still
- * code, and correctly so: a kind that no component renders is a blank on a page.
+ * **The set is code, and so is the composition of each one.** Every page here
+ * is a route file with its own layout, its own choreography and its own view
+ * transitions — the front page's statement holding a screen on its own, the
+ * mentors read across a pinned window, the programmes stacking one at a time.
+ * A fifth page is therefore a design and the motion that goes with it, not a
+ * row somebody adds on a Tuesday; the admin edits the words on these four and
+ * cannot invent a page nothing has been drawn for.
  *
- * A discriminated union rather than one interface with eight optional fields,
- * so `kind: 'gallery'` is the compiler's word that `images` is there — and so
- * `components/composites/PageSections` cannot forget a kind: its switch has no
- * default and returns no `undefined`.
- *
- * `text` is the section's own line of copy, and the two kinds that carry one
- * mean different things by it — a front page's statement is a sentence, a
- * grid's heading is a word or two. They share the field because they share the
- * shape; nothing reads one as the other.
+ * What the pages do *not* carry is the collections they show. The works index
+ * is the works, the programme list is the programmes, the band of portraits is
+ * the mentors — a page names a collection rather than holding one, so adding a
+ * work changes three pages and touches nothing here.
  */
-export type PageSection =
-  /** The page's own title, set as its `h1` on the grid. `PageHeading`. */
-  | { kind: 'heading' }
-  /** One line, centred, holding the first screen on its own. `Recede`. */
-  | { kind: 'statement'; text: LocalisedText }
-  /** Prose, one entry per paragraph. */
-  | { kind: 'prose'; paragraphs: readonly LocalisedText[] }
-  /** Photographs, full bleed, one at a time. `Gallery`. */
-  | { kind: 'gallery'; images: readonly ImageRef[] }
-  /** Every work as a row of numbers and titles. `WorkIndex`. */
-  | { kind: 'works-index' }
-  /** The published works as a grid of covers. `WorkGrid`. */
-  | { kind: 'works-grid'; text: LocalisedText }
-  /** Every programme, one screen at a time. `ProgramList`. */
-  | { kind: 'programs' }
-  /** The mentors, read across a pinned window. `MentorStrip`. */
-  | { kind: 'mentors'; text: LocalisedText };
+export const PAGE_KEYS = ['home', 'works', 'programs', 'about'] as const;
 
-export type SectionKind = PageSection['kind'];
+export type PageKey = (typeof PAGE_KEYS)[number];
 
-/**
- * A page of the site.
- *
- * There is one route file for all of them (`app/[locale]/[[...path]]`), so the
- * set of pages the site has is the set of rows the studio has made. Deleting
- * one deletes a URL; adding one adds a URL and, if it carries a `navLabel`, an
- * item in the bar.
- *
- * `slug` is the single path segment under the locale, and the empty string is
- * the front page — `/zh` rather than `/zh/something`. There is exactly one such
- * page, which lib/content-schema checks, because a site with no front page is
- * a 404 at its own address.
- */
-export interface Page {
-  slug: string;
-  /** The document title. Also the `h1` a `heading` section sets. */
+/** The three pages the nav bar carries, in the order it carries them. */
+export const NAV_PAGES = ['works', 'programs', 'about'] as const;
+
+export type NavPage = (typeof NAV_PAGES)[number];
+
+/** What every page carries: the words that name it to a reader and to a crawler. */
+export interface PageText {
+  /**
+   * The page's own title — its `h1`, its document title, and its word in the
+   * navigation bar, all three. A page called one thing in the bar and another
+   * at the top of itself is a page the reader has to reconcile.
+   */
   title: LocalisedText;
   /** The meta description. */
   description: LocalisedText;
-  /** The word in the nav bar, or null for a page the bar does not carry. */
-  navLabel: LocalisedText | null;
-  sections: readonly PageSection[];
+}
+
+/** The front page: one line, and the studio's photographs under it. */
+export interface HomePage extends PageText {
+  statement: LocalisedText;
+  /** The plates below the statement, in order. May be empty. */
+  gallery: readonly ImageRef[];
+}
+
+/** Programmes: the paragraphs above the list, which is the programmes. */
+export interface ProgramsPage extends PageText {
+  intro: readonly LocalisedText[];
+}
+
+/** About: the prose, then the people, then the projects. */
+export interface AboutPage extends PageText {
+  intro: readonly LocalisedText[];
+  mentorsTitle: LocalisedText;
+  projectsTitle: LocalisedText;
+}
+
+export interface SitePages {
+  home: HomePage;
+  /** The index of works needs nothing but the words that title the page. */
+  works: PageText;
+  programs: ProgramsPage;
+  about: AboutPage;
 }
 
 /**
- * One item of the nav bar: a page the studio has asked to be listed there.
+ * One item of the nav bar.
  *
- * The bar is not a list of its own any more — it is a projection of the pages,
- * built by lib/content, which is why nothing can put an item in it that leads
- * nowhere or leave a page out of it that asked to be in. The Contact item is
- * not here: it opens a panel over the page you are on rather than leading to
- * one, so it belongs to the chrome and its label is in the dictionary.
+ * The bar is the three inner pages, in the order this file lists them, each
+ * labelled by its own title — so nothing holds a second list of words that
+ * could disagree with the first, and a page cannot be in the bar under one name
+ * and at the top of itself under another. The Contact item is not here: it
+ * opens a panel over the page you are on rather than leading to one, so it
+ * belongs to the chrome and its label is in the dictionary.
  */
 export interface NavItem {
-  slug: string;
+  page: NavPage;
   label: LocalisedText;
 }
 
@@ -179,15 +179,16 @@ export interface SiteContent {
  * One object per locale, both typed as this, so a key that exists in zh and not
  * in en is a build error rather than a blank on the page.
  *
- * What is not here is as deliberate as what is. A page's title, its heading, its
- * prose and the words over its sections are on the page record, because they
- * belong to a page that can be deleted; these are the words on the chrome that
- * outlives every page — the pager on a work, the labels a screen reader hears,
- * the contact card, the footer. A key here exists because a *component* reads it
- * by name, which is why the set is fixed and the admin only ever edits values.
+ * What is not here is as deliberate as what is. A page's title, its prose and
+ * the words over its parts are on `SitePages`, because they belong to that page;
+ * these are the words that appear on every page and belong to none — the pager
+ * on a work, the labels a screen reader hears, the contact card, the footer. A
+ * key here exists because a *component* reads it by name, which is why the set
+ * is fixed and the admin only ever edits values.
  */
 export interface Dictionary {
-  meta: { title: string; titleTemplate: string; description: string };
+  /** How an inner page's document title is composed. `%s` is its own title. */
+  meta: { titleTemplate: string };
   a11y: {
     skipToContent: string;
     primaryNav: string;

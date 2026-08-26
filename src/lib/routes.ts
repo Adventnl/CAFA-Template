@@ -16,27 +16,23 @@ export function swapLocale(pathname: string, locale: Locale): string {
 }
 
 /**
- * The front page's slug.
+ * The five addresses the site has.
  *
- * A page is one segment under the locale and the front page is the one with no
- * segment at all, which the empty string is the honest spelling of: it is a
- * page like the others, with sections like the others, that happens to sit at
- * the locale's own address. Named rather than written as `''` at four call
- * sites, so "which page is the front page" is a question with one answer.
- */
-export const HOME_SLUG = '';
-
-/**
- * The two addresses the site has.
+ * One entry per route file, so no path is ever written out anywhere else — the
+ * nav, the sitemap, the metadata helper and the work pager all resolve through
+ * here. `work` is the one that takes an argument: a work's own page is
+ * generated from the registry under a fixed segment, because its address has to
+ * stay valid for as long as the work is cited anywhere.
  *
- * `page` covers every page the studio has made — there is one route file behind
- * it and the slug comes from the content, so adding a page adds a URL without
- * touching this. `work` is the one shape that is not a page record: a work's
- * own page is generated from the works registry, under a fixed segment, because
- * its address has to stay valid for as long as the work is cited anywhere.
+ * The three inner pages are keyed by their `NavPage` name, which is also their
+ * path segment — that is what lets `SiteHeader` and `navContext` index this
+ * object by a page's own name instead of carrying a second table of segments.
  */
 export const routes = {
-  page: (l: Locale, slug: string) => (slug === HOME_SLUG ? `/${l}` : `/${l}/${slug}`),
+  home: (l: Locale) => `/${l}`,
+  works: (l: Locale) => `/${l}/works`,
+  programs: (l: Locale) => `/${l}/programs`,
+  about: (l: Locale) => `/${l}/about`,
   work: (l: Locale, slug: string) => `/${l}/works/${slug}`,
 } as const;
 

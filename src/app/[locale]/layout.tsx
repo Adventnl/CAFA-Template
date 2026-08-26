@@ -11,7 +11,7 @@ import { PinnedNote } from '@/components/motion/PinnedNote';
 import { ScrollField } from '@/components/motion/ScrollField';
 import { ScrollTicks } from '@/components/motion/ScrollTicks';
 import { Text } from '@/components/primitives/Text';
-import { getDictionary, getNav, getSite, getWorks, requireLocale } from '@/lib/content';
+import { getDictionary, getNav, getPage, getSite, getWorks, requireLocale } from '@/lib/content';
 import { sectionSegment, type NavContext } from '@/lib/nav-intent';
 import { panels, routes } from '@/lib/routes';
 
@@ -39,13 +39,17 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: Pick<LocaleLayoutProps, 'params'>): Promise<Metadata> {
-  const { locale } = await params;
-  const { meta } = getDictionary(requireLocale(locale));
+  const locale = requireLocale((await params).locale);
+  const { meta } = getDictionary(locale);
+  // The site's default title and description are the front page's own: it is
+  // the page at the site's address, so a second copy of them under another name
+  // would be two owners for one sentence.
+  const home = getPage('home');
   return {
     // Without this Next resolves og:image against localhost at build time.
     metadataBase: new URL(getSite().url),
-    title: { default: meta.title, template: meta.titleTemplate },
-    description: meta.description,
+    title: { default: home.title[locale], template: meta.titleTemplate },
+    description: home.description[locale],
   };
 }
 
@@ -62,10 +66,10 @@ function navContext(): NavContext {
     worksSection: sectionSegment(routes.work(probe, 'x')) ?? '',
     workIndex: Object.fromEntries(getWorks().map((work) => [work.slug, work.index])),
     // The order of the *pages* along the bar, which is what gives `lateral` its
-    // direction. A page's slug is its section segment, so this needs no
+    // direction. A page's name is its section segment, so this needs no
     // parsing — and the contact item is not in it, because it opens a panel
     // over the page you are on rather than being one of them.
-    sectionOrder: getNav().map((item) => item.slug),
+    sectionOrder: getNav().map((item) => item.page),
   };
 }
 

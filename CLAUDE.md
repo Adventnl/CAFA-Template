@@ -94,16 +94,21 @@ Every one of these is a bug, not a style preference:
   measured when the photograph is uploaded and travel in the bundle; alt text is a
   required field on the content record.
 - A work, programme, mentor or nav item spelled out in JSX. It comes from the bundle.
-- **A page spelled out as a route file.** A page is a record — a slug, a title, and an
-  ordered list of sections — and `app/[locale]/[[...path]]` renders all of them.
-  `components/composites/PageSections` is the only page body; each section kind is exactly
-  one component and each such component is exactly one kind. A new *kind* is code, because
-  a kind nothing draws is a blank on a page; a new *page* is not.
 
-Test: **adding a new work, or a new page, must require nothing but the admin UI — no
+**And the one thing that is deliberately *not* content: the pages.** The site has four —
+home, works, programmes, about — and each is a route file with its own layout, its own
+choreography and its own view transitions. A fifth page is a design and the motion that
+goes with it, not a row somebody adds on a Tuesday, and an editor free to reorder the
+blocks on About can only produce a rhythm nobody drew. So the *set* of pages is code, the
+composition of each is code, and every **word** on them is content: `SitePages` in
+lib/types is what the studio fills in, and the nav bar is those pages' own titles rather
+than a second list of labels that could disagree with them.
+
+Test: **adding a work, a programme or a mentor must require nothing but the admin UI — no
 commit, no deploy, nothing touched in this repository at all.** The same goes for deleting
-one, reordering the sections on one, or taking it out of the nav. If that isn't true, the
-architecture is wrong — fix it.
+one, reordering them, and for changing any word on any page. Adding a *page* is a change
+here, and is meant to be. If the first part isn't true, the architecture is wrong — fix
+it.
 
 ## 5. YAGNI
 

@@ -16,25 +16,25 @@
  * Nothing here is a cast: every narrowing is a check that can fail, and failing
  * stops the build — which leaves the previous deploy serving.
  *
- * Since pages became content, this gate also checks the two rules a page has to
- * satisfy that no database column can express: exactly one front page across
- * the site, and exactly one heading on each page. Both are structural — the
- * first is a 404 at the site's own address, the second is an accessibility
- * defect — and both are cheap to check here, once, before anything renders.
+ * The pages are four named records rather than a list, and this gate reads them
+ * by name for the same reason `parseDictionary` spells its keys out: each has
+ * different fields, so a loop would have to accept the union of them and would
+ * stop being able to say which one is missing.
  */
-import { HOME_SLUG } from './routes';
 import {
   LOCALES,
+  type AboutPage,
   type Dictionary,
+  type HomePage,
   type ImageRef,
   type Locale,
   type LocalisedText,
   type Mentor,
-  type Page,
-  type PageSection,
+  type PageText,
   type Program,
-  type SectionKind,
+  type ProgramsPage,
   type SiteContent,
+  type SitePages,
   type Work,
   type WorkStatus,
 } from './types';
@@ -97,13 +97,6 @@ const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 function slug(value: unknown, at: string): string {
   const found = text(value, at);
   if (!SLUG.test(found)) fail(at, 'a kebab-case slug');
-  return found;
-}
-
-/** The same, plus the empty string — which is the front page's address. */
-function pageSlug(value: unknown, at: string): string {
-  const found = text(value, at);
-  if (found !== HOME_SLUG && !SLUG.test(found)) fail(at, 'a kebab-case slug, or "" for the front page');
   return found;
 }
 
@@ -239,110 +232,55 @@ function parseMentors(value: unknown): Mentor[] {
   });
 }
 
-/**
- * The kinds, listed once so a bad one can be reported with the set it missed.
- * `satisfies` rather than a bare array: a kind added to `PageSection` and
- * forgotten here is a compile error, which is the only way this list stays the
- * same list the union is.
- */
-const SECTION_KINDS = [
-  'heading',
-  'statement',
-  'prose',
-  'gallery',
-  'works-index',
-  'works-grid',
-  'programs',
-  'mentors',
-] as const satisfies readonly SectionKind[];
-
-/** The kinds that set a page's `h1`. Exactly one of them per page — see `page`. */
-const HEADING_KINDS: readonly SectionKind[] = ['heading', 'statement'];
-
-function section(value: unknown, at: string): PageSection {
-  const record = object(value, at);
-  const kind = text(record.kind, `${at}.kind`);
-
-  // No `default`, and every branch returns: a kind added to the union without a
-  // branch here fails to compile rather than parsing into something unrenderable.
-  switch (kind) {
-    case 'heading':
-      return { kind };
-    case 'statement':
-      return { kind, text: localised(record.text, `${at}.text`) };
-    case 'prose':
-      return {
-        kind,
-        paragraphs: some(
-          each(record.paragraphs, `${at}.paragraphs`, localised),
-          `${at}.paragraphs`,
-          'at least one paragraph',
-        ),
-      };
-    case 'gallery':
-      return {
-        kind,
-        images: some(
-          each(record.images, `${at}.images`, image),
-          `${at}.images`,
-          'at least one photograph',
-        ),
-      };
-    case 'works-index':
-      return { kind };
-    case 'works-grid':
-      return { kind, text: localised(record.text, `${at}.text`) };
-    case 'programs':
-      return { kind };
-    case 'mentors':
-      return { kind, text: localised(record.text, `${at}.text`) };
-  }
-
-  return fail(`${at}.kind`, SECTION_KINDS.join(' | '));
-}
-
-function page(value: unknown, at: string): Page {
-  const record = object(value, at);
-  const sections = each(record.sections, `${at}.sections`, section);
-
-  /*
-   * CLAUDE.md §10: one h1 per page, and every page has one. Two headings is a
-   * broken document outline; none is a page a screen reader cannot name. The
-   * admin refuses to save either, so this is the second of two gates — and the
-   * one that also holds for a revision published before the rule existed.
-   */
-  const headings = sections.filter((entry) => HEADING_KINDS.includes(entry.kind));
-  if (headings.length !== 1) {
-    fail(`${at}.sections`, `exactly one ${HEADING_KINDS.join(' or ')} section, found ${headings.length}`);
-  }
-
+/** The two lines every page carries. */
+function pageText(record: Record<string, unknown>, at: string): PageText {
   return {
-    slug: pageSlug(record.slug, `${at}.slug`),
     title: localised(record.title, `${at}.title`),
     description: localised(record.description, `${at}.description`),
-    // Absent and null both mean "not in the bar". A label that is *present* is
-    // held to the same both-languages rule as every other piece of copy.
-    navLabel:
-      record.navLabel === undefined || record.navLabel === null
-        ? null
-        : localised(record.navLabel, `${at}.navLabel`),
-    sections,
   };
 }
 
-function parsePages(value: unknown): Page[] {
-  const found = each(value, 'pages', page);
-  unique(
-    found.map((entry) => entry.slug),
-    'pages',
-  );
+function paragraphs(value: unknown, at: string): LocalisedText[] {
+  return some(each(value, at, localised), at, 'at least one paragraph');
+}
 
-  const home = found.filter((entry) => entry.slug === HOME_SLUG);
-  if (home.length !== 1) {
-    fail('pages', `exactly one page with an empty slug — the front page — found ${home.length}`);
-  }
+function parseHome(value: unknown): HomePage {
+  const at = 'pages.home';
+  const record = object(value, at);
+  return {
+    ...pageText(record, at),
+    statement: localised(record.statement, `${at}.statement`),
+    // No minimum. A front page with no photographs is the statement on its own,
+    // which is a page the studio is allowed to want.
+    gallery: each(record.gallery, `${at}.gallery`, image),
+  };
+}
 
-  return found;
+function parseProgramsPage(value: unknown): ProgramsPage {
+  const at = 'pages.programs';
+  const record = object(value, at);
+  return { ...pageText(record, at), intro: paragraphs(record.intro, `${at}.intro`) };
+}
+
+function parseAbout(value: unknown): AboutPage {
+  const at = 'pages.about';
+  const record = object(value, at);
+  return {
+    ...pageText(record, at),
+    intro: paragraphs(record.intro, `${at}.intro`),
+    mentorsTitle: localised(record.mentorsTitle, `${at}.mentorsTitle`),
+    projectsTitle: localised(record.projectsTitle, `${at}.projectsTitle`),
+  };
+}
+
+function parsePages(value: unknown): SitePages {
+  const record = object(value, 'pages');
+  return {
+    home: parseHome(record.home),
+    works: pageText(object(record.works, 'pages.works'), 'pages.works'),
+    programs: parseProgramsPage(record.programs),
+    about: parseAbout(record.about),
+  };
 }
 
 function isLocale(value: string): value is (typeof LOCALES)[number] {
@@ -396,11 +334,7 @@ function parseDictionary(value: unknown, locale: string): Dictionary {
   const footer = group('footer');
 
   return {
-    meta: {
-      title: meta('title'),
-      titleTemplate: meta('titleTemplate'),
-      description: meta('description'),
-    },
+    meta: { titleTemplate: meta('titleTemplate') },
     a11y: {
       skipToContent: a11y('skipToContent'),
       primaryNav: a11y('primaryNav'),
@@ -485,7 +419,7 @@ export interface ContentBundle {
   /** The published revision this build came from. 0 for a draft preview. */
   revision: number;
   site: SiteContent;
-  pages: Page[];
+  pages: SitePages;
   works: Work[];
   programs: Program[];
   mentors: Mentor[];

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Grid } from '@/components/primitives/Grid';
 import { Mark } from '@/components/primitives/Mark';
 import { Text } from '@/components/primitives/Text';
-import { HOME_SLUG, panels, routes } from '@/lib/routes';
+import { panels, routes } from '@/lib/routes';
 import type { Dictionary, Locale, NavItem, SiteContent } from '@/lib/types';
 
 import { LocaleSwitch } from './LocaleSwitch';
@@ -12,7 +12,7 @@ import styles from './SiteHeader.module.css';
 interface SiteHeaderProps {
   locale: Locale;
   site: SiteContent;
-  /** The pages that asked to be in the bar, in the studio's order. */
+  /** The three inner pages, in the order the bar carries them. */
   nav: readonly NavItem[];
   dictionary: Dictionary;
 }
@@ -23,7 +23,7 @@ export function SiteHeader({ locale, site, nav, dictionary }: SiteHeaderProps) {
     // width; the Grid inside it is what aligns to the page columns.
     <header className={styles.header}>
       <Grid className={styles.bar}>
-        <Link href={routes.page(locale, HOME_SLUG)} className={styles.brand}>
+        <Link href={routes.home(locale)} className={styles.brand}>
           <Text role="label" as="span">
             {site.name[locale]}
           </Text>
@@ -41,11 +41,7 @@ export function SiteHeader({ locale, site, nav, dictionary }: SiteHeaderProps) {
               height of a touch target is a banner. */}
           <nav aria-label={dictionary.a11y.primaryNav} className={styles.links}>
             {nav.map((item) => (
-              <Link
-                key={item.slug}
-                href={routes.page(locale, item.slug)}
-                className={styles.link}
-              >
+              <Link key={item.page} href={routes[item.page](locale)} className={styles.link}>
                 <Mark role="label">{item.label[locale]}</Mark>
               </Link>
             ))}

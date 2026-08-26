@@ -23,11 +23,6 @@ interface WorkGridProps {
   works: readonly WorkListing[];
   locale: Locale;
   heading: string;
-  /**
-   * Whether the first cover is the page's LCP image — true when the grid is the
-   * first thing on the page. PageSections.leadSection is where that is decided.
-   */
-  priority?: boolean;
   className?: string;
 }
 
@@ -43,14 +38,14 @@ interface WorkGridProps {
  * Server-rendered throughout. There is no hover backdrop here and no state to
  * hold — a card is a link — so unlike WorkIndex this ships nothing.
  */
-export function WorkGrid({ works, locale, heading, priority = false, className }: WorkGridProps) {
+export function WorkGrid({ works, locale, heading, className }: WorkGridProps) {
   return (
-    // The `listing` part arrives as a class from PageSections when this is the
-    // page's first list — taken at the section rather than at the grid, so its
-    // own h2 travels with the cards it labels instead of being left on the
-    // surface. Which section holds the role is the page's question, not this
-    // component's: two elements sharing a view-transition-name abort the
-    // transition, and only the page knows what else is on it.
+    // The `listing` part arrives as a class from the page — taken at the
+    // section rather than at the grid, so its own h2 travels with the cards it
+    // labels instead of being left on the surface. Which block holds the role
+    // is the page's question, not this component's: two elements sharing a
+    // view-transition-name abort the transition, and only the page knows what
+    // else is on it.
     <section className={cx(styles.section, className)}>
       <Text role="label" as="h2" className={styles.heading}>
         {heading}
@@ -84,7 +79,6 @@ export function WorkGrid({ works, locale, heading, priority = false, className }
                     image={work.cover}
                     locale={locale}
                     sizes="(min-width: 768px) 30vw, (min-width: 480px) 45vw, 92vw"
-                    priority={priority && index === 0}
                   />
                 </Parallax>
               </Focus>
