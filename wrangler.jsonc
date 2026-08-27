@@ -2,11 +2,21 @@
   // A static-only Worker: no `main`, so there is no server runtime and no
   // JavaScript of ours between the request and the file. Cloudflare Workers
   // Builds reads this config; nothing here needs wrangler installed locally.
-  "name": "cafa-atelier",
+  "name": "cafa-web",
+  "account_id": "fff1de3eb2a028764bfb388d7599fa39",
   "compatibility_date": "2026-08-05",
 
-  // The public site. A custom domain rather than a route: Cloudflare owns the
-  // record and the certificate, and there is no origin to fall through to.
+  // Workers Builds injects Wrangler vars into `npm run build`. This endpoint
+  // is public configuration, not a secret; it must be present before Next.js
+  // starts because the static export fetches its content at build time.
+  "vars": {
+    "CONTENT_API": "https://admin.cafa-studio.com/api/content/published"
+  },
+
+  // The public site. The apex already has a proxied DNS record, so this Worker
+  // is attached as a route over that record rather than trying to replace it
+  // with a Custom Domain record. The Worker handles every apex request before
+  // the old origin can answer.
   //
   // The apex only. Pointing www at this Worker as well would make the same
   // pages answer on two hostnames, which is a duplicate-content problem that
@@ -15,10 +25,10 @@
   // dashboard because it never needs to change with a deploy.
   //
   // Preview builds are unaffected: Workers Builds gives a non-production branch
-  // a versioned alias, and only the production deployment answers on a custom
-  // domain. So the preview keeps its own URL and this stays pointed at what was
-  // last published.
-  "routes": [{ "pattern": "cafa-studio.com", "custom_domain": true }],
+  // a versioned alias, and only the production deployment is attached to the
+  // apex route. So the preview keeps its own URL and this stays pointed at what
+  // was last published.
+  "routes": [{ "pattern": "cafa-studio.com/*", "zone_name": "cafa-studio.com" }],
 
   "assets": {
     // What `npm run build` writes. prebuild fetches the content, next build

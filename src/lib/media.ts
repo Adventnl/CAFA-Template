@@ -73,7 +73,9 @@ const base = (() => {
  * a boolean* still fails the build.
  */
 const transforms = (() => {
-  const value: unknown = bundle.mediaTransform;
+  // JSON imports are inferred from the current file's exact keys. Read through
+  // the bundle contract so a deliberately optional key can also be absent.
+  const value: unknown = (bundle as Record<string, unknown>).mediaTransform;
   if (value === undefined) return false;
   if (typeof value !== 'boolean') {
     throw new Error('content: bundle.mediaTransform — expected a boolean');
