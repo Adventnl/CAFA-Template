@@ -20,10 +20,12 @@
  *   PREVIEW_TOKEN  optional; only the preview build has one.
  *
  * With CONTENT_API unset it reuses whatever bundle is already on disk, so a
- * local checkout can build offline once it has fetched once. A build that was
- * *told* where to look and could not reach it fails instead — quietly shipping
- * yesterday's content because a network call timed out is the one outcome worth
- * refusing.
+ * local checkout can build offline once it has fetched once. The production
+ * branch on Workers Builds uses the public published endpoint as a bootstrap
+ * fallback; preview builds still have to provide their draft endpoint and token.
+ * A build that was *told* where to look and could not reach it fails instead —
+ * quietly shipping yesterday's content because a network call timed out is the
+ * one outcome worth refusing.
  */
 import { access, mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -31,7 +33,10 @@ import path from 'node:path';
 import { ContentApiError, describeBundle, readBundle } from '../src/services/content-api.mts';
 
 const OUT = path.resolve(import.meta.dirname, '..', 'src', 'content', 'bundle.generated.json');
-const API = process.env.CONTENT_API;
+const WORKERS_PRODUCTION_API = 'https://admin.cafa-studio.com/api/content/published';
+const isWorkersProduction =
+  process.env.WORKERS_CI === '1' && process.env.WORKERS_CI_BRANCH === 'main';
+const API = process.env.CONTENT_API ?? (isWorkersProduction ? WORKERS_PRODUCTION_API : undefined);
 const TOKEN = process.env.PREVIEW_TOKEN;
 
 async function exists(file) {

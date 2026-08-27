@@ -44,6 +44,10 @@ instructions if there is nothing to fall back on. A build that was *told* where
 to look and could not reach it fails rather than quietly shipping yesterday's
 content.
 
+The production branch on Cloudflare Workers Builds defaults to the published
+endpoint as a bootstrap fallback. An explicit `CONTENT_API` still wins, so
+preview builds can point at the draft endpoint without changing the script.
+
 The preview build points `CONTENT_API` at `/api/content/draft` instead and sends
 `PREVIEW_TOKEN`, which is how "View draft" in the admin shows unpublished work.
 
