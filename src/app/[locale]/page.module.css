@@ -1,0 +1,48 @@
+/*
+ * DESIGN-SYSTEM.md §8 rule 6 — the page has to survive deleting half of it.
+ * A statement and one photograph below the fold is what is left after doing
+ * that, twice: the works link that used to sit under the statement went the
+ * same way, because the nav carries one on every page. The logotype is in the
+ * header on every page including this one, so it is not set a second time here.
+ */
+
+/*
+ * The statement gets the first screen to itself, centred on both axes. This is
+ * what makes "below the fold" true for the photograph rather than approximately
+ * true at desktop widths only — at 390px it was arriving inside the initial
+ * viewport and becoming the LCP element.
+ *
+ * svh, not vh: the small viewport height is the one that survives a mobile
+ * browser's collapsing toolbar without the image creeping back up.
+ *
+ * The padding is what centres the line on the *viewport* rather than on this
+ * box. The box begins --space-pin down the page — the sticky header plus the
+ * padding globals.css gives <main> — so centring inside it puts the line half
+ * of --space-pin below the middle of the screen, which is what it looked like:
+ * low. Reserving that same distance at the foot of the box moves the midpoint
+ * back up onto the middle of the viewport, header included. The box still ends
+ * exactly at the fold, so the photograph below it has not moved.
+ */
+.above {
+  align-content: center;
+  justify-items: center;
+  min-block-size: calc(100svh - var(--space-pin));
+  padding-block-end: var(--space-pin);
+}
+
+/*
+ * Set in the `label` role, so it needs no size of its own — only somewhere to
+ * stop wrapping. --measure is a prose limit in ch, which at label size is a
+ * short centred block at every width, and is why this needs no breakpoint.
+ */
+.statement {
+  grid-column: 1 / -1;
+  max-inline-size: var(--measure);
+  text-align: center;
+  text-wrap: balance;
+}
+
+/* Outside the Grid, so it runs edge to edge. */
+.gallery {
+  margin-block-start: var(--space-3xl);
+}

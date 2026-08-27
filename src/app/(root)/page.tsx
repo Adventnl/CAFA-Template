@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Grid } from '@/components/primitives/Grid';
 import { Text } from '@/components/primitives/Text';
 import { getSite } from '@/lib/content';
-import { HOME_SLUG, routes } from '@/lib/routes';
+import { routes } from '@/lib/routes';
 
 import styles from './page.module.css';
 
@@ -15,7 +15,7 @@ import styles from './page.module.css';
 export default function RootPage() {
   const site = getSite();
   const locale = site.locales[0];
-  const href = routes.page(locale, HOME_SLUG);
+  const href = routes.home(locale);
 
   return (
     <Grid className={styles.page}>

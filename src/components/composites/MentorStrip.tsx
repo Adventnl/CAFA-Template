@@ -22,11 +22,6 @@ interface MentorStripProps {
   mentors: readonly Mentor[];
   locale: Locale;
   title: string;
-  /**
-   * Whether the first portrait is the page's LCP image — true when the strip is
-   * the first thing on the page. PageSections.leadSection decides.
-   */
-  priority?: boolean;
   className?: string;
 }
 
@@ -58,7 +53,6 @@ export function MentorStrip({
   mentors,
   locale,
   title,
-  priority = false,
   className,
 }: MentorStripProps) {
   return (
@@ -78,14 +72,9 @@ export function MentorStrip({
           <Text role="label" as="h2" className={styles.title}>
             {title}
           </Text>
-          {mentors.map((mentor, at) => (
+          {mentors.map((mentor) => (
             <figure key={mentor.slug} className={styles.plate}>
-              <Media
-                image={mentor.portrait}
-                locale={locale}
-                sizes={SIZES}
-                priority={priority && at === 0}
-              />
+              <Media image={mentor.portrait} locale={locale} sizes={SIZES} />
               <figcaption className={styles.caption}>
                 <Text role="index" as="h3">
                   {mentor.name[locale]}

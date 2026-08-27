@@ -54,8 +54,11 @@ the one place in the codebase that touches image markup.
     │   │   └── not-found/page.tsx   # becomes out/404.html via scripts/emit-404.mjs
     │   ├── [locale]/
     │   │   ├── layout.tsx           # <html lang>, header + <main> + footer + the contact card
-    │   │   ├── [[...path]]/page.tsx # every page the studio has made — see §3a
-    │   │   └── works/[slug]/page.tsx # ium-style detail; the one route that is not a page record
+    │   │   ├── page.tsx             # home — the statement, then the gallery below the fold
+    │   │   ├── works/page.tsx       # the ium index
+    │   │   ├── programs/page.tsx    # the intro, then the stacking list
+    │   │   ├── about/page.tsx       # the prose, the mentors, the projects — see §3a
+    │   │   └── works/[slug]/page.tsx # ium-style detail, generated from the works registry
     │   ├── robots.ts
     │   └── sitemap.ts
     ├── components/
@@ -86,7 +89,6 @@ the one place in the codebase that touches image markup.
     │       ├── WorkMetaPanel.tsx    # sticky left column on detail
     │       ├── WorkPager.tsx        # previous / next; the rule the footer joins onto
     │       ├── MediaSequence.tsx    # scrolling right column on detail
-    │       ├── PageSections.tsx     # a page record → a page. The only page body — §3a
     │       ├── WorkGrid.tsx         # the projects as covers
     │       ├── Gallery.tsx          # photographs, full bleed, one at a time
     │       ├── MentorStrip.tsx      # the mentors, sideways through a pinned window
@@ -97,7 +99,7 @@ the one place in the codebase that touches image markup.
     │   └── bundle.generated.json    # fetched by prebuild; gitignored, never committed
     ├── lib/
     │   ├── content-schema.ts        # JSON → typed records, or a build failure
-    │   ├── content.ts               # getPages, getNav, getWorks, getWorkListings … — typed, pure
+    │   ├── content.ts               # getPage, getNav, getWorks, getWorkListings … — typed, pure
     │   ├── routes.ts                # every path in the site, as functions
     │   ├── metadata.ts              # canonical + hreflang, built from a route function
     │   ├── json-ld.ts               # schema.org payloads, so no page knows a vocabulary
@@ -172,23 +174,23 @@ export interface Work {
 ```
 
 ```ts
-/** A block on a page. One kind, one component — see §3a. */
-export type PageSection =
-  | { kind: 'heading' }                                  // the page's title, as its h1
-  | { kind: 'statement'; text: LocalisedText }           // one line, holding the first screen
-  | { kind: 'prose'; paragraphs: readonly LocalisedText[] }
-  | { kind: 'gallery'; images: readonly ImageRef[] }     // full bleed, one at a time
-  | { kind: 'works-index' }                              // the ium list
-  | { kind: 'works-grid'; text: LocalisedText }          // the same registry, picture first
-  | { kind: 'programs' }
-  | { kind: 'mentors'; text: LocalisedText };
+/** The four pages the site has. The set is code; the words are content — §3a. */
+export const PAGE_KEYS = ['home', 'works', 'programs', 'about'] as const;
 
-export interface Page {
-  slug: string;                 // one segment under the locale; '' is the front page
-  title: LocalisedText;         // the document title, and what a `heading` section sets
-  description: LocalisedText;   // the meta description
-  navLabel: LocalisedText | null; // the word in the bar, or null for a page it omits
-  sections: readonly PageSection[];
+export interface PageText {
+  title: LocalisedText;       // the h1, the browser tab and the word in the bar, all three
+  description: LocalisedText; // the meta description
+}
+
+export interface SitePages {
+  home: PageText & { statement: LocalisedText; gallery: readonly ImageRef[] };
+  works: PageText;            // the index is the works registry
+  programs: PageText & { intro: readonly LocalisedText[] };
+  about: PageText & {
+    intro: readonly LocalisedText[];
+    mentorsTitle: LocalisedText;  // the heading over the band of portraits
+    projectsTitle: LocalisedText; // the heading over the grid of covers
+  };
 }
 ```
 
@@ -217,54 +219,53 @@ Rules:
 - A **private** work publishes no photographs. The admin drops its cover and media when it
   builds a revision, and `parseWorks` drops them again on the way in — which is why an
   empty `src` is legal for exactly that case and nowhere else.
-- `lib/content.ts` exports pure functions only: `getSite()`, `getPages()`, `getPage(slug)`,
-  `getNav()`, `getWorks()`, `getWork(slug)`, `getPrograms()`, `getMentors()`,
-  `getDictionary(locale)` and `requireLocale(param)`.
+- `lib/content.ts` exports pure functions only: `getSite()`, `getPage(key)`, `getNav()`,
+  `getWorks()`, `getWork(slug)`, `getPrograms()`, `getMentors()`,
+  `getDictionary(locale)` and `requireLocale(param)`. `getPage` is keyed rather than
+  searched, so a route asking for a page that does not exist is a compile error.
   Components never import from `content/` directly; pages do, through `lib/content`.
 
 ---
 
-## 3a. Pages are content
+## 3a. Four pages, and what is content about them
 
-**There is one page body in the app, and the site's pages are rows in a database.**
+**The set of pages is code. Every word on them is content.**
 
-This used to be four route files — home, works, programmes, about — each spelling out
-which blocks it had and in what order. That made the *set* of pages, and the composition
-of each one, a fact about this repository: adding a page was a commit, deleting one was a
-commit, and moving the mentors above the prose was a commit. Only the words inside those
-blocks were editable, which is a CMS in the shape of a hardcoded site.
+For one commit it was the other way round: a page was a row with an ordered list of
+section rows under it, one catch-all route rendered all of them, and the studio could
+compose a fifth. It reads well and it is wrong for this site. Every page here is a figure
+as much as a layout — the front page's statement holding a screen on its own and receding
+as it leaves, the mentors read sideways through a pinned window, the programmes stacking
+one at a time, the works index compressing into the rail of a work page. A fifth page is
+that much design and that much motion, not a row somebody adds on a Tuesday; and a page
+whose blocks can be reordered by an editor is a page whose rhythm nobody drew.
 
-Now:
+So:
 
-- `app/[locale]/[[...path]]/page.tsx` is the only page route. Its `generateStaticParams`
-  enumerates `getPages()`, so a page the studio adds becomes a URL the next time the site
-  builds and a page it deletes stops being one. The catch-all is *optional* because the
-  front page is a page like the others whose slug happens to be empty.
-- `components/composites/PageSections.tsx` turns a page's `sections` into its body. Its
-  switch has no `default` and every branch returns, so a kind added to `PageSection`
-  without a component behind it is a TypeScript error rather than a blank on a page.
-- **One kind, one component.** `gallery` is `Gallery`, `mentors` is `MentorStrip`,
-  `programs` is `ProgramList`, `works-index` is `WorkIndex`, `works-grid` is `WorkGrid`.
-  There is exactly one of each in the codebase, and the database decides how many times
-  and on which pages each appears.
-- The **nav is a projection of the pages** (`getNav()`), not a list of its own, so it
-  cannot name a page that was deleted or omit one that asked to be in it. Contact is the
-  one item that is not a page — it opens a panel over the page you are on — so its label
-  is dictionary copy and `SiteHeader` appends it.
-- Two rules no database column can express are checked at the build gate instead:
-  **exactly one page with an empty slug** (a site with no front page 404s at its own
-  address) and **exactly one heading-bearing section per page** (`heading` or `statement`
-  — CLAUDE.md §10 wants one `h1`, and wants one).
-- What is *not* a page record: a work's own page. `app/[locale]/works/[slug]` is generated
-  from the works registry under a fixed segment, because a work's address has to stay valid
-  for as long as anything cites it. Next resolves its static `works` segment ahead of the
-  catch-all's dynamic one, so the two coexist without either knowing about the other.
+- **Four route files**, one per page, each with its own `page.module.css` and its own
+  composition: `app/[locale]/page.tsx`, `works/page.tsx`, `programs/page.tsx`,
+  `about/page.tsx`. Each reads `getPage('…')` for its words and the collection functions
+  for its lists, and hands both to composites — the §3 rule that a page assembles and
+  never draws is unchanged.
+- **`SitePages` is what the studio fills in.** A title and a description on each; the
+  statement and the gallery on home; the opening paragraphs on programmes and about; the
+  two headings about sets over the people and the projects. Nothing else on those pages is
+  a string in a `.tsx` file.
+- The **nav bar is the three inner pages, in `NAV_PAGES` order, labelled by their own
+  titles** (`getNav()`). There is no separate nav label to keep in step with the heading at
+  the top of the page, and no way for the bar to name a page that is not there. Contact is
+  the one item that is not a page — it opens a panel over the page you are on — so its
+  label is dictionary copy and `SiteHeader` appends it.
+- The **collections are not on the pages.** The works index *is* the works, the programme
+  list is the programmes, the band of portraits is the mentors. A page names a collection
+  rather than carrying one, so adding a work changes three pages and touches nothing here.
+- A work's own page is generated from the registry under a fixed segment, because its
+  address has to stay valid for as long as anything cites it.
 
-The consequence for the dictionary is that it shrank to what it always should have been:
-the words on the *chrome*. A page's title, its prose and the headings over its sections
-belong to a page that can be deleted, so they live on the page record; the pager on a work,
-the labels a screen reader hears, the contact card and the footer outlive every page, so
-they stay copy.
+The dictionary is what is left after all of that: the words on the *chrome*. A page's
+title, its prose and the headings over its parts belong to that page; the pager on a work,
+the labels a screen reader hears, the contact card and the footer appear on every page and
+belong to none, so they stay copy.
 
 ---
 
@@ -272,15 +273,16 @@ they stay copy.
 
 ```
 /                    → redirect (static) to /zh        via app/(root)/page.tsx
-/zh                  → the page whose slug is ''       via app/[locale]/[[...path]]
-/zh/{slug}           → any other page the studio has made, same route
+/zh                  → home                            via app/[locale]/page.tsx
+/zh/works            → the index                       via app/[locale]/works/page.tsx
+/zh/programs         → the programmes                  via app/[locale]/programs/page.tsx
+/zh/about            → about                           via app/[locale]/about/page.tsx
 /zh/works/{slug}     → a work's own page               via app/[locale]/works/[slug]
-/en, /en/{slug}      …the same, in English
+/en, /en/…           …the same, in English
 ```
 
-The second and third lines are one file, and which slugs exist is a question for the
-database rather than for the filesystem — §3a. The fourth is the one route that is not a
-page record.
+Four pages, four files — §3a. The last line is the one route generated from a collection
+rather than written down.
 
 There is no `/contact`. It was a page and is now a card pinned over whichever page you are
 on — `components/motion/PinnedNote`, mounted once in the locale layout and opened by the
@@ -311,9 +313,9 @@ own content at runtime.
 - `app/[locale]/layout.tsx` exports
   `generateStaticParams: () => [{locale:'zh'}, {locale:'en'}]`, which covers every page
   nested under it.
-- `app/[locale]/[[...path]]/page.tsx` and `app/[locale]/works/[slug]/page.tsx` each export
-  `generateStaticParams` producing the cross product of locales × their own records —
-  pages for the first, work slugs for the second. Every page is pre-rendered.
+- The locale layout's `generateStaticParams` covers the four pages nested under it;
+  `app/[locale]/works/[slug]/page.tsx` exports its own, producing the cross product of
+  locales × published work slugs. Every page is pre-rendered.
 - **No middleware** — it doesn't run under static export. Root `/` is a static page that
   renders a `<meta http-equiv="refresh">` plus a link. Keep it dumb.
 - **The 404 is a route, not `app/not-found.tsx`.** That file sits above both root layouts,
@@ -323,14 +325,15 @@ own content at runtime.
   directory. The segment cannot be called `404`: the exporter writes its own built-in error
   page over anything at that path.
 - `lib/routes.ts` is the only place a path string exists, and — since contact stopped being
-  one — the only place the destinations that are *not* paths exist either. Two shapes, not
-  five, because the pages stopped being enumerable here:
+  one — the only place the destinations that are *not* paths exist either. The three inner
+  pages are keyed by their own name, which is also their path segment, so `SiteHeader` and
+  `navContext` index this object rather than carrying a second table of segments:
   ```ts
-  /** The front page's slug. A page like any other, at the locale's own address. */
-  export const HOME_SLUG = '';
-
   export const routes = {
-    page: (l: Locale, slug: string) => (slug === HOME_SLUG ? `/${l}` : `/${l}/${slug}`),
+    home: (l: Locale) => `/${l}`,
+    works: (l: Locale) => `/${l}/works`,
+    programs: (l: Locale) => `/${l}/programs`,
+    about: (l: Locale) => `/${l}/about`,
     work: (l: Locale, slug: string) => `/${l}/works/${slug}`,
   } as const;
 
@@ -344,11 +347,10 @@ own content at runtime.
   present in one and missing from the other fails the build rather than the page. They are
   stored as one flat `copy` table keyed by dotted path, with a `zh` and an `en` column, so
   a missing translation is a blank column rather than an absent key.
-- The **nav labels** are not in that table any more. A page carries its own `navLabel`, so
-  the bar's shape *and* its words are both content: reordering the pages reorders the bar,
-  and clearing a label takes a page out of it without deleting the page. The one exception
-  is Contact, whose label is still copy, because the panel it opens is chrome rather than
-  a page.
+- The **nav labels** are not in that table. The bar's words are the pages' own titles, so
+  a page cannot be called one thing in the bar and another at the top of itself, and there
+  is nothing to keep in step. The one exception is Contact, whose label is still copy,
+  because the panel it opens is chrome rather than a page.
 
 ---
 
