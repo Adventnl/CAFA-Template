@@ -33,6 +33,7 @@ import {
   type PageText,
   type Program,
   type ProgramsPage,
+  type Project,
   type SiteContent,
   type SitePages,
   type Work,
@@ -219,6 +220,33 @@ function parsePrograms(value: unknown): Program[] {
   });
 }
 
+/**
+ * The projects, each held to the same four fields.
+ *
+ * Slugs are checked for uniqueness even though a project has no page and
+ * nothing resolves one by slug. It is still the React key down the grid, and
+ * two cards claiming one key is a list React will reorder wrongly the moment
+ * the studio moves a row — a quieter failure than a shadowed route and worth
+ * catching at the same gate.
+ */
+function parseProjects(value: unknown): Project[] {
+  const found = each(value, 'projects', (item, at) => {
+    const record = object(item, at);
+    return {
+      slug: slug(record.slug, `${at}.slug`),
+      title: localised(record.title, `${at}.title`),
+      summary: localised(record.summary, `${at}.summary`),
+      image: image(record.image, `${at}.image`),
+    };
+  });
+
+  unique(
+    found.map((entry) => entry.slug),
+    'projects',
+  );
+  return found;
+}
+
 function parseMentors(value: unknown): Mentor[] {
   return each(value, 'mentors', (item, at) => {
     const record = object(item, at);
@@ -372,6 +400,10 @@ function parseDictionary(value: unknown, locale: string): Dictionary {
       message: contact('message'),
       subject: contact('subject'),
       send: contact('send'),
+      sending: contact('sending'),
+      sent: contact('sent'),
+      failed: contact('failed'),
+      draft: contact('draft'),
     },
     notFound: { title: notFound('title'), body: notFound('body'), home: notFound('home') },
     footer: { note: footer('note') },
@@ -423,7 +455,34 @@ export interface ContentBundle {
   works: Work[];
   programs: Program[];
   mentors: Mentor[];
+  /** The grid at the foot of About. Legitimately empty — see `parseBundle`. */
+  projects: Project[];
   dictionaries: Record<Locale, Dictionary>;
+}
+
+/**
+ * Where the contact card posts a message, or null where it has nowhere to.
+ *
+ * Null is not a failure. It is a deployment whose admin has not been told its
+ * own origin, or a bundle published before the endpoint existed — and the card
+ * answers both the same way, by composing a `mailto:` and handing the reader a
+ * draft, which is what it did before there was anywhere to post to. Anything
+ * that is *present and not a string* still fails the build, because that is a
+ * bug rather than an absence: the same asymmetry lib/media applies to
+ * `mediaTransform`, for the same reason.
+ */
+export function parseContactEndpoint(value: unknown): string | null {
+  if (value === undefined || value === null) return null;
+  const found = text(value, 'contactEndpoint');
+  if (found.trim() === '') return null;
+
+  // It is fetched from a browser, so a relative or malformed value would fail
+  // at the worst possible moment — after somebody has typed a message.
+  try {
+    return new URL(found).toString();
+  } catch {
+    fail('contactEndpoint', 'an absolute URL');
+  }
 }
 
 /**
@@ -444,6 +503,11 @@ export function parseBundle(value: unknown): ContentBundle {
     works: parseWorks(record.works),
     programs: parsePrograms(record.programs),
     mentors: parseMentors(record.mentors),
+    // Absent reads as none, and that is the one place laxity is right here: the
+    // field arrived after the first revisions were published, so a bundle
+    // without it predates the question rather than answering it wrongly. A
+    // bundle that *has* it and has it malformed still fails the build.
+    projects: record.projects === undefined ? [] : parseProjects(record.projects),
     dictionaries: {
       zh: parseDictionary(dictionaries.zh, 'zh'),
       en: parseDictionary(dictionaries.en, 'en'),

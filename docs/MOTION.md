@@ -445,8 +445,8 @@ The rule is that every surface names a trigger. This table is the acceptance tes
 | about — mentor filmstrip | `pin-scrub` + `pan` | horizontal filmstrip under vertical scroll |
 | about — the strip's rule | the same `--pin` | the margin rule turned on its side, drawn for the pin and no longer; §5.5d |
 | about — prose | `batch` | `split` d1 per paragraph |
-| about — project grid | `batch` | `rise` d1, staggered by column |
-| about — project cover | `scrub` | `focus` d1, nested inside the card |
+| about — project grid | `batch` | `unmask` d2, staggered by column |
+| about — project picture | — | `Parallax`'s own drift; no scene, and no focus. §5.5e |
 | contact | — | not a surface; an overlay pinned over one. §5.5b |
 | footer | `progress` | `rise` at document end |
 
@@ -477,9 +477,30 @@ trigger. `focus` and `drift` belong on `scrub`, which runs the whole `cover 0% �
 pass, or nowhere.
 
 The fix is also the better design, which is usually the sign it is the right one: the
-card assembles (`batch` + `rise`) and the portrait inside it focuses (`scrub` + `focus`),
+card assembles on a ranged trigger and the picture inside it moves on a continuous one,
 each on its own element. That is the nesting §5.4 was built for, and it is what the
 original "focus d1, staggered by column" was reaching for.
+
+### 5.5e The project grid, after the projects stopped being the works
+
+Two rows in the table above changed again when the grid at the foot of About stopped
+being a second drawing of the works index and became its own collection. The motion
+changed with the content, which is the point rather than a coincidence.
+
+While the cards were works read picture-first, they took the works' own vocabulary:
+`batch` + `rise` on the grid, with each cover on the focus curve inside it. That was
+right for what they were — a card that opens into a work should look like it is rising
+to be clicked, and the focus curve is the promise that the cover leads somewhere.
+
+A project leads nowhere. It has no page, nothing routes to one, and `ProjectGrid`
+renders a `<figure>` rather than an anchor. So the card takes the other half of the
+ranged vocabulary — `unmask`, a top-to-bottom clip wipe, which reads as each card being
+*printed* rather than lifted — and the picture inside it keeps only `Parallax`'s internal
+drift, with no scene of its own. Dropping the `Focus` wrapper is the whole difference,
+and it is the right thing to drop: what is left is depth without invitation.
+
+`unmask` ends fully revealed, so §5.5a's rule is satisfied — which is what makes it a
+legal choice on a `batch` at all.
 
 ### 5.5b Where the pinned scenes catch, and why it is not zero
 

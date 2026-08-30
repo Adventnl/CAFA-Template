@@ -102,25 +102,43 @@ export const scenes = {
    */
   prose: { kind: 'batch', effect: 'split', depth: 1 },
   /**
-   * The project grid on About: the *cards* assemble, staggered by the batch.
+   * The project grid on About: the *cards* are wiped in, staggered by the batch.
    *
-   * This used to read `focus`, and that was a defect rather than a taste
-   * question. `focus` is a symmetric scrub curve — down, up, down — and `batch`
-   * runs its children over `entry 0% → entry 50%` with `animation-fill-mode:
-   * both`. So the curve completed during the entrance and then *held its end
-   * keyframe*, which is the dimmed, shrunk one: every card came to rest
-   * permanently at 0.9 scale and 55% opacity, and stayed there for as long as
-   * the page was open. Anything ending at its start state (`rise`, `slide`,
-   * `unmask`) is safe on a ranged trigger; the two symmetric effects, `focus`
-   * and `drift`, only ever belong on `scrub`, which runs the whole pass.
+   * This is where the works grid used to be, and the motion changed with the
+   * content rather than in spite of it. The cards were the works read
+   * picture-first, so they took the works' own figure — `rise`, with the covers
+   * on the focus curve inside them, which is the index's vocabulary applied to a
+   * grid. The projects are not the works and should not arrive as though they
+   * were, so they take the other half of the batch vocabulary: `unmask`, a
+   * top-to-bottom clip wipe, which reads as each card being *printed* rather than
+   * lifted into place. That is the right figure for a card that goes nowhere —
+   * nothing here is a link, so nothing should look like it is rising to be
+   * clicked.
    *
-   * The covers still focus — see workCardCover, which nests a scrub inside each
-   * card. That is the composition the effect vocabulary is built for, and it is
-   * what the §5.5 audit's "focus d1" was actually asking for.
+   * `unmask` ends at its end state, fully revealed, which is what makes it safe
+   * on a ranged trigger. That constraint is not a footnote: `batch` runs its
+   * children over `entry 0% → entry 50%` with `animation-fill-mode: both`, so an
+   * effect that ends anywhere but at rest *holds* that keyframe for as long as
+   * the page is open. The works grid learned this the hard way when it read
+   * `focus` here and every card came to rest permanently at 0.9 scale and 55%
+   * opacity. The two symmetric effects, `focus` and `drift`, only ever belong on
+   * `scrub`, which runs the whole pass — which is exactly where the picture
+   * inside each card puts one.
    */
-  workCards: { kind: 'batch', effect: 'rise', depth: 1 },
-  /** And the cover inside each card, on its own continuous pass. */
-  workCardCover: { kind: 'scrub', effect: 'focus', depth: 1 },
+  projectCards: { kind: 'batch', effect: 'unmask', depth: 2 },
+  /*
+   * There is no entry here for the picture inside a project card, and its
+   * absence is the composition rather than a gap.
+   *
+   * A work's cover is <Focus><Parallax><Media>: a scrub scene scaling the plate
+   * toward the reader as it crosses the middle of the screen, with the picture
+   * panning inside its own frame underneath. A project's picture is <Parallax>
+   * alone — components/motion/Parallax carries its own view() timeline and needs
+   * no scene, which is why it never had an entry here. Dropping the Focus is the
+   * whole difference, and it is the right one to drop: the focus curve is an
+   * invitation, and on the works index it is the promise that the cover opens
+   * into something. A project opens into nothing, so its picture only settles.
+   */
   /*
    * Contact had a scene here — `scrub` + `sway`, a card pinned at its top edge
    * turning a fraction of a degree as the page moved under it. It went with the

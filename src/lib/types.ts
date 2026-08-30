@@ -75,6 +75,27 @@ export interface Mentor {
 }
 
 /**
+ * A project: a picture, a name, and a line or two about it.
+ *
+ * The grid at the foot of About used to be the *works* — WorkGrid read the same
+ * registry the index reads and drew it picture-first, under a heading that
+ * called them projects. The heading was honest and the data was not: the studio
+ * could not put anything under it that was not a work, or keep a work off it.
+ *
+ * So these are records of their own, and deliberately the smallest ones here.
+ * No status, no year, no disciplines, no credits — those are the columns of the
+ * works index, and the index is where they are read. No page either: `slug` is
+ * a stable key and a React one, never a URL segment, which is why nothing in
+ * lib/routes resolves a project and ProjectGrid renders no link.
+ */
+export interface Project {
+  slug: string;
+  title: LocalisedText;
+  summary: LocalisedText; // the line or two under the picture
+  image: ImageRef;
+}
+
+/**
  * The four pages the site has.
  *
  * **The set is code, and so is the composition of each one.** Every page here
@@ -87,8 +108,9 @@ export interface Mentor {
  *
  * What the pages do *not* carry is the collections they show. The works index
  * is the works, the programme list is the programmes, the band of portraits is
- * the mentors — a page names a collection rather than holding one, so adding a
- * work changes three pages and touches nothing here.
+ * the mentors, the grid at the foot of About is the projects — a page names a
+ * collection rather than holding one, so adding a work changes three pages and
+ * touches nothing here.
  */
 export const PAGE_KEYS = ['home', 'works', 'programs', 'about'] as const;
 
@@ -123,7 +145,13 @@ export interface ProgramsPage extends PageText {
   intro: readonly LocalisedText[];
 }
 
-/** About: the prose, then the people, then the projects. */
+/**
+ * About: the prose, then the people, then the projects.
+ *
+ * `projectsTitle` heads the projects — the collection, not a second reading of
+ * the works. The heading did not have to change when they became their own
+ * records, because it was always the honest name for what sat under it.
+ */
 export interface AboutPage extends PageText {
   intro: readonly LocalisedText[];
   mentorsTitle: LocalisedText;
@@ -222,11 +250,26 @@ export interface Dictionary {
     hours: string;
     note: string;
     /** The message form. `from` and `message` name the two fields; `subject` is
-        the line the reader's mail client opens with, so it is copy too. */
+        the line the message arrives under, so it is copy too. */
     from: string;
     message: string;
     subject: string;
     send: string;
+    /**
+     * What the button says mid-flight, what replaces the form once the message
+     * has gone, what is said when it could not go, and the offer of a `mailto:`
+     * draft instead.
+     *
+     * `failed` is the fallback rather than the usual case: a refusal from the
+     * admin carries its own sentence — "that does not look like an email
+     * address" — and the card shows that, because the half that knows what was
+     * wrong with a message should be the half that says so. This is what is
+     * shown when the network failed and there is nothing to relay.
+     */
+    sending: string;
+    sent: string;
+    failed: string;
+    draft: string;
   };
   notFound: { title: string; body: string; home: string };
   footer: { note: string };

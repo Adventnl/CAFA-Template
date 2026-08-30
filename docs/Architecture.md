@@ -89,12 +89,12 @@ the one place in the codebase that touches image markup.
     │       ├── WorkMetaPanel.tsx    # sticky left column on detail
     │       ├── WorkPager.tsx        # previous / next; the rule the footer joins onto
     │       ├── MediaSequence.tsx    # scrolling right column on detail
-    │       ├── WorkGrid.tsx         # the projects as covers
+    │       ├── ProjectGrid.tsx      # the projects — pictures with captions, no links
     │       ├── Gallery.tsx          # photographs, full bleed, one at a time
     │       ├── MentorStrip.tsx      # the mentors, sideways through a pinned window
     │       ├── ProgramList.tsx
     │       ├── ContactBlock.tsx     # the card PinnedNote carries
-    │       └── ContactForm.tsx      # its two fields and Send — a mailto, no backend
+    │       └── ContactForm.tsx      # its two fields and Send — posts to the admin
     ├── content/
     │   └── bundle.generated.json    # fetched by prebuild; gitignored, never committed
     ├── lib/
@@ -156,6 +156,14 @@ export interface ImageRef {
   alt: LocalisedText | '';
 }
 
+/** The grid at the foot of About. Deliberately the smallest record here — §3a. */
+export interface Project {
+  slug: string;          // a stable key and a React key. Never a URL segment.
+  title: LocalisedText;
+  summary: LocalisedText; // the line or two under the picture
+  image: ImageRef;
+}
+
 export type WorkStatus = 'completed' | 'in-progress' | 'private';
 
 export interface Work {
@@ -189,7 +197,7 @@ export interface SitePages {
   about: PageText & {
     intro: readonly LocalisedText[];
     mentorsTitle: LocalisedText;  // the heading over the band of portraits
-    projectsTitle: LocalisedText; // the heading over the grid of covers
+    projectsTitle: LocalisedText; // the heading over the grid of projects
   };
 }
 ```
@@ -257,8 +265,16 @@ So:
   the one item that is not a page — it opens a panel over the page you are on — so its
   label is dictionary copy and `SiteHeader` appends it.
 - The **collections are not on the pages.** The works index *is* the works, the programme
-  list is the programmes, the band of portraits is the mentors. A page names a collection
-  rather than carrying one, so adding a work changes three pages and touches nothing here.
+  list is the programmes, the band of portraits is the mentors, the grid at the foot of
+  About is the projects. A page names a collection rather than carrying one, so adding a
+  work changes three pages and touches nothing here.
+- The **projects are not the works**, and the grid at the foot of About is where that
+  used to be untrue. It drew the works registry a second time, picture-first, under a
+  heading that called them projects — so the studio could neither put something there
+  that was not a work nor keep a work off it. `projects` is its own collection now:
+  a picture, a title and a line or two, with no status, no year and no page. Nothing
+  routes to a project, which is why its cards are figures rather than links. The list
+  may be empty, and About leaves the whole section out when it is.
 - A work's own page is generated from the registry under a fixed segment, because its
   address has to stay valid for as long as anything cites it.
 
@@ -291,19 +307,34 @@ nav bar is the pages *plus one item that is not a page*, which is why `SiteHeade
 `getNav()` and then appends the Contact button rather than iterating one list with a
 special case in it.
 
-**The card carries a form, and where it sends is the whole of the decision.** §1 ships no
-server runtime, so there is nowhere for a POST to land — and a form that takes a message
-and drops it is worse than printing an address. So `ContactForm` never holds the message:
-Send composes a `mailto:` and navigates, which hands the fields to software the reader
-already trusts and leaves the message in their sent items. The `action` on the `<form>` is
-the same address again as the no-script path; JavaScript intercepts it only to write a
-subject line and a readable body. This is the one client component under the card, it is
-about forty lines, and it holds no copy — every string is prerendered and passed in.
+**The card carries a form, and where it sends is the whole of the decision.** It used to
+send nowhere: §1 ships no server runtime, so there was no origin here for a POST to land on,
+and a form that takes a message and drops it is worse than printing an address. So Send
+composed a `mailto:` and navigated, handing the fields to software the reader already
+trusted.
 
-If the atelier ever wants messages arriving in an inbox it owns, that is an endpoint URL in
-that `action` and the deletion of one `onSubmit`. It is not an architecture change and it
-does not make §1 false: a form POST to somebody else's origin is not this site fetching its
-own content at runtime.
+It posts now. The admin grew `POST /api/v1/contact`, which reads the studio's address out
+of the published revision and sends the mail, and `ContactForm` posts to it. **This does not
+make §1 false, and the distinction is worth being exact about.** §1 forbids fetching
+*content* in a browser, for a stated reason: three serial round trips ahead of the LCP image
+and no intrinsic dimensions until after first paint. None of that is this. The page is
+complete, prerendered and static before this component has done anything; the request
+happens because somebody pressed a button. What is still forbidden is what was always
+forbidden, and nothing here moves a content read to runtime.
+
+**The endpoint's address arrives as content.** It could have been an environment variable on
+this side, and making it one would have given this repository a second thing that knows the
+admin exists — §3 keeps that to `services/`, at build time. Instead the admin stamps its own
+origin into the bundle it publishes as `contactEndpoint`, and `lib/content` reads it at the
+same gate as everything else. Nothing above `lib/` learns a hostname.
+
+**`contactEndpoint: null` is a supported state, not a broken one.** A deployment whose admin
+has not been told its own origin, or a build from a revision published before the endpoint
+existed, gets exactly the old behaviour: a `mailto:` and a draft. The `action` on the
+`<form>` is still that mailto and is still the no-script path. A failed POST offers the same
+draft, carrying what was already typed. A message is never silently dropped — which is the
+rule the original `mailto:` design was protecting, kept intact by a form that can now
+actually deliver.
 
 - **Two root layouts, and no `app/layout.tsx`.** A root layout cannot read route params, so
   a single one would have to hardcode `<html lang>` — wrong on every page of the other
@@ -571,8 +602,10 @@ Listed so it stays absent:
 - No global state. The one piece of shared client state (hovered work) is `useState` inside
   `WorkIndex`.
 - No i18n, form, icon, carousel, lightbox or UI library. The contact form is two inputs, a
-  button and a `mailto:` — see §4. What stays absent is the *library*, and with it the
-  validation schema, the resolver and the controlled-input re-render on every keystroke.
+  button and a `fetch` — see §4. What stays absent is the *library*, and with it the
+  validation schema, the resolver and the controlled-input re-render on every keystroke: the
+  fields are uncontrolled, read once out of a `FormData` on submit, and what is worth saying
+  about a bad address is said by the endpoint that refused it.
 - No dark mode. The palette is near-monochrome by design; a second theme adds tokens,
   testing surface and contrast bugs for no editorial gain. Revisit only if asked.
 - No animation library, still. What replaced the "no page transitions" line that used to sit

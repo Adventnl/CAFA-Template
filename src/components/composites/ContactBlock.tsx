@@ -10,6 +10,13 @@ interface ContactBlockProps {
   site: SiteContent;
   locale: Locale;
   labels: Dictionary['contact'];
+  /**
+   * Where the form posts, or null where it has nowhere to and should hand the
+   * reader a `mailto:` draft instead. Passed through rather than read here: a
+   * composite never imports lib/content (CLAUDE.md §3), so whatever renders the
+   * card reads it and hands it down beside the address it already reads.
+   */
+  contactEndpoint: string | null;
 }
 
 /**
@@ -30,12 +37,14 @@ interface ContactBlockProps {
  *
  * This stays a server component. ContactForm is the only client boundary and it
  * holds no copy of its own — every string here is prerendered, including the
- * ones handed across that boundary as props.
+ * ones handed across that boundary as props, and including the endpoint it
+ * posts to, which is a fact out of the content bundle rather than something
+ * looked up in a browser.
  *
  * Where the card sits, how it arrives and how it is moved belong to
  * components/motion/PinnedNote, which is the only thing that renders it.
  */
-export function ContactBlock({ site, locale, labels }: ContactBlockProps) {
+export function ContactBlock({ site, locale, labels, contactEndpoint }: ContactBlockProps) {
   const { contact } = site;
 
   return (
@@ -57,7 +66,12 @@ export function ContactBlock({ site, locale, labels }: ContactBlockProps) {
         <Fact label={labels.hours}>{contact.hours[locale]}</Fact>
       </dl>
 
-      <ContactForm to={contact.email} labels={labels} />
+      <ContactForm
+        to={contact.email}
+        endpoint={contactEndpoint}
+        locale={locale}
+        labels={labels}
+      />
     </div>
   );
 }

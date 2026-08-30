@@ -2,18 +2,13 @@ import type { Metadata } from 'next';
 
 import { MentorStrip } from '@/components/composites/MentorStrip';
 import { PageHeading } from '@/components/composites/PageHeading';
-import { WorkGrid } from '@/components/composites/WorkGrid';
+import { ProjectGrid } from '@/components/composites/ProjectGrid';
 import { partClass } from '@/components/motion/Part';
 import { Grid } from '@/components/primitives/Grid';
 import { Text } from '@/components/primitives/Text';
 import { scenes, sceneAttrs } from '@/lib/choreography';
 import { cx } from '@/lib/class-names';
-import {
-  getMentors,
-  getPage,
-  getPublishedWorkListings,
-  requireLocale,
-} from '@/lib/content';
+import { getMentors, getPage, getProjects, requireLocale } from '@/lib/content';
 import { pageMetadata } from '@/lib/metadata';
 import { routes, type LocaleParams } from '@/lib/routes';
 
@@ -33,6 +28,7 @@ export async function generateMetadata({ params }: LocaleParams): Promise<Metada
 export default async function AboutPage({ params }: LocaleParams) {
   const locale = requireLocale((await params).locale);
   const page = getPage('about');
+  const projects = getProjects();
 
   return (
     // Three blocks rather than one grid, because the middle one is not on the
@@ -62,14 +58,24 @@ export default async function AboutPage({ params }: LocaleParams) {
         title={page.mentorsTitle[locale]}
         className={styles.strip}
       />
-      <Grid>
-        <WorkGrid
-          works={getPublishedWorkListings()}
-          locale={locale}
-          heading={page.projectsTitle[locale]}
-          className={cx(styles.works, partClass('listing'))}
-        />
-      </Grid>
+      {/* The projects, and only if there are any. An empty grid under a heading
+          reads as a page that failed to load; leaving the section out entirely
+          reads as a page that ends after the people, which is what it does. So
+          the heading goes with its content rather than standing over nothing —
+          which is also why `projects.length` is checked here, in the page, and
+          not inside ProjectGrid: whether a section exists is the page's
+          question, and a component asked to render nothing should not have to
+          decide it is not wanted (CLAUDE.md §3). */}
+      {projects.length > 0 && (
+        <Grid>
+          <ProjectGrid
+            projects={projects}
+            locale={locale}
+            heading={page.projectsTitle[locale]}
+            className={cx(styles.projects, partClass('listing'))}
+          />
+        </Grid>
+      )}
     </>
   );
 }

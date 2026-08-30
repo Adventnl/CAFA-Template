@@ -94,3 +94,79 @@
     color: var(--c-ink);
   }
 }
+
+/*
+ * The honeypot's field, out of sight without being `display: none`.
+ *
+ * A bot that parses the stylesheet is rare; one that skips a `display: none`
+ * input because that is the oldest trick there is, less so. Clipped to nothing
+ * and taken out of flow keeps it a rendered, fillable control while leaving no
+ * mark on the card. The three attributes that keep it away from *people* —
+ * `aria-hidden`, `tabIndex={-1}`, `autoComplete="off"` — are on the element in
+ * ContactForm, because they are behaviour rather than appearance.
+ */
+.trap {
+  block-size: 0;
+  clip-path: inset(50%);
+  inline-size: 0;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+}
+
+/*
+ * What the card says once the message has gone.
+ *
+ * It replaces the form rather than sitting under it, so it takes the space the
+ * form had — which is why it is set at the form's own row rhythm and not as a
+ * line squeezed above a spent set of fields.
+ */
+.sent {
+  color: var(--c-ink);
+  margin: 0;
+  padding-block: var(--space-s);
+}
+
+/*
+ * A failure, and the way out of it.
+ *
+ * Not red, and not a box. DESIGN-SYSTEM.md §8 has no error colour and no
+ * container whose background differs from the paper, and inventing one here for
+ * a message that is already the only thing on the card that has changed would
+ * be the loudest thing on the sheet. Full ink against the --c-ink-62 the labels
+ * carry is the whole emphasis, which is the same distinction the focused field
+ * underneath it makes.
+ */
+.problem {
+  color: var(--c-ink);
+  margin: 0;
+}
+
+/* The offer of a draft instead: the send button's own vocabulary, because it is
+   the same kind of thing — a control that is not a destination. */
+.fallback {
+  background: none;
+  border: 0;
+  color: var(--c-ink-70);
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 0.22em;
+  transition: color var(--dur-fast) var(--ease-io);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .fallback:hover {
+    color: var(--c-ink);
+  }
+}
+
+/*
+ * Mid-flight. The button keeps its size and its place — a control that moves
+ * or vanishes while you are waiting on it reads as a page reloading rather than
+ * as work in progress — and only its ink drops back to say it is not pressable.
+ */
+.send:disabled {
+  color: var(--c-ink-62);
+  cursor: default;
+}

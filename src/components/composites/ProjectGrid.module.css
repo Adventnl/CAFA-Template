@@ -1,0 +1,101 @@
+/*
+ * The project grid. DESIGN-SYSTEM.md §5 and §8.
+ *
+ * What is *not* here is the interesting half. The works grid this replaced had
+ * a `.card` that was an anchor — `color: inherit`, `text-decoration: none`, the
+ * whole tile a hit area. A project card goes nowhere, so it has no anchor, no
+ * cursor, no hover state and no focus ring: it is a figure with a caption, and
+ * it should read as one rather than as a link whose destination has not loaded
+ * yet.
+ */
+
+.section {
+  container-type: inline-size;
+}
+
+/* The same rule the works grid set over its cards, and deliberately identical:
+   these two sections are different content read the same way, and a second
+   treatment for a heading in the same slot would be noise. */
+.heading {
+  border-block-end: var(--hairline);
+  color: var(--c-ink-62);
+  margin-block-end: var(--space-l);
+  padding-block-end: var(--space-2xs);
+}
+
+.grid {
+  display: grid;
+  gap: var(--space-l);
+  grid-template-columns: minmax(0, 1fr);
+  list-style: none;
+  padding: 0;
+}
+
+/*
+ * `margin: 0` because a <figure> carries a UA margin and this one is placed by
+ * the grid. The gap is the grid's; the figure's own would be added to it.
+ */
+.card {
+  display: grid;
+  margin: 0;
+  row-gap: var(--space-s);
+}
+
+/*
+ * A consistent frame, which the works grid did not need and this does.
+ *
+ * A cover is a photograph chosen to be a cover, so a grid of them is already
+ * roughly one shape. A project's picture is whatever the studio had — a
+ * photograph, a drawing, a scan — and a column of ragged heights makes the
+ * captions under them stop lining up, which is the one thing that turns a grid
+ * into a pile. So the frame is a 4:3 box and the picture fills it.
+ *
+ * It is on the Parallax frame rather than on a wrapper of our own: that element
+ * is already `overflow: clip` for the drift, so this is the aspect box the clip
+ * was going to need anyway rather than a second element to hold one.
+ */
+.picture {
+  aspect-ratio: 4 / 3;
+}
+
+.picture img {
+  block-size: 100%;
+  inline-size: 100%;
+  object-fit: cover;
+}
+
+.caption {
+  display: grid;
+  row-gap: var(--space-3xs);
+}
+
+/*
+ * The summary is body copy at --c-ink-70, held to a measure.
+ *
+ * A card in a three-column grid is already narrow, so the measure rarely binds —
+ * but the same grid is one column on a phone and two in a container query away
+ * from a phone, and at one column a sentence would otherwise run the full width
+ * of the page under a picture that does not. DESIGN-SYSTEM.md §6.
+ */
+.summary {
+  color: var(--c-ink-70);
+  max-inline-size: var(--measure);
+}
+
+/*
+ * Container queries rather than breakpoints, at the same two numbers the works
+ * grid used: --bp-sm and --bp-md, measured against this section's own width. So
+ * dropping the grid into a narrower column would still do the right thing.
+ * CLAUDE.md §9.
+ */
+@container (width >= 480px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@container (width >= 768px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
