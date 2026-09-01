@@ -3,10 +3,25 @@
   // JavaScript of ours between the request and the file. Cloudflare Workers
   // Builds reads this config; nothing here needs wrangler installed locally.
   "name": "cafa-web",
+  "account_id": "fff1de3eb2a028764bfb388d7599fa39",
   "compatibility_date": "2026-08-05",
+
+  // Workers Builds injects Wrangler vars into `npm run build`. This endpoint
+  // is public configuration, not a secret; it must be present before Next.js
+  // starts because the static export fetches its content at build time.
+  "vars": {
+    "CONTENT_API": "https://admin.cafa-studio.com/api/content/published"
+  },
 
   // The public site. A custom domain rather than a route: Cloudflare owns the
   // record and the certificate, and there is no origin to fall through to.
+  //
+  // The fork carried a zone route here instead — `cafa-studio.com/*` over an
+  // existing proxied record — because on 27 Aug the apex still pointed at the
+  // old origin and a Custom Domain could not take it. That record is gone: the
+  // apex has been a Custom Domain of this Worker since 1 Sep, and the deploy
+  // that made it so is what is serving the site now. A route would fight the
+  // Custom Domain for the same hostname, so this stays as the account has it.
   //
   // The apex only. Pointing www at this Worker as well would make the same
   // pages answer on two hostnames, which is a duplicate-content problem that
