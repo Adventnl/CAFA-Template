@@ -2,7 +2,7 @@
   // A static-only Worker: no `main`, so there is no server runtime and no
   // JavaScript of ours between the request and the file. Cloudflare Workers
   // Builds reads this config; nothing here needs wrangler installed locally.
-  "name": "cafa-atelier",
+  "name": "cafa-web",
   "compatibility_date": "2026-08-05",
 
   // The public site. A custom domain rather than a route: Cloudflare owns the
